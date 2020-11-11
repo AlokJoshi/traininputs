@@ -23,6 +23,8 @@ class Path {
   get rects(){
     return 1+this.train.num_passenger_coaches+this.train.num_goods_coaches
   }
+  
+  
   addPoint(point) {
     this.points.push(point)
   }
@@ -125,17 +127,26 @@ class Path {
 
         //check if the length of l2 is greater than 2*MIN_LENGTh
         //if it is then a linear segment needs to be added.
-        if (l2 > 2 * MIN_LENGTH) {
-          //starting point is p2_
-          //and ending point is MIN_LENGTH away from p2
-          let endPoint = new Point(p2.x + (p1.x - p2.x) * MIN_LENGTH / l2, p2.y + (p1.y - p2.y) * MIN_LENGTH / l2)
+        if ((l2 > 2 * MIN_LENGTH && ip<this.length-1) || (l2>MIN_LENGTH && ip==this.length-1)) {
+          let endPoint
+          if(ip<this.length-1){ //added on 11/09/20
+            //starting point is p2_
+            //and ending point is MIN_LENGTH away from p2
+            endPoint = new Point(p2.x + (p1.x - p2.x) * MIN_LENGTH / l2, p2.y + (p1.y - p2.y) * MIN_LENGTH / l2)
+            console.log(`endPoint calculated when ip<this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
+          }else{
+            endPoint = this.points[ip]  //added on 11/09/20
+            console.log(`endPoint calculated when ip==this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
+          }//added on 11/09/20
           this._lineSegments.push(new LinSeg(p2_, endPoint))
+        }else{
+          console.log(`_lineSegment not added for ip:${ip}`)
         }
       }
-      //if it is the last point we need to add the straight segment
-      if (ip > 1 && ip == this.length - 1) {
-        this._lineSegments.push(this.endingLinSegment(this.points[ip - 1], this.points[ip], MIN_LENGTH))
-      }
+      //removed on 11/09/20 if it is the last point we need to add the straight segment
+      // if (ip > 1 && ip == this.length - 1) {
+      //   this._lineSegments.push(this.endingLinSegment(this.points[ip - 1], this.points[ip], MIN_LENGTH))
+      // }
     }
   }
   startingLinSegment(p1, p2, d) {
@@ -155,23 +166,25 @@ class Path {
     try {
       this._lineSegments.forEach(l => l.draw(this.ctx, pathEditMode))
     } catch (error) {
-      console.log('error: ' + error)
+      console.error('error: ' + error)
     }
     try {
       this._quadraticSegments.forEach(l => l.draw(this.ctx, pathEditMode))
     } catch (error) {
-      console.log('error: ' + error)
+      console.error('error: ' + error)
     }
 
   }
   drawBackground(ctx) {
     try {
       this._lineSegments.forEach(l => l.drawBackground(ctx))
+      //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
     } catch (error) {
       console.log('error: ' + error)
     }
     try {
       this._quadraticSegments.forEach(l => l.drawBackground(ctx))
+      //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
     } catch (error) {
       console.log('error: ' + error)
     }
@@ -199,24 +212,27 @@ class Path {
     })  
   }
   animate(canvas, ctx) {
-    let p1, p3
-    
+    let p1, p3, p4
     for (let iRect = 0; iRect < this.rects; iRect++) {
       let ptAdjust = iRect * this.ptGap;
       p1 = this.dp[this.i - ptAdjust];
-      p3 = this.dp[this.i + 3 - ptAdjust];
-      let rad;
+      p3 = this.dp[this.i + 2 - ptAdjust];
+      p4 = this.dp[this.i + 3 - ptAdjust];
+      let rad,rad1,rad2;
       let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 12 : 10
       let h = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 6 : 4
       if (this.i - ptAdjust > -1) {
-        if (p3) {
-          rad = Math.atan((p3.y - p1.y) / (p3.x - p1.x));
+        if (p3 && p4) {
+          //rad = Math.atan(((p3.y+p4.y)/2 - p1.y) / ((p3.x+p4.x)/2 - p1.x));
+          rad1 = Math.atan((p3.y - p1.y) / (p3.x - p1.x));
+          rad2 = Math.atan((p4.y - p1.y) / (p4.x - p1.x));
+          rad = (rad1+rad2)/2
         }
         ctx.save();
         if ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) {
-          ctx.fillStyle = "rgb(20,20,20)";
+          ctx.fillStyle = "rgba(100,100,100)";
         } else {
-          ctx.fillStyle = "rgb(150,150,0)";
+          ctx.fillStyle = `rgba(255,0,0,${this.train.occupancy+0.2})`;
         }
         ctx.translate(p1.x + Math.floor(w / 2), p1.y + Math.floor(h / 2));
         ctx.rotate(rad);
@@ -233,30 +249,59 @@ class Path {
       if (this.i == this.dp.length) {
         this.i = this.dp.length - 1
         this.going = false
+        if(makeSound) audiowhistle.play()
       } else if (this.i == -1) {
         this.i = 0
         this.going = true
+        if(makeSound) audiowhistle.play()
       }
       //reset timer
       this.numFrames=0
       //train at station but not time to move on
+      //audiochugging=null
     }else if((this.atStation(this.i) && this.numFrames <= this.numFramesToSkip)){
       if(this.numFrames==0){
         console.log(`Train reached station at location: ${this.i}, ${this.going}`)
-        //take in passengers for the cities on the way back to the final station
-        //take in passengers for the cities on the way back to the originating station
+        
+        let currCity = this.getStation(this.i).name 
+        let currCity_dpn = this.getStation(this.i).dpn
+        //first alight the passengers for this city
+        let numAlighted = this.train.alightPassengersForCity(currCity)
+        console.log(`Alighted ${numAlighted} at ${currCity}`)
         if(this.going){
-          let fromCity = this.getStation(this.i).name 
-          let fromCity_dpn = this.getStation(this.i).dpn
-          //other stations that are in the direction of the final destination all have their dpns that are greater than fromCity_dpn
+          //take in passengers for the cities on the way back to the final station
+          
+          //other stations that are in the direction of the final
+          //destination all have their dpns that are greater than currCity_dpn
           this.stations.forEach(station=>{
-            if(station.dpn>fromCity_dpn){
-              let num = passengers.numAvailable(fromCity,station.name)
-              console.log(`Take ${num} passengers from ${fromCity} to ${station.name}`)
+            if(station.dpn>currCity_dpn){
+              let num = passengers.numAvailable(currCity,station.name)
+              //second check the room
+              let room = this.train.passenger_room_available
+              num = Math.min(num,room)
+              console.log(`Take ${num} passengers from ${currCity} to ${station.name}`)
+              //third board the passengers
+              this.train.boardPassengersFor(station.name,num)
             }
           })
+        }else{
+          //take in passengers for the cities on the way back to the originating station
+          this.stations.forEach(station=>{
+            if(station.dpn<currCity_dpn){
+              let num = passengers.numAvailable(currCity,station.name)
+              //second check the room
+              let room = this.train.passenger_room_available
+              num = Math.min(num,room)
+              console.log(`Take ${num} passengers from ${currCity} to ${station.name}`)
+              //third board the passengers
+              this.train.boardPassengersFor(station.name,num)
+            }
+          })
+
         }
+
       }
+      //audiochugging=null
       this.numFrames++    
     }
     
@@ -264,18 +309,12 @@ class Path {
 
   updateNeighbors() {
     if (this.points.length > 1) {
-      //this.dp.push({ n: 0, x: this.points[0].x, y: this.points[0].y });
       this.scanNeighbors(this.ctx, 0, this.points[0].x, this.points[0].y, this.points[this.points.length - 1].x, this.points[this.points.length - 1].y)
+      let index = this.dp.findIndex(i=>i.lastpoint==true)
+      this.dp.length = index + 1
     }
-    //console.log(this.dp.length,this.dp)
   }
 
-  // buffer.getContext('2d').drawImage(canvas,0,0)
-  // ctx.clearRect(0,0,canvas.width,canvas.height)
-  // ctx.fillRect(d,d,200,200)
-  // ctx.globalCompositeOperation='destination-over'
-  // ctx.drawImage(buffer,0,0)
-  // d+=0.5
   scanNeighbors(ctx, n, x, y, endx, endy) {
     //given the x and y of a pixel
     //this function searches the neighborhood and recursively
@@ -300,13 +339,13 @@ class Path {
             xFound = x + x_;
             yFound = y + y_;
             if (Math.abs(xFound - endx) < 4 && Math.abs(yFound - endy) < 4) {
-              this.dp.push({ n: n, x: endx, y: endy });
+              this.dp.push({ n: n, x: endx, y: endy, lastpoint:true });
               return;
             }
             if (!this.alreadySelected(xFound, yFound)) {
               // console.log(`Pushed: ${xFound}, ${yFound}`);
               //push the item into a points array
-              this.dp.push({ n: n, x: xFound, y: yFound });
+              this.dp.push({ n: n, x: xFound, y: yFound, lastpoint:false });
               //and call this function recursively
               found = true;
               this.scanNeighbors(ctx, n + 1, xFound, yFound, endx, endy);
@@ -320,7 +359,9 @@ class Path {
 
   alreadySelected(x, y) {
     return (
-      this.dp.findIndex(p => Math.abs(p.x - x) < 2 && Math.abs(p.y - y) < 2) !== -1
+      //changed this to make explicit the logic by placing additional brackets
+      this.dp.findIndex(p => (Math.abs(p.x - x) < 2) && (Math.abs(p.y - y) < 2)) !== -1
+      //this.dp.findIndex(p => Math.abs(p.x - x) < 2 && Math.abs(p.y - y) < 2) !== -1
     );
   }
 }

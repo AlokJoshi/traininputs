@@ -2,7 +2,8 @@ class LinSeg {
   constructor(p1, p2) {
     this.p1 = p1
     this.p2 = p2
-    this.w = 8    //width of sleepers
+    this.w = 10    //width between sleepers
+    this.l = 6     //length of sleepers
   }
   draw(ctx, pathEditMode) {
     console.log(`pathEditMode in LinSeg draw${pathEditMode}`)
@@ -21,14 +22,17 @@ class LinSeg {
     ctx.restore()
   }
   drawBackground(ctx) {
-    let l = Math.sqrt((this.p1.x - this.p2.x) * (this.p1.x - this.p2.x) + (this.p1.y - this.p2.y) * (this.p1.y - this.p2.y))
+    console.log(`drawBackground on linSeg called for ${this}` )
+
+    let l = this.length
+    //let l = Math.sqrt((this.p1.x - this.p2.x) * (this.p1.x - this.p2.x) + (this.p1.y - this.p2.y) * (this.p1.y - this.p2.y))
     let n = Math.floor(l / this.w)
     let m = Math.atan((this.p2.y - this.p1.y) / (this.p2.x - this.p1.x))
-    let deltax = this.w * Math.sin(m) / 2
-    let deltay = this.w * Math.cos(m) / 2
+    let deltax = this.l * Math.sin(m) / 2
+    let deltay = this.l * Math.cos(m) / 2
     ctx.save()
     ctx.strokeStyle = 'rgb(0,0,0)'
-    ctx.lineWidth = 1
+    ctx.lineWidth = 0.1
     ctx.moveTo(this.p1.x, this.p1.y)
     ctx.setLineDash([])
     ctx.lineTo(this.p2.x, this.p2.y)

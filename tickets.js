@@ -12,7 +12,7 @@ class Tickets {
           to:cTo.name,
           ticket:ticket
         })
-        console.log(cFrom.name,cTo.name,ticket)
+        //console.log(cFrom.name,cTo.name,ticket)
       })
     });
   }

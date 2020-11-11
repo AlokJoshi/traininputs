@@ -1,9 +1,14 @@
 const MIN_ANGLE = 90
 const FRAMES_PER_TIME_PERIOD = 100
-const PASSENGER_COACH_CAPACITY = 100
+const PASSENGER_COACH_CAPACITY = 10
 const D = 2
 
-//testing
+let audiowhistle = document.createElement('audio')
+audiowhistle.src = "steam engine whistle.mp3"
+let audiochugging = document.createElement('audio')
+audiochugging.src = "chugging sound.mp3"
+let makeSound = false
+
 let passengers = new Passengers()
 let cities = new Cities()
 
@@ -148,6 +153,13 @@ function drawPaths() {
 document.onmousemove = function (event) {
   currentMousePosition.x = event.offsetX
   currentMousePosition.y = event.offsetY
+  if(lastClick.x){
+    ctx_foreground.clearRect(0,0,foreground.width,foreground.height)
+    ctx_foreground.beginPath()
+    ctx_foreground.moveTo(lastClick.x,lastClick.y)
+    ctx_foreground.lineTo(currentMousePosition.x,currentMousePosition.y)
+    ctx_foreground.stroke()
+  }
 }
 
 document.onkeypress = function (event) {
@@ -188,6 +200,7 @@ document.onkeypress = function (event) {
     paths.paths.forEach(p=>{
       console.log(p.pathCapitalCost)
     })
+    if(makeSound) audiochugging.play()
     performAnimation();
   }else if (event.key == 'p') {
     paused=!paused

@@ -15,9 +15,10 @@ class QuadSeg {
     ctx.restore()
   }
   drawBackground(ctx) {
+    console.log(`drawBackground on quadSeg called for ${this}` )
     ctx.save()
     ctx.strokeStyle = "rgb(0,0,0)"
-    ctx.lineWidth = 2
+    ctx.lineWidth = LINE_WIDTH
     ctx.beginPath()
     ctx.moveTo(this.p1.x, this.p1.y)
     ctx.quadraticCurveTo(this.cp.x, this.cp.y, this.p2.x, this.p2.y)

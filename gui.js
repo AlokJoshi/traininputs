@@ -61,7 +61,7 @@ function updatePassengers(cities,passengers){
        let cityTo = cities.cities[iTo].name
        if(cityFrom!=cityTo){
          let demand = FromToTravelDemand(cities,cityFrom,cityTo)
-         console.log(cityFrom,cityTo,demand)
+         //console.log(cityFrom,cityTo,demand)
          passengers.addPassengers(cityFrom,cityTo,demand)
        }
      }
