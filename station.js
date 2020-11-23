@@ -1,7 +1,7 @@
 class Station{
-  constructor(name,dpn,x,y){
+  constructor(name,wpn,x,y){
     this.name=name
-    this.dpn = dpn
+    this.wpn = wpn
     this.x=x
     this.y=y
   }

@@ -1,22 +1,17 @@
 class LinSeg {
-  constructor(p1, p2) {
+  constructor(segment_number,p1, p2) {
+    this.segment_number=segment_number
     this.p1 = p1
     this.p2 = p2
     this.w = 10    //width between sleepers
     this.l = 6     //length of sleepers
   }
-  draw(ctx, pathEditMode) {
-    console.log(`pathEditMode in LinSeg draw${pathEditMode}`)
+  draw(ctx,pathColor) {
     ctx.save()
-    ctx.strokeStyle = pathEditMode ? 'rgb(255,0,0)' : 'rgb(0,0,255)'
+    ctx.strokeStyle = pathColor
     ctx.lineWidth = LINE_WIDTH
+    ctx.beginPath()
     ctx.moveTo(this.p1.x, this.p1.y)
-    if (pathEditMode) {
-      ctx.setLineDash([3, 5])
-    }
-    else {
-      ctx.setLineDash([])
-    }
     ctx.lineTo(this.p2.x, this.p2.y)
     ctx.stroke()
     ctx.restore()
@@ -34,7 +29,6 @@ class LinSeg {
     ctx.strokeStyle = 'rgb(0,0,0)'
     ctx.lineWidth = 0.1
     ctx.moveTo(this.p1.x, this.p1.y)
-    ctx.setLineDash([])
     ctx.lineTo(this.p2.x, this.p2.y)
     ctx.stroke()
     for (let i = 0; i < n; i++) {

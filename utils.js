@@ -71,3 +71,119 @@ function angleBetweenLinesIsOK2(x1, y1, x2, y2, x3, y3) {
     })
     return city
   }
+
+  function updateHUD(){
+    let state_str=''
+    switch (state) {
+      case ROUTE_EDITING_STATE:
+        state_str=`Route Editing: click f(finalize), a(add route), s(station), t(train), g(game)`
+        break;
+      case STATION_EDITING_STATE:
+        state_str=`Station Editing: click n(next route), t(train), g(game)`
+        break;
+      case TRAIN_EDITING_STATE:
+        state_str=`Train Editing: +(add coach), -(remove coach), n(next route), g(game)`
+        break;
+      case RUNNING_STATE:
+        state_str=`Running`
+        break;
+      case PAUSED_STATE:
+        state_str=`Paused: r(Route Editing), s(Station Editing), t(Train Editing), g(game)`
+        break;
+    
+      default:
+        break;
+    }
+    let txt = `State : ${state_str}`
+    hud.display(txt)
+  }
+
+  function circle(p1, p2, p3, p4) {
+    //returns the circle x,y,radius of the 
+    //circle passing through p2 and p3 where
+    //the two line segments p1,p2 and p3,p4 are
+    //tangential to the circle.
+
+    //slope of first line
+    let m1 = (p2.y - p1.y) / (p2.x - p1.x);
+    //intercept of the perppendicular going through p2
+    let c1 = p2.y + (1 / m1) * p2.x;
+  
+    let m2 = (p4.y - p3.y) / (p4.x - p3.x);
+    //intercept of the perppendicular going through p2
+    let c2 = p3.y + (1 / m2) * p3.x;
+  
+    //slopes of the respective perpendiculars
+    m1 = -1 / m1;
+    m2 = -1 / m2;
+  
+    //point of intersection of the two perpendiculars
+    let x = (c2 - c1) / (m1 - m2);
+    let y = m1 * x + c1;
+    //console.log(`intersection point`);
+    //console.log(`${x},${y}`);
+    let radius = Math.sqrt((p2.x - x) * (p2.x - x) + (p2.y - y) * (p2.y - y));
+    return { x, y, radius };
+  }
+
+  function pointsAlongArc(x, y, r, p1x, p1y, p2x, p2y) {
+    console.log(x, y, r, p1x, p1y, p2x, p2y);
+    //find all the points along the circumfrence of a circle
+    const GAP = 2
+    let points = [];
+    let n = Math.floor(2*Math.PI*r/GAP)
+  
+    for (let i = 0; i < n; i++) {
+      let _x = x + r * Math.cos((((i * 360) / n) * Math.PI) / 180);
+      let _y = y + r * Math.sin((((i * 360) / n) * Math.PI) / 180);
+      points.push(new Point(_x, _y));
+      //console.log(`${i}:${_x},${_y}`);
+    }
+    //find the array index for point closest to a given point
+    let f = (array, x, y) => {
+      let min_l = 100000,
+        min_i = -1;
+      for (let i = 0; i < array.length; i++) {
+        let l = Math.sqrt(
+          (array[i].x - x) * (array[i].x - x) +
+            (array[i].y - y) * (array[i].y - y)
+        );
+        if (l < min_l) {
+          min_l = l;
+          min_i = i;
+        }
+      }
+      return min_i;
+    };
+    let i1 = f(points, p1x, p1y);
+    let i2 = f(points, p2x, p2y);
+    console.log(i1, i2);
+    let finalpoints = [];
+  
+    
+    //select point adjacent to p1 in clockwise
+    //direction
+    let _i1 = i1 + 1;
+    if (_i1 === n) _i1 = 0;
+    let d1 = lineLength(points[i1].x, points[i1].y, points[i2].x ,points[i2].y);
+    let d2 = lineLength(points[_i1].x,points[_i1].y, points[i2].x,points[i2].y);
+    console.log(`Lengths: ${d1},${d2}`);
+    let clockwise = d2 < d1 ? true : false;
+    if (clockwise) {
+      while (i1 !== i2) {
+        //console.log(`Final point: ${points[i1].x},${points[i1].y}`)
+        finalpoints.push({x:points[i1].x,y:points[i1].y});
+        i1++;
+        if (i1 === n) i1 = 0;
+      }
+    } else {
+      while (i1 !== i2) {
+        //console.log(`Final point: ${points[i1].x},${points[i1].y}`)
+        finalpoints.push({x:points[i1].x,y:points[i1].y});
+        i1--;
+        if (i1 === -1) i1 = n - 1;
+      }
+    }
+  
+    return finalpoints
+  }

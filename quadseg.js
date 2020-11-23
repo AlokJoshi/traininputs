@@ -1,12 +1,13 @@
 class QuadSeg {
-  constructor(p1, p2, cp) {
+  constructor(segment_number,p1, p2, cp) {
+    this.segment_number=segment_number
     this.p1 = p1
     this.p2 = p2
     this.cp = cp
   }
-  draw(ctx, pathEditMode) {
+  draw(ctx,pathColor) {
     ctx.save()
-    ctx.strokeStyle = pathEditMode ? "rgb(255,0,0)" : "rgb(0,0,255)"
+    ctx.strokeStyle = pathColor
     ctx.lineWidth = LINE_WIDTH
     ctx.beginPath()
     ctx.moveTo(this.p1.x, this.p1.y)

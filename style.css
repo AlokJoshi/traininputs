@@ -1,15 +1,47 @@
 *{
-    margin:0;
-    padding:0;
     box-sizing: border-box;
+    font-family: "Comic Sans MS", cursive, sans-serif;
 }
 body{
-    background: black;
+    margin:0;
+    padding:0;
+    background:#f1f1f1;
+    margin-left:10px;
+}
+.navbar{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color:white;
+  overflow:hidden;
+}
+.navbar-links ul{
+  margin:0;
+  padding:0;
+  display:flex;
+}
+.navbar-links li{
+  list-style: none;
+}
+.navbar-links li a{
+  text-decoration:none; 
+  color:white;
+  padding:1rem;
+  display:block; 
+}
+.navbar-links li:hover{
+  background-color: #555;
+}
+
+.brand-title{
+  font-size: 1.5rem;
+  margin:.5rem;
 }
 table, th, td {
     border: 1px solid black;
   }
-#background,#foreground,#gui{
+#background,#foreground,#hud{
     position:absolute;
     top: 0;
     left: 0;
@@ -17,15 +49,34 @@ table, th, td {
     height: 100%; */
 }
 #foreground{
-    z-index: 10;
+    /* z-index: 10; */
 }
 #menu{
     position:absolute;
     top:100;
     left:100;
+    width:100%;
     font-size: large;
     background-color: rgba(100,255,255,0.8);
 }
 #passengers,#ticketprices{
     font-size: small;
+}
+
+/* Page content */
+.content {
+  padding: 16px;
+}
+
+/* The sticky class is added to the navbar with JS when it reaches its scroll position */
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement 
+(as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + .content {
+  padding-top: 60px;
 }

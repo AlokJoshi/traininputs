@@ -1,19 +1,33 @@
+let noncanvases= document.getElementById('noncanvases')
+let canvases= document.getElementById('canvases')
+
+noncanvases.style.visibility='collapse'
+document.addEventListener('keypress',(key)=>{
+   if(key.code==='Space'){
+      noncanvases.style.visibility=noncanvases.style.visibility==='collapse'?'visible':'collapse'
+      canvases.style.visibility=canvases.style.visibility==='collapse'?'visible':'collapse'
+      setTimeout(()=>{
+         window.scrollTo(0, -30);
+      },50)
+   }
+})
+
 let sb = document.getElementById('railwaytracks')
 var tbl = document.getElementById("passengers");
 
-function updateRailwayTracksSelectBox(paths){
-   removeAll(sb)
-   paths.paths.forEach(p=>{
-      let newOption = new Option(p.name,p.name);
-      sb.add (newOption)
-      console.log('add this path to the select statement' & p.name)
-   })
-}
-function removeAll(selectBox) {
-   while (selectBox.options.length > 0) {
-       selectBox.remove(0);
-   }
-}
+// function updateRailwayTracksSelectBox(paths){
+//    removeAll(sb)
+//    paths.paths.forEach(p=>{
+//       let newOption = new Option(p.name,p.name);
+//       sb.add (newOption)
+//       console.log('add this path to the select statement' & p.name)
+//    })
+// }
+// function removeAll(selectBox) {
+//    while (selectBox.options.length > 0) {
+//        selectBox.remove(0);
+//    }
+// }
 function displayPassengersTable(rows){
    removeAllTableRows(tbl)
    //get set of from cities
@@ -67,12 +81,6 @@ function updatePassengers(cities,passengers){
      }
    }
  }
-function updateMoney(){
-   let runningCost =0
-   runningCost=paths.paths.reduce((cum,p)=>cum+p.train.runningCostPerTimePeriod,0)
-   money=money-runningCost
-   console.log(`money after running cost: ${money}`)
-}
 
 function displayTicketPricesTable(rows){
    let tbl = document.getElementById('ticketprices')
