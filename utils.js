@@ -20,7 +20,7 @@ function angleBetweenLinesIsOK2(x1, y1, x2, y2, x3, y3) {
     return d > 2 * dist * Math.cos(MIN_ANGLE * Math.PI / 180)
   }
 
-  function angleBetweenLinesIsOK(x1, y1, x2, y2, x3, y3) {
+  function angleBetweenLinesIsOK(x1, y1, x2, y2, x3, y3,MIN_ANGLE) {
     //first line is x1,y1,x2,y2
     //second line is x2,y2,x3,y3
     let la = Math.pow((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2), 0.5)
@@ -46,10 +46,13 @@ function angleBetweenLinesIsOK2(x1, y1, x2, y2, x3, y3) {
     console.log(`factor is ${factor}, angle is ${angle}, adjustedAngle is ${adjustedAngle}`)
     return adjustedAngle
   }
-  function FromToTravelDemand(cities,cityFrom,cityTo){
+  function FromToTravelDemand(period,cities,cityFrom,cityTo){
     let cf = cities.city(cityFrom)[0]
     let ct = cities.city(cityTo)[0]
-    demand = (2*cf.population+ct.population)*0.00001
+    let cfgr = cf.growthrate
+    let ctgr = ct.growthrate
+
+    demand = (2*cf.population*(1+period*cfgr)+ct.population*(1+period*ctgr))*0.00001
     if(cf.population>=90000){
       demand+=ct.travelDestination?10:0
     }
@@ -58,7 +61,7 @@ function angleBetweenLinesIsOK2(x1, y1, x2, y2, x3, y3) {
     }
     return Math.floor(demand)
   }
-  function getClosestCity(x,y){
+  function getClosestCity(cities,x,y){
     //cycle through all the cities
     let minDistance=10000000
     let city=''
@@ -72,31 +75,7 @@ function angleBetweenLinesIsOK2(x1, y1, x2, y2, x3, y3) {
     return city
   }
 
-  function updateHUD(){
-    let state_str=''
-    switch (state) {
-      case ROUTE_EDITING_STATE:
-        state_str=`Route Editing: click f(finalize), a(add route), s(station), t(train), g(game)`
-        break;
-      case STATION_EDITING_STATE:
-        state_str=`Station Editing: click n(next route), t(train), g(game)`
-        break;
-      case TRAIN_EDITING_STATE:
-        state_str=`Train Editing: +(add coach), -(remove coach), n(next route), g(game)`
-        break;
-      case RUNNING_STATE:
-        state_str=`Running`
-        break;
-      case PAUSED_STATE:
-        state_str=`Paused: r(Route Editing), s(Station Editing), t(Train Editing), g(game)`
-        break;
-    
-      default:
-        break;
-    }
-    let txt = `State : ${state_str}`
-    hud.display(txt)
-  }
+  
 
   function circle(p1, p2, p3, p4) {
     //returns the circle x,y,radius of the 

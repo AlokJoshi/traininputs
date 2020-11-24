@@ -1,42 +1,43 @@
 class KeyBuffer {
-  constructor() {
+  constructor(game) {
     this.kb = ''
+    this.game=game
   }
   addKey(key) {
     if (this.kb == '') {
       switch (key) {
         case 'r':
         case 'R':
-          if (state != RUNNING_STATE) {
-            previous_state = state
-            state = ROUTE_EDITING_STATE
+          if (this.game.state != this.game.RUNNING_STATE) {
+            this.game.previous_state = this.game.state
+            this.game.state = this.game.ROUTE_EDITING_STATE
           }
           break;
         case 's':
         case 'S':
-          if (state != RUNNING_STATE) {
-            previous_state = state
-            state = STATION_EDITING_STATE
+          if (this.game.state != this.game.RUNNING_STATE) {
+            this.game.previous_state = this.game.state
+            this.game.state = this.game.STATION_EDITING_STATE
           }
           break;
         case 't':
         case 'T':
-          if (state != RUNNING_STATE) {
-            previous_state = state
-            state = TRAIN_EDITING_STATE
+          if (this.game.state != this.game.RUNNING_STATE) {
+            this.game.previous_state = this.game.state
+            this.game.state = this.game.TRAIN_EDITING_STATE
           }
           break;
         case 'p':
         case 'P':
-          if (state == RUNNING_STATE) {
-            previous_state = state
-            state = PAUSED_STATE
+          if (this.game.state == this.game.RUNNING_STATE) {
+            this.game.previous_state = this.game.state
+            this.game.state = this.game.PAUSED_STATE
           }
           break;
         case 'g':
         case 'G':
-          previous_state = state
-          state = RUNNING_STATE
+          this.game.previous_state = this.game.state
+          this.game.state = this.game.RUNNING_STATE
           break;
         case 'f':
         case 'F':

@@ -8,7 +8,8 @@ class Path {
   static D = 3;
   static WPL = 3;
 
-  constructor(ctx) {
+  constructor(game,ctx) {
+    this.game=game
     this.name=`RTN${Math.floor(Math.random()*1000)}` 
     this.ctx = ctx
     this._finalized=false
@@ -26,8 +27,8 @@ class Path {
     this.numFramesToSkip = 100
     this.going = true
     this.train = new Train(2,0,0)
-    this._lineSegments = null
-    this._quadraticSegments = null
+    //this._lineSegments = null
+    //this._quadraticSegments = null
     this._segments = null
   }
   get rects(){
@@ -70,8 +71,8 @@ class Path {
   updateStations(){
     //first add the starting and ending locations as stations
     if(this.wp.length>0){
-      this.stations.push(new Station(getClosestCity(this.wp[0].x,this.wp[0].y),0,this.wp[0].x,this.wp[0].y))
-      this.stations.push(new Station(getClosestCity(this.wp[this.wp.length-1].x,this.wp[this.wp.length-1].y),this.wp[this.wp.length-1].n,this.wp[this.wp.length-1].x,this.wp[this.wp.length-1].y))
+      this.stations.push(new Station(getClosestCity(this.game.cities,this.wp[0].x,this.wp[0].y),0,this.wp[0].x,this.wp[0].y))
+      this.stations.push(new Station(getClosestCity(this.game.cities,this.wp[this.wp.length-1].x,this.wp[this.wp.length-1].y),this.wp[this.wp.length-1].n,this.wp[this.wp.length-1].x,this.wp[this.wp.length-1].y))
       this.approxStationLocations.forEach(l=>{
         this.addStation(l.x,l.y)
       })
@@ -92,7 +93,7 @@ class Path {
     }
     //if (n != -1 && !this.stations.includes(n)) {
     if (n != -1 && !this.atStation(i)) {
-    this.stations.push(new Station(getClosestCity(this.wp[n].x,this.wp[n].y),n,this.wp[n].x,this.wp[n].y))
+    this.stations.push(new Station(getClosestCity(this.game.cities,this.wp[n].x,this.wp[n].y),n,this.wp[n].x,this.wp[n].y))
     //this.stations.push(n)
     }
   }
@@ -111,8 +112,8 @@ class Path {
     //return this._quadraticSegments
   }
   createSegments() {
-    this._lineSegments = new Array()
-    this._quadraticSegments = new Array()
+    //this._lineSegments = new Array()
+    //this._quadraticSegments = new Array()
     this._segments = new Segments()
     let segment_number=1
     for (let ip = 0; ip < this.length; ip++) {
@@ -120,11 +121,11 @@ class Path {
         //second point
         //create one linear segment only
         if (this.length == 2) {
-          this._lineSegments.push(new LinSeg(segment_number++,this.points[0], this.points[1]))
+          //this._lineSegments.push(new LinSeg(segment_number++,this.points[0], this.points[1]))
           this._segments.add(segment_number,true,new LinSeg(segment_number,this.points[0], this.points[1]))
         } else {
-          this._lineSegments.push(this.startingLinSegment(segment_number++,this.points[0], this.points[1], MIN_LENGTH))
-          this._segments.add(segment_number,true,this.startingLinSegment(segment_number,this.points[0], this.points[1], MIN_LENGTH))
+          //this._lineSegments.push(this.startingLinSegment(segment_number++,this.points[0], this.points[1], this.game.MIN_LENGTH))
+          this._segments.add(segment_number,true,this.startingLinSegment(segment_number,this.points[0], this.points[1], Game.MIN_LENGTH))
         }
       } else if (ip > 1) {
         //third point onwards
@@ -133,30 +134,30 @@ class Path {
         let l1 = Math.pow((p0.x - p1.x) * (p0.x - p1.x) + (p0.y - p1.y) * (p0.y - p1.y), 0.5)
         let xDiff = (p0.x - p1.x)
         let yDiff = (p0.y - p1.y)
-        let p1_ = { x: p1.x + xDiff * MIN_LENGTH / l1, y: p1.y + yDiff * MIN_LENGTH / l1 }
+        let p1_ = { x: p1.x + xDiff * Game.MIN_LENGTH / l1, y: p1.y + yDiff * Game.MIN_LENGTH / l1 }
 
         let l2 = Math.pow((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y), 0.5)
         xDiff = (p2.x - p1.x)
         yDiff = (p2.y - p1.y)
-        let p2_ = new Point(p1.x + xDiff * MIN_LENGTH / l2, p1.y + yDiff * MIN_LENGTH / l2)
+        let p2_ = new Point(p1.x + xDiff * Game.MIN_LENGTH / l2, p1.y + yDiff * Game.MIN_LENGTH / l2)
 
-        this._quadraticSegments.push(new QuadSeg(segment_number++,p1_, p2_, p1))
+        //this._quadraticSegments.push(new QuadSeg(segment_number++,p1_, p2_, p1))
         this._segments.add(segment_number,false,new QuadSeg(segment_number,p1_, p2_, p1))
 
         //check if the length of l2 is greater than 2*MIN_LENGTh
         //if it is then a linear segment needs to be added.
-        if ((l2 > 2 * MIN_LENGTH && ip<this.length-1) || (l2>MIN_LENGTH && ip==this.length-1)) {
+        if ((l2 > 2 * Game.MIN_LENGTH && ip<this.length-1) || (l2>Game.MIN_LENGTH && ip==this.length-1)) {
           let endPoint
           if(ip<this.length-1){ //added on 11/09/20
             //starting point is p2_
-            //and ending point is MIN_LENGTH away from p2
-            endPoint = new Point(p2.x + (p1.x - p2.x) * MIN_LENGTH / l2, p2.y + (p1.y - p2.y) * MIN_LENGTH / l2)
+            //and ending point is this.game.MIN_LENGTH away from p2
+            endPoint = new Point(p2.x + (p1.x - p2.x) * Game.MIN_LENGTH / l2, p2.y + (p1.y - p2.y) * Game.MIN_LENGTH / l2)
             console.log(`endPoint calculated when ip<this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
           }else{
             endPoint = this.points[ip]  //added on 11/09/20
             console.log(`endPoint calculated when ip==this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
           }//added on 11/09/20
-          this._lineSegments.push(new LinSeg(segment_number++,p2_, endPoint))
+          //this._lineSegments.push(new LinSeg(segment_number++,p2_, endPoint))
           this._segments.add(segment_number,true,new LinSeg(segment_number,p2_, endPoint))
         }else{
           console.log(`_lineSegment not added for ip:${ip}`)
@@ -178,23 +179,23 @@ class Path {
   }
   draw(pathColor) {
     this.createSegments()
-    try {
-      this._lineSegments.forEach(l => {
-        l.draw(this.ctx,pathColor)
-        console.log(`line segment drawn: ${JSON.stringify(l)}`)
-      })
-    } catch (error) {
-      console.error('error: ' + error)
-    }
-    try {
-      this._quadraticSegments.forEach(l => {
-        l.draw(this.ctx,pathColor)
-        console.log(`quad segment drawn: ${JSON.stringify(l)}`)
-      })
-    } catch (error) {
-      console.error('error: ' + error)
-    }
-    //this._segments.draw(this.ctx, pathColor)
+    // try {
+    //   this._lineSegments.forEach(l => {
+    //     l.draw(this.ctx,pathColor)
+    //     console.log(`line segment drawn: ${JSON.stringify(l)}`)
+    //   })
+    // } catch (error) {
+    //   console.error('error: ' + error)
+    // }
+    // try {
+    //   this._quadraticSegments.forEach(l => {
+    //     l.draw(this.ctx,pathColor)
+    //     console.log(`quad segment drawn: ${JSON.stringify(l)}`)
+    //   })
+    // } catch (error) {
+    //   console.error('error: ' + error)
+    // }
+    this._segments.draw(this.ctx, pathColor)
   }
   drawBackground(ctx) {
     try {
@@ -312,11 +313,11 @@ class Path {
       if (this.i == this.wp.length) {
         this.i = this.wp.length - 1
         this.going = false
-        if(makeSound) audiowhistle.play()
+        if(this.game.makeSound) this.game.audiowhistle.play()
       } else if (this.i == -1) {
         this.i = 0
         this.going = true
-        if(makeSound) audiowhistle.play()
+        if(this.game.makeSound) this.game.audiowhistle.play()
       }
       //reset timer
       this.numFrames=0
@@ -338,7 +339,7 @@ class Path {
           //destination all have their wpns that are greater than currCity_wpn
           this.stations.forEach(station=>{
             if(station.wpn>currCity_wpn){
-              let num = passengers.numAvailable(currCity,station.name)
+              let num = this.game.passengers.numAvailable(currCity,station.name)
               //second check the room
               let room = this.train.passenger_room_available
               num = Math.min(num,room)
@@ -351,7 +352,7 @@ class Path {
           //take in passengers for the cities on the way back to the originating station
           this.stations.forEach(station=>{
             if(station.wpn<currCity_wpn){
-              let num = passengers.numAvailable(currCity,station.name)
+              let num = this.game.passengers.numAvailable(currCity,station.name)
               //second check the room
               let room = this.train.passenger_room_available
               num = Math.min(num,room)

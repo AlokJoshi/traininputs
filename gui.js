@@ -68,14 +68,13 @@ function removeAllTableRows(tbl){
       tbl.deleteRow(0)
    }   
 }
-function updatePassengers(cities,passengers){
+function updatePassengers(period,cities,passengers){
    for(let iFrom=0;iFrom<cities.cities.length;iFrom++){
      let cityFrom = cities.cities[iFrom].name
      for(let iTo=0;iTo<cities.cities.length;iTo++){ 
        let cityTo = cities.cities[iTo].name
        if(cityFrom!=cityTo){
-         let demand = FromToTravelDemand(cities,cityFrom,cityTo)
-         //console.log(cityFrom,cityTo,demand)
+         let demand = FromToTravelDemand(period,cities,cityFrom,cityTo)
          passengers.addPassengers(cityFrom,cityTo,demand)
        }
      }

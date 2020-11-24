@@ -1,7 +1,7 @@
 class CashFlow {
-  constructor(openingcash,paths,openingcumcapitalcost,openingcumdepreciation) {
+  constructor(game,openingcash,openingcumcapitalcost,openingcumdepreciation) {
+    this.game = game
     this._openingcash = openingcash
-    this._paths = paths
     this._openingcumcapitalcost = openingcumcapitalcost
     this._openingcumdepreciation = openingcumdepreciation
     this._capitalcost = 0
@@ -76,7 +76,7 @@ class CashFlow {
     this._maintenancecost=0.01 * this._closingcumcapitalcost
 
     //running cost is based on the total distance travelled by all the trains
-    this._runningCost = paths.paths.reduce((cum,p)=>cum+p.train.runningCostPerTimePeriod,0)
+    this._runningCost = this.game.paths.paths.reduce((cum,p)=>cum+p.train.runningCostPerTimePeriod,0)
     
     //profit
     this._profit = this._ticketsales - this._runningcost - this._maintenancecost - this._depreciation

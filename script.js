@@ -1,4 +1,4 @@
-const MIN_ANGLE = 90
+/* const MIN_ANGLE = 90
 const FRAMES_PER_TIME_PERIOD = 100
 const PASSENGER_COACH_CAPACITY = 10
 const ROUTE_EDITING_STATE = 1
@@ -258,14 +258,13 @@ const animate = (ts) => {
     }
   },150)
 }
+*/
 
 
+
+
+console.log(`Starting game`)
 let game = new Game()
-game.init()
-console.log(game.MIN_ANGLE)
-
-
-
 
 
 

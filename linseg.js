@@ -9,7 +9,7 @@ class LinSeg {
   draw(ctx,pathColor) {
     ctx.save()
     ctx.strokeStyle = pathColor
-    ctx.lineWidth = LINE_WIDTH
+    ctx.lineWidth = Game.LINE_WIDTH
     ctx.beginPath()
     ctx.moveTo(this.p1.x, this.p1.y)
     ctx.lineTo(this.p2.x, this.p2.y)

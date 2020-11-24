@@ -24,7 +24,7 @@ class Train {
     return Math.floor(this.capitalCost*0.5)+this.num_passenger_coaches*5000+this.num_goods_coaches*2000
   }
   get passenger_capacity(){
-    return this.num_passenger_coaches*PASSENGER_COACH_CAPACITY
+    return this.num_passenger_coaches*Game.PASSENGER_COACH_CAPACITY
   }
   get num_passengers_on_train(){
     //sums up passengers for each city

@@ -1,5 +1,6 @@
 class Paths {
-  constructor() {
+  constructor(game) {
+    this.game = game
     this._paths = []
   }
   addPath(path) {

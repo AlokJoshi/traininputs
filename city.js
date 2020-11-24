@@ -1,10 +1,11 @@
 class City{
-  constructor(name,x,y,population,traveldestination){
+  constructor(name,x,y,population,traveldestination,growthrate){
     this.name=name
     this.x=x
     this.y=y
     this.population=population
     this.traveldestination=traveldestination
+    this.growthrate=growthrate
   }
   draw(ctx){
     ctx.moveTo(this.x,this.y)
