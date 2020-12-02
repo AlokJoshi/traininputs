@@ -13,13 +13,6 @@ class KeyBuffer {
             this.game.state = this.game.ROUTE_EDITING_STATE
           }
           break;
-        case 's':
-        case 'S':
-          if (this.game.state != this.game.RUNNING_STATE) {
-            this.game.previous_state = this.game.state
-            this.game.state = this.game.STATION_EDITING_STATE
-          }
-          break;
         case 't':
         case 'T':
           if (this.game.state != this.game.RUNNING_STATE) {
@@ -33,7 +26,7 @@ class KeyBuffer {
             this.game.previous_state = this.game.state
             this.game.state = this.game.PAUSED_STATE
           }
-          break;
+          break;p
         case 'g':
         case 'G':
           this.game.previous_state = this.game.state
@@ -45,7 +38,13 @@ class KeyBuffer {
         case 'D':
         case 'a':
         case 'A':
+        case 'n':
+        case 'N':
+        case 'w':
+        case 'W':
         case ' ':
+        case '+':
+        case '-':
         case 'space':
           break;
         default:
@@ -73,7 +72,6 @@ class KeyBuffer {
             }))
             break;
           case 'dp':
-            console.log('delete point')
             window.dispatchEvent(new Event('deletepoint',{
               detail:{
 
@@ -82,7 +80,6 @@ class KeyBuffer {
             break;
             
           case 'as':
-            console.log('add station');
             window.dispatchEvent(new Event('addstation',{
               detail:{
 
@@ -90,7 +87,6 @@ class KeyBuffer {
             }))              
             break;
           case 'ds':
-            console.log('delete station');
             window.dispatchEvent(new Event('deletestation',{
               detail:{
 
@@ -98,7 +94,6 @@ class KeyBuffer {
             }))              
             break;
           case 'sg':
-            console.log('start game');
             window.dispatchEvent(new Event('startgame',{
               detail:{
 
@@ -106,7 +101,6 @@ class KeyBuffer {
             }))              
             break;
           case 'pg':
-            console.log('pause game');
             window.dispatchEvent(new Event('pausegame',{
               detail:{
 
@@ -115,7 +109,6 @@ class KeyBuffer {
             break;
           
           default:
-            console.log(`keyCombination: ${keyCombination} is not recognized`);
             this.kb=''
         } */
     }

@@ -9,6 +9,9 @@ class Train {
   addPassengerCoach(){
     this.num_passenger_coaches++  
   }
+  removePassengerCoach(){
+    this.num_passenger_coaches--  
+  }
   addGoodsCoach(){
     this.num_goods_coaches++  
   }

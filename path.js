@@ -10,7 +10,7 @@ class Path {
 
   constructor(game,ctx) {
     this.game=game
-    this.name=`RTN${Math.floor(Math.random()*1000)}` 
+    this.number=`RTN${Math.floor(Math.random()*1000)}` 
     this.ctx = ctx
     this._finalized=false
     //critical points on the path
@@ -22,19 +22,23 @@ class Path {
     this.i = 0
     this.ptGap = 4
     this.approxStationLocations = new Array()
-    this.stations = new Array()
+    this.stations = []
     this.numFrames = 0
     this.numFramesToSkip = 100
     this.going = true
-    this.train = new Train(2,0,0)
-    //this._lineSegments = null
-    //this._quadraticSegments = null
+
+    this._train = new Train(1,0,0)
+    this.game.cashflow.enginecost = Game.COST_ENGINE
+    this.game.cashflow.coachcost = Game.COST_PASSENGER_COACH 
+    
     this._segments = null
   }
   get rects(){
     return 1+this.train.num_passenger_coaches+this.train.num_goods_coaches
   }
-  
+  get train(){
+    return this._train
+  }
   
   addPoint(point) {
     this.points.push(point)
@@ -62,23 +66,37 @@ class Path {
   set finalized(value){
     this._finalized=value 
   }
+  get isValid(){
+    //the length of points has to be greater than 1
+    return this.length>1 && 
+      getClosestCity(this.game.cities,this.points[0].x,this.points[0].y) != '' && 
+      getClosestCity(this.game.cities,this.points[this.length-1].x,this.points[this.length-1].y) != ''
+  }
+  
   get pathCapitalCost(){
-    return Math.floor(this.pathLength*1000)
+    return Math.floor(this.pathLength*Game.TRACK_COST_PER_UNIT)
   }
-  addApproxStationLocation(x,y){
-    this.approxStationLocations.push({x:x,y:y})
-  }
+  // addApproxStationLocation(x,y){
+  //   this.approxStationLocations.push({x:x,y:y})
+  // }
   updateStations(){
     //first add the starting and ending locations as stations
     if(this.wp.length>0){
+      this.stations = []
       this.stations.push(new Station(getClosestCity(this.game.cities,this.wp[0].x,this.wp[0].y),0,this.wp[0].x,this.wp[0].y))
       this.stations.push(new Station(getClosestCity(this.game.cities,this.wp[this.wp.length-1].x,this.wp[this.wp.length-1].y),this.wp[this.wp.length-1].n,this.wp[this.wp.length-1].x,this.wp[this.wp.length-1].y))
-      this.approxStationLocations.forEach(l=>{
-        this.addStation(l.x,l.y)
-      })
+      this.game.cashflow.stationcost = 2* Game.COST_STATION
+      //automatically add stations at all intermediate points that are in city limits
+      for(let ip = 1; ip < this.points.length-1 ; ip++){
+        let city = getClosestCityObject(this.game.cities,this.points[ip].x,this.points[ip].y)
+        if('name' in city){
+          //this.addStation(this.points[ip].x,this.points[ip].y)
+          this.addStation(city.name,city.x,city.y)
+        }  
+      }
     }
   }
-  addStation(x, y) {
+  addStation(name,x, y) {
     console.log(`adding station at ${x},${y}`)
     //compares x,y with all points in wp array and selects the wp item
     //that is closest to x,y
@@ -91,26 +109,33 @@ class Path {
         min = l
       }
     }
-    //if (n != -1 && !this.stations.includes(n)) {
-    if (n != -1 && !this.atStation(i)) {
-    this.stations.push(new Station(getClosestCity(this.game.cities,this.wp[n].x,this.wp[n].y),n,this.wp[n].x,this.wp[n].y))
-    //this.stations.push(n)
+    if (n != -1 && !this.atStation(n)) {
+      //this.stations.push(new Station(name,n,this.wp[n].x,this.wp[n].y))
+      this.stations.push(new Station(name,n,x,y))
+      this.game.cashflow.stationcost = Game.COST_STATION
     }
   }
   get length() {
     return this.points.length
   }
+  get name() {
+    return this.stations.map(s=>s.name).join('-')
+  }
+
   get lastTwoPoints() {
     return this.points.slice(-2)
   }
+
   get lineSegments() {
     return this._segments.lineSegments
     //return this._lineSegments
   }
+
   get quadraticSegments() {
     return this._segments.quadraticSegments
     //return this._quadraticSegments
   }
+
   createSegments() {
     //this._lineSegments = new Array()
     //this._quadraticSegments = new Array()
@@ -178,38 +203,25 @@ class Path {
     return new LinSeg(segment_number,new Point(px, py), p2)
   }
   draw(pathColor) {
-    this.createSegments()
-    // try {
-    //   this._lineSegments.forEach(l => {
-    //     l.draw(this.ctx,pathColor)
-    //     console.log(`line segment drawn: ${JSON.stringify(l)}`)
-    //   })
-    // } catch (error) {
-    //   console.error('error: ' + error)
-    // }
-    // try {
-    //   this._quadraticSegments.forEach(l => {
-    //     l.draw(this.ctx,pathColor)
-    //     console.log(`quad segment drawn: ${JSON.stringify(l)}`)
-    //   })
-    // } catch (error) {
-    //   console.error('error: ' + error)
-    // }
+    if(!this.finalized){
+      this.createSegments()
+    }
     this._segments.draw(this.ctx, pathColor)
   }
   drawBackground(ctx) {
-    try {
-      this._lineSegments.forEach(l => l.drawBackground(ctx))
-      //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
-    } catch (error) {
-      console.log('error: ' + error)
-    }
-    try {
-      this._quadraticSegments.forEach(l => l.drawBackground(ctx))
-      //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
-    } catch (error) {
-      console.log('error: ' + error)
-    }
+    //AJ 11/30
+    // try {
+    //   this._lineSegments.forEach(l => l.drawBackground(ctx))
+    //   //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
+    // } catch (error) {
+    //   console.log('error: ' + error)
+    // }
+    // try {
+    //   this._quadraticSegments.forEach(l => l.drawBackground(ctx))
+    //   //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
+    // } catch (error) {
+    //   console.log('error: ' + error)
+    // }
     this._segments.drawBackground(ctx)
   }
   atStation(i){
@@ -298,10 +310,19 @@ class Path {
         ctx.rotate(rad);
         ctx.translate(-Math.floor(w / 2), - Math.floor(h / 2));
         ctx.fillRect(0, 0, w, h);
-        //ctx.translate(p1.x + Math.floor(w / 2), p1.y + Math.floor(h / 2));
-        // ctx.translate(-(p1.x + Math.floor(w / 2)), -(p1.y + Math.floor(h / 2)));
-        // ctx.translate(-(p1.x), -(p1.y));
-        // ctx.fillRect(p1.x, p1.y, w, h);
+        //if(this.i%4==0 && (iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)){
+        if((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)){
+          if(this.i%4==0){
+
+            //smoke
+            ctx.beginPath()
+            ctx.moveTo(this.going?w-2:2,0)
+            ctx.arc(this.going?w-2:2,2,1,0,2*Math.PI)
+            ctx.fillStyle='rgba(212,212,212,0.7)'
+            ctx.fill()
+          }
+
+        }
         ctx.restore();
       }
     }
@@ -313,11 +334,17 @@ class Path {
       if (this.i == this.wp.length) {
         this.i = this.wp.length - 1
         this.going = false
-        if(this.game.makeSound) this.game.audiowhistle.play()
+        if(this.game.makeSound) {
+          this.game.audiowhistle.play()
+          play(this.game.audiochugging,5000)
+        }
       } else if (this.i == -1) {
         this.i = 0
         this.going = true
-        if(this.game.makeSound) this.game.audiowhistle.play()
+        if(this.game.makeSound) {
+          this.game.audiowhistle.play()
+          play(this.game.audiochugging,5000)
+        }
       }
       //reset timer
       this.numFrames=0
@@ -325,13 +352,13 @@ class Path {
       //audiochugging=null
     }else if((this.atStation(this.i) && this.numFrames <= this.numFramesToSkip)){
       if(this.numFrames==0){
-        console.log(`Train reached station at location: ${this.i}, ${this.going}`)
+        //console.log(`Train reached station at location: ${this.i}, ${this.going}`)
         
         let currCity = this.getStation(this.i).name 
         let currCity_wpn = this.getStation(this.i).wpn
         //first alight the passengers for this city
         let numAlighted = this.train.alightPassengersForCity(currCity)
-        console.log(`Alighted ${numAlighted} at ${currCity}`)
+        //console.log(`Alighted ${numAlighted} at ${currCity}`)
         if(this.going){
           //take in passengers for the cities on the way back to the final station
           
@@ -339,26 +366,53 @@ class Path {
           //destination all have their wpns that are greater than currCity_wpn
           this.stations.forEach(station=>{
             if(station.wpn>currCity_wpn){
-              let num = this.game.passengers.numAvailable(currCity,station.name)
+              let num = Math.floor(this.game.passengers.numAvailable(currCity,station.name))
               //second check the room
               let room = this.train.passenger_room_available
               num = Math.min(num,room)
-              console.log(`Take ${num} passengers from ${currCity} to ${station.name}`)
+              //collect fare
+              let fare = this.game.tickets.ticket(currCity,station.name)
+              //console.log(`Ticket Sales before: ${this.game.cashflow.ticketsales}`)
+              console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
+              var event = new CustomEvent("info", {
+                detail: {
+                  text: `${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`
+                }
+              });
+              document.dispatchEvent(event);
+              this.game.cashflow.ticketsales=num*fare
+              //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
               //third board the passengers
               this.train.boardPassengersFor(station.name,num)
+              //reduce the number of passengers that have boarded
+              this.game.passengers.subtractPassengers(currCity,station.name,num)
             }
           })
         }else{
           //take in passengers for the cities on the way back to the originating station
           this.stations.forEach(station=>{
             if(station.wpn<currCity_wpn){
-              let num = this.game.passengers.numAvailable(currCity,station.name)
+              let num = Math.floor(this.game.passengers.numAvailable(currCity,station.name))
               //second check the room
               let room = this.train.passenger_room_available
               num = Math.min(num,room)
-              console.log(`Take ${num} passengers from ${currCity} to ${station.name}`)
+              //collect fare
+              let fare = this.game.tickets.ticket(currCity,station.name)
+              //console.log(`Ticket Sales before: ${this.game.cashflow.ticketsales}`)
+              //console.log(`Take ${num} passengers from ${currCity}-${station.name} @${fare}`)
+              console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
+              var event = new CustomEvent("info", {
+                detail: {
+                  text: `${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`
+                }
+              });
+              document.dispatchEvent(event);
+              this.game.cashflow.ticketsales=num*fare
+              //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
               //third board the passengers
               this.train.boardPassengersFor(station.name,num)
+              //reduce the number of passengers that have boarded
+              this.game.passengers.subtractPassengers(currCity,station.name,num)
             }
           })
           this.numFrames++   

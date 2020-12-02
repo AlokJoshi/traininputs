@@ -9,8 +9,8 @@
 </head>
 
 <body>
+  <div id="tooltip"></div>
   <div id="noncanvases">
-
     <nav class="navbar">
       <div class="brand-title">Train Tycoon</div>
       <div class="navbar-links">
@@ -45,21 +45,13 @@
         lines,
         the game
         will automatically create curved lines between each pair of straight lines.
-        If you to delete the last point you clicked, you can press the 'd' key.
-        When you have created the route that you like, you will need to press the 'f' key to finalize the route.
-        Once you do this you cannot edit that route.
-        If you want to create another route, you will need to click on 'a' and follow the steps outlined above.
+        If you to delete the last point you clicked, you can press the 'd' key. If you have completed one route
+        and want to create another route, you will press the 'a' key. This will start the process of adding another route.
+        Once you have created the routes, they cannot be edited or deleted.
+        When you have created one or more routes, you can press the 'g' key to get into the game mode.
         A separate train will run on each of the routes.
-        Cost of the track is proportional to the distance of the track.
+        Cost of the track is proportional to the distance of the route.
       </p>
-      <h4>Station Editing State</h4>
-      <p>The game automatically adds Stations for the city closest to the starting point on the route and the city
-        closest
-        to the ending point on the
-        route. However, when you are in this state, you can click at one or more points on the route to add one or more
-        stations. It is only at the
-        stations that the train will pick up and drop off the passengers. Each Station will add to the cost of
-        construction.
       <h4>Train Editing State</h4>
       <p>Each route will automatically get one train. By default the train will consist of an engine and one passenger
         coach. If you want to add
@@ -75,6 +67,11 @@
       <h4>How to get to these states?</h4>
       <p>Here again we use keyboard keys to get to various states</p>
       <p>'r' will switch you to the Route Editing State if you are not in Running State</p>
+      <ul>
+        <li>Clicking within the blue circle for any city will start the process of creating a route. Click at 
+          points between and then inside the blue circle of the destination city.
+        </li>
+      </ul>
       <p>'s' will switch you to the Station Editing State if you are not in Running State</p>
       <p>'t' will switch you to the Train Editing State if you are not in Running State</p>
       <p>'p' will switch you to the Paused State if you are in the Running State</p>
@@ -138,9 +135,11 @@
   <script src="segments.js"></script>
   <script src="keybuffer.js"></script>
   <script src="hud.js"></script>
+  <script src="tooltip.js"></script>
   <script src="utils.js"></script>
   <script src="city.js"></script>
   <script src="cities.js"></script>
+  <script src="tickets.js"></script>
   <script src="passengers.js"></script>
   <script src="train.js"></script>
   <script src="linseg.js"></script>
@@ -150,7 +149,6 @@
   <script src="paths.js"></script>
   <script src="station.js"></script>
   <script type = "text/javascript" src = "gui.js"></script>
-  <script src="tickets.js"></script>
   <script src="cash.js"></script>
   <script src="cashflow.js"></script>
   <script src="game.js"></script>

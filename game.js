@@ -1,16 +1,25 @@
 class Game {
-  static PASSENGER_COACH_CAPACITY=20
-  static MIN_LENGTH = 30
+  static PASSENGER_COACH_CAPACITY = 30
+  static MIN_LENGTH = 40
   static LINE_WIDTH = 2
-  static OPENING_CASH = 10000000
+  static OPENING_CASH = 1000000
   static FRAMES_PER_TIME_PERIOD = 100
   static PERIODS_PER_MEGA_PERIOD = 100
+  static TRACK_COST_PER_UNIT = 1000
+  static COST_STATION = 50000
+  static COST_ENGINE = 10000
+  static COST_GOODS_COACH = 500
+  static COST_PASSENGER_COACH=1000
+  static INTEREST_EARNED_PER_PERIOD = 0.0005
+  static INTEREST_PAID_PER_PERIOD = 0.001
+  static DISTANCE_FACTOR = 1.05
+  static CITY_RADIUS = 30
 
+  ms = 150
   period = 0
   megaperiod = 0
   MIN_ANGLE = 90
   ROUTE_EDITING_STATE = 1
-  STATION_EDITING_STATE = 2
   TRAIN_EDITING_STATE = 3
   RUNNING_STATE = 4
   PAUSED_STATE = 5
@@ -49,13 +58,12 @@ class Game {
     this.passengers = new Passengers()
     this.cities = new Cities()
     updatePassengers(this.period, this.cities, this.passengers)
-    console.log(this.cities.city('Mumba'))
-    console.log(this.cities.city('abc'))
     this.tickets = new Tickets(this.travel_cost_per_unit_distance)
 
     this.background = document.querySelector('#background')
     this.foreground = document.querySelector('#foreground')
     this.hudElement = document.querySelector('#hud')
+    this.tooltipElement = document.querySelector('#tooltip')
 
     this.background.width = 1920//window.innerWidth
     this.background.height = 1080//window.innerHeight
@@ -64,11 +72,12 @@ class Game {
     this.foreground.height = 1080//window.innerHeight
 
     this.hudElement.width = 1920//window.innerWidth
-    this.hudElement.height = 30 //window.innerHeight
+    this.hudElement.height = 40 //window.innerHeight
 
     this.ctx_background = this.background.getContext('2d')
     this.ctx_foreground = this.foreground.getContext('2d')
     this.hud = new Hud(this.hudElement)
+    this.tooltip = new ToolTip(this.tooltipElement)
 
     this.img = new Image()
     this.img.src = "aerialview2.png"
@@ -93,37 +102,40 @@ class Game {
     this.addEventListeners()
     this.addMouseListener()
     this.addKeyEventListener()
+    //start in this state
+    this.state = this.ROUTE_EDITING_STATE
+    this.updateHUD()
+    document.addEventListener("info", e => { 
+      //console.log(`Event received: ${e.detail.text}` )
+      this.hud.info = e.detail.text 
+    })
   }
+
 
   addEventListeners() {
     this.foreground.addEventListener('click', (event)=> {
       if (this.state == this.ROUTE_EDITING_STATE) {
-        console.log(`this.currentPath.length == 1:${this.currentPath.length == 1}`)
-        console.log(`(lineLength(this.lastClick.x, this.lastClick.y, event.offsetX, event.offsetY) > 2 * Game.MIN_LENGTH) ${lineLength(this.lastClick.x, this.lastClick.y, event.offsetX, event.offsetY) > 2 * Game.MIN_LENGTH}`)
-        if (this.lastClick.x === null) {
-          console.log(`last click was null. Adding the first point in the path`)
-          this.currentPath.addPoint(new Point(event.offsetX, event.offsetY))
-          this.lastClick.x = event.offsetX
-          this.lastClick.y = event.offsetY
-        } else if ((this.currentPath.length == 1) && (lineLength(this.lastClick.x, this.lastClick.y, event.offsetX, event.offsetY) > 2 * Game.MIN_LENGTH)) {
-          console.log(`adding the second point in the path`)
-          this.currentPath.addPoint(new Point(event.offsetX, event.offsetY))
-          this.lastClick.x = event.offsetX
-          this.lastClick.y = event.offsetY
-        } else if ((this.currentPath.length > 1) && (lineLength(this.lastClick.x, this.lastClick.y, event.offsetX, event.offsetY) > 2 * Game.MIN_LENGTH)) {
-          console.log(`Before checking if the between the lines is OK`)
+        let city = getClosestCityObject(this.cities,event.offsetX,event.offsetY)
+        let clickedWithinCityLimits = 'name' in city
+        let finalPoint = {x:clickedWithinCityLimits?city.x:event.offsetX,y:clickedWithinCityLimits?city.y:event.offsetY}
+        if (this.lastClick.x === null && clickedWithinCityLimits) {
+          //we are adding the first point
+          this.currentPath.addPoint(new Point(city.x, city.y))
+          this.lastClick.x = city.x
+          this.lastClick.y = city.y
+        } else if ((this.currentPath.length == 1) && (lineLength(this.lastClick.x, this.lastClick.y, finalPoint.x, finalPoint.y) > 2 * Game.MIN_LENGTH)) {
+            this.currentPath.addPoint(new Point(finalPoint.x, finalPoint.y))
+            this.lastClick.x = finalPoint.x
+            this.lastClick.y = finalPoint.y
+        } else if ((this.currentPath.length > 1) && (lineLength(this.lastClick.x, this.lastClick.y, finalPoint.x, finalPoint.y) > 2 * Game.MIN_LENGTH)) {
           let lastTwoPoints = this.currentPath.lastTwoPoints
-          //angle = angleBetweenLines(lastTwoPoints[0].x,lastTwoPoints[0].y,lastTwoPoints[1].x,lastTwoPoints[1].y,event.offsetX,event.offsetY)
-          if (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y, event.offsetX, event.offsetY,this.MIN_ANGLE)) {
-            this.currentPath.addPoint(new Point(event.offsetX, event.offsetY))
-            this.lastClick.x = event.offsetX
-            this.lastClick.y = event.offsetY
-            console.log(`adding 3rd or higher point in the path. In here we check if the angle between the lines is OK`)
+          if (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y, 
+            finalPoint.x, finalPoint.y,this.MIN_ANGLE)) {
+            this.currentPath.addPoint(new Point(finalPoint.x, finalPoint.y))
+            this.lastClick.x = finalPoint.x
+            this.lastClick.y = finalPoint.y
           }
         }
-      }
-      if (this.state == this.STATION_EDITING_STATE) {
-        this.paths.addApproxStationLocation(this.selectedPathNum, event.offsetX, event.offsetY)
       }
     })
   }
@@ -135,88 +147,142 @@ class Game {
 
   addMouseListener() {
     document.onmousemove = (event) => {
-      this.currentMousePosition.x = event.offsetX
-      this.currentMousePosition.y = event.offsetY
-      if (this.lastClick.x) {
-        this.drawPaths()
-        this.ctx_foreground.beginPath()
-        this.ctx_foreground.moveTo(this.lastClick.x, this.lastClick.y)
-        this.ctx_foreground.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
-        this.ctx_foreground.stroke()
+
+      if (this.canvases.style.visibility == 'collapse') {
+        this.tooltip.clearDisplay()
+        return
+      }
+      document.body.style.cursor = this.state==this.ROUTE_EDITING_STATE?'crosshair':'default'
+      if(this.state==this.ROUTE_EDITING_STATE){
+        this.currentMousePosition.x = event.offsetX
+        this.currentMousePosition.y = event.offsetY
+        if (!this.currentPath.finalized && this.state==this.ROUTE_EDITING_STATE) {
+          this.drawPaths()
+          if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
+            this.ctx_foreground.beginPath()
+            this.ctx_foreground.moveTo(this.lastClick.x, this.lastClick.y)
+            this.ctx_foreground.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
+            this.ctx_foreground.stroke()
+          }
+        }
+      }else if(this.state==this.RUNNING_STATE){
+        //where is the mouse
+        //close to a city?
+        let city = this.cities.getClosestCity(event.offsetX,event.offsetY)
+        if(city!=null){
+          let waiting = Math.floor(this.passengers.numWaitingAt(city.name))
+          this.tooltip.display(city,waiting)
+        }else{
+          this.tooltip.clearDisplay()
+        }
       }
     }
   }
 
   addKeyEventListener() {
     document.onkeypress = (event) => {
-      if (this.canvases.style.visibility == 'collapse') return
 
+      if(event.code==='Space'){
+        noncanvases.style.visibility=noncanvases.style.visibility==='collapse'?'visible':'collapse'
+        canvases.style.visibility=canvases.style.visibility==='collapse'?'visible':'collapse'
+        displayPassengersTable(this.passengers.passengers)
+        displayTicketPricesTable(this.tickets.tickets)
+        setTimeout(()=>{
+           window.scrollTo(0, -30);
+        },50)
+      }
+
+      if (this.canvases.style.visibility == 'collapse') {
+        this.tooltip.clearDisplay()
+        return
+      }
       this.keyBufffer.addKey(event.key)
       this.updateHUD()
-      if (this.state == this.ROUTE_EDITING_STATE && event.key == 'f') {
-        console.log(`iNSIDE F : ${this.currentPath}`)
-        this.lastClick.x = null
-        this.lastClick.y = null
-        this.cashflow.trackcost = this.currentPath.pathCapitalCost
-        // updateRailwayTracksSelectBox(paths)
-        this.currentPath.finalized = true
-        this.currentPath.createWayPoints()
-        this.currentPath.updateStations()
-      } else if (this.state == this.ROUTE_EDITING_STATE && event.key == 'd') {
-        if (!this.currentPath.finalized) {
-          this.currentPath.popPoint()
-          if (this.currentPath.length == 0) {
-            this.lastClick.x = null
-            this.lastClick.y = null
+      if (this.state == this.ROUTE_EDITING_STATE) {
+        if (event.key == 'd'){
+          if (!this.currentPath.finalized) {
+            this.currentPath.popPoint()
+            if (this.currentPath.length == 0) {
+              this.lastClick.x = null
+              this.lastClick.y = null
+            }
           }
+        } else if (event.key == 'a') {
+          if (this.currentPath.isValid) {
+            this.currentPath.finalized = true
+            this.currentPath.createWayPoints()
+            this.currentPath.updateStations()
+            this.cashflow.trackcost = this.currentPath.pathCapitalCost
+            this.cashflow.enginecost = Game.COST_ENGINE
+            this.cashflow.coachcost = Game.COST_PASSENGER_COACH
+          }
+          this.lastClick.x=null
+          this.lastClick.y=null
+          this.currentPath = new Path(this,this.ctx_foreground)
+          this.paths.addPath(this.currentPath)
         }
-        // } else if (event.key == 's'){
-        //   stationEditMode = !stationEditMode
-        //   ctx_strokeStyle = 'black'
-        //   updateHUD()
-      } else if (this.state == this.ROUTE_EDITING_STATE && event.key == 'a') {
-        if (!this.currentPath.finalized) {
+      } 
+      
+
+      if (this.state == this.TRAIN_EDITING_STATE) {
+        if(event.key == 'n'){
+          let numPaths = this.paths.numPaths
+          this.selectedPathNum++
+          if(this.selectedPathNum>numPaths) this.selectedPathNum = 1
+          this.updateHUD()
+        }
+        if (event.key == '+') {  
+          this.cashflow.coachcost = Game.COST_PASSENGER_COACH
+          this.paths.getPath(this.selectedPathNum).train.addPassengerCoach()
+          this.updateHUD()
+        }
+        if (event.key == '-') {  
+          this.cashflow.coachcost = -1 * Game.COST_PASSENGER_COACH
+          this.paths.getPath(this.selectedPathNum).train.removePassengerCoach()
+          this.updateHUD()
+        }
+      }
+
+      if (this.state == this.RUNNING_STATE) {
+        if(event.key=='r' || event.key=='t'){
+          return
+        }
+        if(event.key == '+'){
+          this.ms -=10
+          return  
+        }
+        if(event.key == '-'){
+          this.ms +=10
+          return  
+        }
+        if(event.key == 'w' || event.key == 'W'){
+          this.makeSound = !this.makeSound
+          this.updateHUD()
+          return  
+        }
+        if(this.currentPath.isValid){
           this.lastClick.x = null
           this.lastClick.y = null
-          this.money -= this.currentPath.pathCapitalCost
-          //updateRailwayTracksSelectBox(paths)
           this.currentPath.finalized = true
+          this.currentPath.createWayPoints()
+          this.currentPath.updateStations()
+          this.cashflow.trackcost = this.currentPath.pathCapitalCost
         }
-        this.currentPath = new Path(this,ctx_foreground)
-        this.paths.addPath(currentPath)
-      } else if (event.key == ' ') {
-        this.selectedPathNum++
-        if (this.selectedPathNum > this.paths.numPaths) this.selectedPathNum = 1
-        console.log(`selectedPathNum:${this.selectedPathNum}`)
-      } else if (this.state == this.RUNNING_STATE) {
         if (this.paths.atLeastOnePathFinalized) {
           this.animationMode = true
           this.i = 0;
           this.paths.createWayPoints()
-          this.paths.updateStations()
+          //this.paths.updateStations()
           this.paths.drawBackground(this.ctx_background)
           this.paths.drawStations(this.ctx_background)
           //cities.draw(ctx_background)
-          this.paths.paths.forEach(p => {
-            console.log(p.pathCapitalCost)
-          })
-          if (this.makeSound) audiochugging.play()
-          if (this.frames == 0) {
-            //this starts up the animation when the game is
-            //just starting
-            this.animate();
-          }
+          if (this.makeSound) this.audiochugging.play()
+          this.animate();
         } else {
           console.log(`No path finalized yet`)
         }
       } else if (this.state == this.PAUSED_STATE) {
         return
-      } else if (event.key == 'm') {
-        displayPassengersTable(this.passengers.passengers)
-        displayTicketPricesTable(this.tickets.tickets)
-        document.getElementById('menu').style.zIndex = !menu ? '100' : '0'
-        menu = !menu
-        console.log(`zIndex: foreground(${this.foreground.style.zIndex}) background(${this.background.style.zIndex} gui(${document.getElementById('menu').style.zIndex})`)
       } else if (event.key == 'rightArrow') {
         //window.scrollBy(10)
       } else if (event.key == 'leftArrow') {
@@ -225,57 +291,67 @@ class Game {
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
       this.paths.draw()
     };
+    // document.onkeypress = (event) => {
+    //   if (this.state == this.RUNNING_STATE){
+    //     this.ms += event.key == '+'?-10:event.key == '-'?+10:0 
+    //   }
+    // }
   }
+
 
   animate = () => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
     if (this.state == this.RUNNING_STATE) {
+      if (this.frames % Game.FRAMES_PER_TIME_PERIOD == 0) {
+        this.period = Math.floor(this.frames / Game.FRAMES_PER_TIME_PERIOD)
+        updatePassengers(this.period, this.cities, this.passengers)
+        this.cashflow.updateMaintenanceCost()
+        this.cashflow.updateRunningCost()
+        this.cashflow.updateInterest()
+        this.cashflow.update()
+        console.log(this.period,this.cashflow.ticketsales,this.cashflow.closingcash)
+      }
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
       this.paths.animate(this.background, this.ctx_foreground)
       this.frames++
-      this.period = Math.floor(this.frames / Game.FRAMES_PER_TIME_PERIOD)
       this.megaperiod = Math.floor(this.period / Game.PERIODS_PER_MEGA_PERIOD)
       if ((this.period>0) && (this.period % Game.PERIODS_PER_MEGA_PERIOD == 0)) {
-        updatePassengers(this.period, this.cities, this.passengers)
-        //updateMoney()
       }
     }
-    let txt = ''
-    txt += `Period: ${this.period}`
-    //Money: ${this.cashflow.closingcash} ${state == PAUSED_STATE ? 'Paused' : ''} Menu: ${menu}`
-    this.ctx_foreground.fillText(txt, 0, 40);
+    // let txt = ''
+    // txt += `Period: ${this.period} MS per frame: ${this.ms}`
+    // //Money: ${this.cashflow.closingcash} ${state == PAUSED_STATE ? 'Paused' : ''} Menu: ${menu}`
+    // this.ctx_foreground.fillText(txt, 0, 40);
+    this.updateHUD()
     setTimeout(() => {
       if (this.state == this.RUNNING_STATE) {
         this.request = requestAnimationFrame(this.animate)
       }
-    }, 150)
+    }, this.ms)
   }
 
   updateHUD(){
-    let state_str=''
+    let txt=`Pd: ${this.period} M: ${this.cashflow.closingcash} State: `
     switch (this.state) {
       case this.ROUTE_EDITING_STATE:
-        state_str=`Route Editing: click f(finalize), a(add route), s(station), t(train), g(game)`
-        break;
-      case this.STATION_EDITING_STATE:
-        state_str=`Station Editing: click n(next route), t(train), g(game)`
+        txt=`Route Editing: click-click, a(add another route), s(station), t(train), g(resume game)`
         break;
       case this.TRAIN_EDITING_STATE:
-        state_str=`Train Editing: +(add coach), -(remove coach), n(next route), g(game)`
+        if(this.selectedPathNum==0) this.selectedPathNum=1
+        txt+=`Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game)`
         break;
       case this.RUNNING_STATE:
-        state_str=`Running: p(pause) Money${this.cashflow.closingcash}`
+        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'})`
         break;
       case this.PAUSED_STATE:
-        state_str=`Paused: r(Route Editing), s(Station Editing), t(Train Editing), g(game)`
+        txt+=`Paused: r(Route Editing), t(Train Editing), g(resume game)`
         break;
     
       default:
         break;
     }
-    let txt = `State : ${state_str}`
-    this.hud.display(txt)
+    this.hud.display(txt,info)
   }
 }
 

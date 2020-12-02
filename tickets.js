@@ -6,6 +6,7 @@ class Tickets {
     cities.cities.forEach(cFrom => {
       cities.cities.forEach(cTo => {
         let distance = lineLength(cFrom.x,cFrom.y,cTo.x,cTo.y)
+        distance = Math.pow(distance,Game.DISTANCE_FACTOR)
         let ticket = Math.round(distance*travel_cost_per_unit_distance/10)*10
         this.info.push({
           from:cFrom.name,
@@ -18,5 +19,10 @@ class Tickets {
   }
   get tickets(){
     return this.info
+  }
+  ticket(from,to){
+    return this.info.find(item=>
+      item.from==from && item.to==to
+    ).ticket
   }
 }

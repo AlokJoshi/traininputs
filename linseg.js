@@ -20,7 +20,6 @@ class LinSeg {
     console.log(`drawBackground on linSeg called for ${this}` )
 
     let l = this.length
-    //let l = Math.sqrt((this.p1.x - this.p2.x) * (this.p1.x - this.p2.x) + (this.p1.y - this.p2.y) * (this.p1.y - this.p2.y))
     let n = Math.floor(l / this.w)
     let m = Math.atan((this.p2.y - this.p1.y) / (this.p2.x - this.p1.x))
     let deltax = this.l * Math.sin(m) / 2

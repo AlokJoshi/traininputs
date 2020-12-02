@@ -263,7 +263,6 @@ const animate = (ts) => {
 
 
 
-console.log(`Starting game`)
 let game = new Game()
 
 

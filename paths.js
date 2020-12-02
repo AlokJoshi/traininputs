@@ -12,11 +12,9 @@ class Paths {
   addStation(pathNum, x, y) {
     this._paths[pathNum - 1].addStation(x, y)
   }
-  updateStations(){
-    for (let i = 0; i < this.numPaths; i++) {
-      this._paths[i].updateStations()
-    }    
-  }
+  // updateStations(pathNum){
+  //   this._paths[pathNum - 1].updateStations()
+  // }
   get numPaths() {
     return this._paths.length
   }
@@ -87,12 +85,16 @@ class Paths {
   }
   drawBackground(ctx) {
     for (let i = 0; i < this.numPaths; i++) {
-      this._paths[i].drawBackground(ctx)
+      if(this._paths[i].finalized==true){
+        this._paths[i].drawBackground(ctx)
+      }
     }
   }
   animate(canvas, ctx_background) {
     for (let i = 0; i < this.numPaths; i++) {
-      this._paths[i].animate(canvas, ctx_background)
+      if(this._paths[i].wp.length>0){
+        this._paths[i].animate(canvas, ctx_background)
+      }
     }
   }
   updateNeighbors() {
