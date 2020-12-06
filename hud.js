@@ -2,20 +2,31 @@ class Hud{
   constructor(canvasElement){
     this.canvasElement = canvasElement
     this.ctx = canvasElement.getContext('2d')
-    this.info = ''
+    this._info = []
   }
-  display(text){
-    console.log(`In Hud display: ${info}`)
+  set info(value){
+    this._info.push(value)
+    if(this._info.length>=200){
+      this._info.shift()
+    }
+  }
+  display(text,state,train){
+    this.canvasElement.height = state==Game.RUNNING_STATE?1000:50
     this.ctx.clearRect(0,0,this.canvasElement.width,this.canvasElement.height)
-    this.ctx.fillStyle='rgba(100,100,100,.2)'
-    this.ctx.fillRect(0,0,this.canvasElement.width,60)
-    this.ctx.fillStyle='rgba(255,255,255,1)'
-    this.ctx.strokeStyle='rgba(255,255,255,0.1)'
+    // this.ctx.fillStyle='rgba(100,100,100,.2)'
+    // this.ctx.fillRect(0,0,this.canvasElement.width,60)
+    this.ctx.fillStyle='rgba(64,64,64,1)'
+    this.ctx.strokeStyle='rgba(64,64,64,0.1)'
     this.ctx.font = "15px Comic Sans MS"
     for(let i=0;i<Math.ceil(text.length/150);i++){
       this.ctx.fillText(text.substr(i*150,150),0,(i+1)*20,1500)
     }
-    this.ctx.fillText(this.info,0,40)
+    let newInfo = this._info.filter(item=>item.train==train)
+    newInfo = newInfo.slice().reverse()
+    this.ctx.fillText(`Train: ${train}`,0,150)
+    for(let i = 0; i < newInfo.length ; i++ ){
+      this.ctx.fillText(newInfo[i].text,0,170+i*20)
+    }
   }
   displayCityInfo(city){
     let x=city.x

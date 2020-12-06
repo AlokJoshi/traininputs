@@ -1,6 +1,6 @@
 class Game {
   static PASSENGER_COACH_CAPACITY = 30
-  static MIN_LENGTH = 40
+  static MIN_LENGTH = 45
   static LINE_WIDTH = 2
   static OPENING_CASH = 1000000
   static FRAMES_PER_TIME_PERIOD = 100
@@ -15,21 +15,23 @@ class Game {
   static DISTANCE_FACTOR = 1.05
   static CITY_RADIUS = 30
 
+  static ROUTE_EDITING_STATE = 1
+  static RUNNING_STATE = 4
+  static TRAIN_EDITING_STATE = 3
+  static PAUSED_STATE = 5
+
+  static TRAVEL_COST_PER_UNIT_DISTANCE = 2
+  
   ms = 150
   period = 0
   megaperiod = 0
   MIN_ANGLE = 90
-  ROUTE_EDITING_STATE = 1
-  TRAIN_EDITING_STATE = 3
-  RUNNING_STATE = 4
-  PAUSED_STATE = 5
-  travel_cost_per_unit_distance = 1
   makeSound = false
 
-  state = this.PAUSED_STATE
-  previous_state = this.PAUSED_STATE
-  width = 1920
-  height = 1080
+  state = Game.ROUTE_EDITING_STATE
+  previous_state = Game.ROUTE_EDITING_STATE
+  width = 1200
+  height = 675
   menu = false
   stationEditMode = false
   animationMode = false
@@ -54,24 +56,25 @@ class Game {
     this.audiowhistle.src = "steam engine whistle.mp3"
     this.audiochugging = document.createElement('audio')
     this.audiochugging.src = "chugging sound.mp3"
+
     this.keyBufffer = new KeyBuffer(this)
     this.passengers = new Passengers()
     this.cities = new Cities()
     updatePassengers(this.period, this.cities, this.passengers)
-    this.tickets = new Tickets(this.travel_cost_per_unit_distance)
+    this.tickets = new Tickets(Game.TRAVEL_COST_PER_UNIT_DISTANCE)
 
     this.background = document.querySelector('#background')
     this.foreground = document.querySelector('#foreground')
     this.hudElement = document.querySelector('#hud')
     this.tooltipElement = document.querySelector('#tooltip')
 
-    this.background.width = 1920//window.innerWidth
-    this.background.height = 1080//window.innerHeight
+    this.background.width = this.width//window.innerWidth
+    this.background.height = this.height//window.innerHeight
 
-    this.foreground.width = 1920//window.innerWidth
-    this.foreground.height = 1080//window.innerHeight
+    this.foreground.width = this.width//window.innerWidth
+    this.foreground.height = this.height//window.innerHeight
 
-    this.hudElement.width = 1920//window.innerWidth
+    this.hudElement.width = this.width//window.innerWidth
     this.hudElement.height = 40 //window.innerHeight
 
     this.ctx_background = this.background.getContext('2d')
@@ -103,18 +106,18 @@ class Game {
     this.addMouseListener()
     this.addKeyEventListener()
     //start in this state
-    this.state = this.ROUTE_EDITING_STATE
+    this.state = Game.ROUTE_EDITING_STATE
     this.updateHUD()
     document.addEventListener("info", e => { 
       //console.log(`Event received: ${e.detail.text}` )
-      this.hud.info = e.detail.text 
+      this.hud.info = e.detail
     })
   }
 
 
   addEventListeners() {
     this.foreground.addEventListener('click', (event)=> {
-      if (this.state == this.ROUTE_EDITING_STATE) {
+      if (this.state == Game.ROUTE_EDITING_STATE && !this.currentPath.finalized) {
         let city = getClosestCityObject(this.cities,event.offsetX,event.offsetY)
         let clickedWithinCityLimits = 'name' in city
         let finalPoint = {x:clickedWithinCityLimits?city.x:event.offsetX,y:clickedWithinCityLimits?city.y:event.offsetY}
@@ -152,20 +155,22 @@ class Game {
         this.tooltip.clearDisplay()
         return
       }
-      document.body.style.cursor = this.state==this.ROUTE_EDITING_STATE?'crosshair':'default'
-      if(this.state==this.ROUTE_EDITING_STATE){
+      document.body.style.cursor = this.state==Game.ROUTE_EDITING_STATE?'crosshair':'default'
+      if(this.state==Game.ROUTE_EDITING_STATE){
         this.currentMousePosition.x = event.offsetX
         this.currentMousePosition.y = event.offsetY
-        if (!this.currentPath.finalized && this.state==this.ROUTE_EDITING_STATE) {
+        if (!this.currentPath.finalized && this.state==Game.ROUTE_EDITING_STATE) {
           this.drawPaths()
-          if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
+          //if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
+          console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
+          if (this.lastClick.x!=null) {
             this.ctx_foreground.beginPath()
             this.ctx_foreground.moveTo(this.lastClick.x, this.lastClick.y)
             this.ctx_foreground.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
             this.ctx_foreground.stroke()
           }
         }
-      }else if(this.state==this.RUNNING_STATE){
+      }else if(this.state==Game.RUNNING_STATE){
         //where is the mouse
         //close to a city?
         let city = this.cities.getClosestCity(event.offsetX,event.offsetY)
@@ -198,17 +203,18 @@ class Game {
       }
       this.keyBufffer.addKey(event.key)
       this.updateHUD()
-      if (this.state == this.ROUTE_EDITING_STATE) {
+      if (this.state == Game.ROUTE_EDITING_STATE) {
         if (event.key == 'd'){
           if (!this.currentPath.finalized) {
-            this.currentPath.popPoint()
+            let deletedPoint = this.currentPath.popPoint()
+            this.currentMousePosition = {...deletedPoint}
             if (this.currentPath.length == 0) {
               this.lastClick.x = null
               this.lastClick.y = null
             }
           }
         } else if (event.key == 'a') {
-          if (this.currentPath.isValid) {
+          if (this.currentPath.isValid && !this.currentPath.finalized) {
             this.currentPath.finalized = true
             this.currentPath.createWayPoints()
             this.currentPath.updateStations()
@@ -224,7 +230,15 @@ class Game {
       } 
       
 
-      if (this.state == this.TRAIN_EDITING_STATE) {
+      if (this.state == Game.TRAIN_EDITING_STATE) {
+        if(this.currentPath.isValid && !this.currentPath.finalized){
+          this.lastClick.x = null
+          this.lastClick.y = null
+          this.currentPath.finalized = true
+          this.currentPath.createWayPoints()
+          this.currentPath.updateStations()
+          this.cashflow.trackcost = this.currentPath.pathCapitalCost
+        }
         if(event.key == 'n'){
           let numPaths = this.paths.numPaths
           this.selectedPathNum++
@@ -243,7 +257,7 @@ class Game {
         }
       }
 
-      if (this.state == this.RUNNING_STATE) {
+      if (this.state == Game.RUNNING_STATE) {
         if(event.key=='r' || event.key=='t'){
           return
         }
@@ -255,12 +269,19 @@ class Game {
           this.ms +=10
           return  
         }
+        if(event.key == 'n'){
+          let numPaths = this.paths.numPaths
+          this.selectedPathNum++
+          if(this.selectedPathNum>numPaths) this.selectedPathNum = 1
+          this.updateHUD()
+          return
+        }
         if(event.key == 'w' || event.key == 'W'){
           this.makeSound = !this.makeSound
           this.updateHUD()
           return  
         }
-        if(this.currentPath.isValid){
+        if(this.currentPath.isValid && !this.currentPath.finalized){
           this.lastClick.x = null
           this.lastClick.y = null
           this.currentPath.finalized = true
@@ -281,7 +302,7 @@ class Game {
         } else {
           console.log(`No path finalized yet`)
         }
-      } else if (this.state == this.PAUSED_STATE) {
+      } else if (this.state == Game.PAUSED_STATE) {
         return
       } else if (event.key == 'rightArrow') {
         //window.scrollBy(10)
@@ -292,7 +313,7 @@ class Game {
       this.paths.draw()
     };
     // document.onkeypress = (event) => {
-    //   if (this.state == this.RUNNING_STATE){
+    //   if (this.state == Game.RUNNING_STATE){
     //     this.ms += event.key == '+'?-10:event.key == '-'?+10:0 
     //   }
     // }
@@ -302,7 +323,7 @@ class Game {
   animate = () => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
-    if (this.state == this.RUNNING_STATE) {
+    if (this.state == Game.RUNNING_STATE) {
       if (this.frames % Game.FRAMES_PER_TIME_PERIOD == 0) {
         this.period = Math.floor(this.frames / Game.FRAMES_PER_TIME_PERIOD)
         updatePassengers(this.period, this.cities, this.passengers)
@@ -310,7 +331,6 @@ class Game {
         this.cashflow.updateRunningCost()
         this.cashflow.updateInterest()
         this.cashflow.update()
-        console.log(this.period,this.cashflow.ticketsales,this.cashflow.closingcash)
       }
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
       this.paths.animate(this.background, this.ctx_foreground)
@@ -325,33 +345,33 @@ class Game {
     // this.ctx_foreground.fillText(txt, 0, 40);
     this.updateHUD()
     setTimeout(() => {
-      if (this.state == this.RUNNING_STATE) {
+      if (this.state == Game.RUNNING_STATE) {
         this.request = requestAnimationFrame(this.animate)
       }
     }, this.ms)
   }
 
-  updateHUD(){
-    let txt=`Pd: ${this.period} M: ${this.cashflow.closingcash} State: `
+  updateHUD = ()=>{
+    let txt=`Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash/1000)} K State: `
     switch (this.state) {
-      case this.ROUTE_EDITING_STATE:
-        txt=`Route Editing: click-click, a(add another route), s(station), t(train), g(resume game)`
+      case Game.ROUTE_EDITING_STATE:
+        txt=`Route Editing: ${this.previous_state==Game.ROUTE_EDITING_STATE?'click-click, ':''}a(add another route), t(train), g(resume game)`
         break;
-      case this.TRAIN_EDITING_STATE:
+      case Game.TRAIN_EDITING_STATE:
         if(this.selectedPathNum==0) this.selectedPathNum=1
         txt+=`Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game)`
         break;
-      case this.RUNNING_STATE:
-        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'})`
+      case Game.RUNNING_STATE:
+        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'}), n(display info next)`
         break;
-      case this.PAUSED_STATE:
+      case Game.PAUSED_STATE:
         txt+=`Paused: r(Route Editing), t(Train Editing), g(resume game)`
         break;
     
       default:
         break;
     }
-    this.hud.display(txt,info)
+    this.hud.display(txt,this.state,this.paths.paths[this.selectedPathNum-1].name)
   }
 }
 

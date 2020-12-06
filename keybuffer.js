@@ -8,29 +8,31 @@ class KeyBuffer {
       switch (key) {
         case 'r':
         case 'R':
-          if (this.game.state != this.game.RUNNING_STATE) {
+          if (this.game.state != Game.RUNNING_STATE) {
+            this.game.lastClick.x=null
+            this.game.lastClick.y=null
             this.game.previous_state = this.game.state
-            this.game.state = this.game.ROUTE_EDITING_STATE
+            this.game.state = Game.ROUTE_EDITING_STATE
           }
           break;
         case 't':
         case 'T':
-          if (this.game.state != this.game.RUNNING_STATE) {
+          if (this.game.state != Game.RUNNING_STATE) {
             this.game.previous_state = this.game.state
-            this.game.state = this.game.TRAIN_EDITING_STATE
+            this.game.state = Game.TRAIN_EDITING_STATE
           }
           break;
         case 'p':
         case 'P':
-          if (this.game.state == this.game.RUNNING_STATE) {
+          if (this.game.state == Game.RUNNING_STATE) {
             this.game.previous_state = this.game.state
-            this.game.state = this.game.PAUSED_STATE
+            this.game.state = Game.PAUSED_STATE
           }
           break;p
         case 'g':
         case 'G':
           this.game.previous_state = this.game.state
-          this.game.state = this.game.RUNNING_STATE
+          this.game.state = Game.RUNNING_STATE
           break;
         case 'f':
         case 'F':

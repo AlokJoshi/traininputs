@@ -279,16 +279,17 @@ class Path {
         let {x,y,radius} = circle(p1,p2,p3,p4)
         console.log(`Seg: ${i},${x},${y},${radius}`)
 
-        let finalpoints = pointsAlongArc(x,y,radius,p2.x,p2.y,p3.x,p3.y)
-        console.log(`Final points: ${finalpoints}`)
+        let finalpoints = pointsAlongArcNew(x,y,radius,p2.x,p2.y,p3.x,p3.y)
         for(let i=0;i<finalpoints.length;i++){
           this.wp.push({n:n++,x:finalpoints[i].x,y:finalpoints[i].y})
+          console.log(`Along Curve:${n}, ${finalpoints[i].x},${finalpoints[i].y}`)
         }
       }
     }
   }
   animate(canvas, ctx) {
     let p1, p3
+    let event
     for (let iRect = 0; iRect < this.rects; iRect++) {
       let ptAdjust = iRect * this.ptGap;
       p1 = this.wp[this.i - ptAdjust];
@@ -334,30 +335,45 @@ class Path {
       if (this.i == this.wp.length) {
         this.i = this.wp.length - 1
         this.going = false
-        if(this.game.makeSound) {
-          this.game.audiowhistle.play()
-          play(this.game.audiochugging,5000)
-        }
       } else if (this.i == -1) {
         this.i = 0
         this.going = true
-        if(this.game.makeSound) {
-          this.game.audiowhistle.play()
-          play(this.game.audiochugging,5000)
-        }
       }
       //reset timer
       this.numFrames=0
       //train at station but not time to move on
       //audiochugging=null
     }else if((this.atStation(this.i) && this.numFrames <= this.numFramesToSkip)){
+      if(this.game.makeSound) {
+        if(this.numFrames==this.numFramesToSkip-10){
+          let currCity_wpn = this.getStation(this.i).wpn
+          if(currCity_wpn==0 && this.going || currCity_wpn==this.wp.length-1 && !this.going){
+            this.game.audiowhistle.play()
+            play(this.game.audiochugging,15000)
+          }
+        }
+      }
       if(this.numFrames==0){
         //console.log(`Train reached station at location: ${this.i}, ${this.going}`)
         
         let currCity = this.getStation(this.i).name 
         let currCity_wpn = this.getStation(this.i).wpn
         //first alight the passengers for this city
-        let numAlighted = this.train.alightPassengersForCity(currCity)
+        if(currCity_wpn==0 && this.going || currCity_wpn==this.wp.length-1 && !this.going){
+          //starting point on going or returning back. No one is alighted here as that was done
+          //already when the train was at this point coming into this station
+        }else{
+          let numAlighted = this.train.alightPassengersForCity(currCity)
+          //note: dispatching this event works but does not add any value
+          //console.log(`${numAlighted} alighted at ${currCity}`)
+          // event = new CustomEvent("info", {
+          //   detail: {
+          //     train: this.name,
+          //     text: `${numAlighted} alighted at ${currCity}`
+          //   }
+          // });
+          // document.dispatchEvent(event);
+        }
         //console.log(`Alighted ${numAlighted} at ${currCity}`)
         if(this.going){
           //take in passengers for the cities on the way back to the final station
@@ -373,9 +389,10 @@ class Path {
               //collect fare
               let fare = this.game.tickets.ticket(currCity,station.name)
               //console.log(`Ticket Sales before: ${this.game.cashflow.ticketsales}`)
-              console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
-              var event = new CustomEvent("info", {
+              //console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
+              event = new CustomEvent("info", {
                 detail: {
+                  train: this.name,
                   text: `${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`
                 }
               });
@@ -400,9 +417,10 @@ class Path {
               let fare = this.game.tickets.ticket(currCity,station.name)
               //console.log(`Ticket Sales before: ${this.game.cashflow.ticketsales}`)
               //console.log(`Take ${num} passengers from ${currCity}-${station.name} @${fare}`)
-              console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
-              var event = new CustomEvent("info", {
+              //console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
+              event = new CustomEvent("info", {
                 detail: {
+                  train: this.name,
                   text: `${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`
                 }
               });
@@ -421,6 +439,7 @@ class Path {
       }
       this.numFrames++    
       //audiochugging=null
+      
     }
     
   }

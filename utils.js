@@ -26,7 +26,7 @@ function angleBetweenLinesIsOK(x1, y1, x2, y2, x3, y3, MIN_ANGLE) {
   let la = Math.pow((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2), 0.5)
   let lb = Math.pow((x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2), 0.5)
   let lc = Math.pow((x3 - x1) * (x3 - x1) + (y3 - y1) * (y3 - y1), 0.5)
-  let r = MIN_ANGLE * 180 / Math.PI
+  let r = MIN_ANGLE * Math.PI/180
   let dmin = Math.pow(la * Math.sin(r) * la * Math.sin(r) + (lb - la * Math.cos(r)) * (lb - la * Math.cos(r)), 0.5)
 
   return lc >= dmin
@@ -208,9 +208,92 @@ function pointsAlongArc(x, y, r, p1x, p1y, p2x, p2y) {
 
   return finalpoints
 }
+function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y) {
+  console.log(x, y, r, p1x, p1y, p2x, p2y);
+  //find all the points along the circumfrence of a circle
+  const GAP = 2
+  let points = [];
+  let n = Math.floor(2 * Math.PI * r / GAP)
+
+  // for (let i = 0; i < n; i++) {
+  //   let _x = x + r * Math.cos((((i * 360) / n) * Math.PI) / 180);
+  //   let _y = y + r * Math.sin((((i * 360) / n) * Math.PI) / 180);
+  //   points.push(new Point(_x, _y));
+  // }
+  //find the 2 points on either side of p1 on the arc
+  dtheta = 2*Math.PI/180 //2 degrees in radians
+  let newx = null
+  let newy = null
+  let finalpoints = [];
+  let done = true
+  do {
+    finalpoints.push({x:p1x,y:p1y}) 
+    //calculate 2 points on either side of p1 
+    let p_1 = {x: p1x + r*dtheta*Math.sin(dtheta),y: p1y + r*dtheta*Math.cos(dtheta)}
+    let p_2 = {x: p1x - r*dtheta*Math.sin(*dtheta),y: p1y - r*dtheta*Math.cos(dtheta)}
+    //calculate distance from those points to p2 
+    let l_1 = lineLength(p_1.x,p_1.y,p2x,p2y)
+    let l_2 = lineLength(p_2.x,p_2.y,p2x,p2y)
+    if(l_1 < l_2){
+      //now p_1 becomes the new p1
+      //ensure that p_1 lies between p1 and p2
+      if(((p1x <= p_1.x && p_1.x <= p2x) || (p1x >= p_1.x && p_1.x >= p2x)) && ((p1y <= p_1.y && p_1.y <= p2y) || (p1y >= p_1.y && p_1.y >= p2y))){
+        p1x = p_1.x
+        p1y = p_1.y
+        done = false
+      }else{
+        done=true
+      }
+    }else{
+      if(((p1x <= p_2.x && p_2.x <= p2x) || (p1x >= p_2.x && p_2.x >= p2x)) && ((p1y <= p_2.y && p_2.y <= p2y) || (p1y >= p_2.y && p_2.y >= p2y))){
+        p1x = p_2.x
+        p1y = p_2.y
+        done = false
+      }else{
+        done=true
+      }
+    }
+  } while (!done);
+
+  
+  /* //find the closest point to p1 but between p1 and p2
+  let f = (array, p1x, p1y, p2x, p2y) => {
+    let pt = {x:null,y:null}
+    let distp1p2 = Math.sqrt(
+      (p2x - p1x) * (p2x - p1x) +
+      (p2y - p1y) * (p2y - p1y)
+    );
+    let dist = Infinity
+    for (let i = 0; i < array.length; i++) {
+      let l = Math.sqrt(
+        (array[i].x - p1x) * (array[i].x - p1x) +
+        (array[i].y - p1y) * (array[i].y - p1y)
+      );
+      let distp2 = Math.sqrt(
+        (array[i].x - p2x) * (array[i].x - p2x) +
+        (array[i].y - p2y) * (array[i].y - p2y)
+      );
+      if (l < dist && distp2 < distp1p2) {
+        pt = {x:array[i].x,y:array[i].y}
+        dist = l 
+      }
+    }
+    return pt;
+  };
+
+  let finalpoints = [];
+  finalpoints.push({x:p1x,y:p1y}) 
+  while (p1x != null && p2x != null) {
+    let nextPoint = f(points,p1x,p1y,p2x,p2y) 
+    p1x = nextPoint.x
+    p1y = nextPoint.y
+  }
+ */
+  return finalpoints
+}
 
 function play( audio, time_in_milisec){
-  audio.loop = true;
+  //audio.loop = true;
   audio.play();
   setTimeout(() => { audio.pause(); }, time_in_milisec);
 }
