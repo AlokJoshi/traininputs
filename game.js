@@ -7,9 +7,9 @@ class Game {
   static PERIODS_PER_MEGA_PERIOD = 100
   static TRACK_COST_PER_UNIT = 1000
   static COST_STATION = 50000
-  static COST_ENGINE = 10000
+  static COST_ENGINE = 100000
   static COST_GOODS_COACH = 500
-  static COST_PASSENGER_COACH=1000
+  static COST_PASSENGER_COACH=20000
   static INTEREST_EARNED_PER_PERIOD = 0.0005
   static INTEREST_PAID_PER_PERIOD = 0.001
   static DISTANCE_FACTOR = 1.05
@@ -21,7 +21,10 @@ class Game {
   static PAUSED_STATE = 5
 
   static TRAVEL_COST_PER_UNIT_DISTANCE = 2
-  
+  static FEATURE_LAND = 1
+  static FEATURE_WATER = 2
+  static FEATURE_TUNNEL = 3
+
   ms = 150
   period = 0
   megaperiod = 0
@@ -162,7 +165,7 @@ class Game {
         if (!this.currentPath.finalized && this.state==Game.ROUTE_EDITING_STATE) {
           this.drawPaths()
           //if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
-          console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
+          //console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
           if (this.lastClick.x!=null) {
             this.ctx_foreground.beginPath()
             this.ctx_foreground.moveTo(this.lastClick.x, this.lastClick.y)
@@ -362,7 +365,7 @@ class Game {
         txt+=`Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game)`
         break;
       case Game.RUNNING_STATE:
-        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'}), n(display info next)`
+        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'}), n(next train info)`
         break;
       case Game.PAUSED_STATE:
         txt+=`Paused: r(Route Editing), t(Train Editing), g(resume game)`

@@ -31,7 +31,36 @@
       <p>Ticket Prices</p>
       <table id="ticketprices">
       </table>
+      <h4>Costs in G$(Game Dollars)</h4>
+      <p><b>Track:</b> Depends on the distance. It is about G$ 1000
+        per unit distance ie per pixel on the screen. However going over
+        the lake, while possible will cost you about 20 times of the
+        regular track cost.
+      </p>
     </div>
+    <p><b>Engine:</b> The Engine costs G$ 100000
+      and this engine can pull any number of passenger coaches</p>
+    <p><b>Passenger Coach:</b> Each Passenger Coach costs G$ 20000.
+      Note that if you reduce the number of coaches, the coach does not earn
+      you any resales at all. Each passenger coach has a capacity of 30
+      passengers. Also note that when passengers are boarded, the passengers
+      for the farthest destination are boarded first and so on for the
+      remaining destinations if there is any coach capacity left.
+    </p>
+    <p><b>Station:</b> Each Station costs G$ 50000.
+    </p>
+    <p><b>Maintainance Cost:</b> This proportional to the total capital cost
+    </p>
+    <p><b>Running Cost:</b> This proportional to the total track length, and number of Stations
+    </p>
+    <p><b>Depreciation Cost:</b> The depreciation is calculated internally to work out the profit after depreciation for 
+      taxation purposes. The depreciation is a straight line depreciation over 200 periods. 
+      However, it flows back in to the cash.
+    </p>
+    <p>You have no control over Maintenance Cost, Running Cost and Depreciation</p>
+    <p>Once a train is started on any given route, there is no way to stop the train in this version of the game.</p>
+    <h4>Switching Between Game Screen and this screen</h4>
+    <p>The space bar will switch between the game screen and this scree</p>
     <div id='how'>
       <h3>How to Play</h3>
       <p>At any time you will be in one of the following stages(states) of play</p>
@@ -46,7 +75,8 @@
         the game
         will automatically create curved lines between each pair of straight lines.
         If you to delete the last point you clicked, you can press the 'd' key. If you have completed one route
-        and want to create another route, you will press the 'a' key. This will start the process of adding another route.
+        and want to create another route, you will press the 'a' key. This will start the process of adding another
+        route.
         Once you have created the routes, they cannot be edited or deleted.
         When you have created one or more routes, you can press the 'g' key to get into the game mode.
         A separate train will run on each of the routes.
@@ -68,7 +98,7 @@
       <p>Here again we use keyboard keys to get to various states</p>
       <p>'r' will switch you to the Route Editing State if you are not in Running State</p>
       <ul>
-        <li>Clicking within the blue circle for any city will start the process of creating a route. Click at 
+        <li>Clicking within the blue circle for any city will start the process of creating a route. Click at
           points between and then inside the blue circle of the destination city.
         </li>
       </ul>
@@ -89,15 +119,31 @@
     <div id='objective'>
       <h3>Objective</h3>
       <p>The objective of the game is to become a Train Tycoon - by amassing a lot of money.</p>
-      <p>You start with {{x}} amount of money</p>
+      <p>You start with G$ 1,000,000</p>
       <p>You decide on the number of trains to start</p>
       <p>You decide on the route you want your train to take and the stations it must stop and the number of passenger
         coaches it must have</p>
-      <p>If you spend too much money (beyond what you have) you will be charged a steep interst rate by your
+      <p>If you spend too much money (beyond what you have) you will be charged a steep interst rate (10%) by your
         bank/financiers</p>
-      <p>You earn a little interest on the money you have in the bank</p>
+      <p>You earn a little interest (5%) on the money you have in the bank</p>
       <p>You can review Passenger Demand and Ticket Prices in the Info menu item.</p>
-      <p>You can review your performance in the Performance menu item.</p>
+      <p>Your performance in terms of the G$ is shown on the top left of your screen along with the current period you
+        are in. This also shows the State you are in and your options.
+        You can review your detailed performance in the Performance menu item.(Currently under construction)</p>
+      <p>You train-wise performance can be seen on the left of your game screen (most recent on top). You can switch
+        between the trains by pressing the n key in the Running state.
+      </p>
+      <p>Note that the data is not saved anywhere. Hence you will need to start again once you close the Game browser
+        window
+        or the computer.
+      </p>
+      <p>Try and become a Train Tycoon by Pd 500.</p>
+      <p>You can speed up the game by clicking on the + key once or repeatedly in the Running state. This makes the time
+        pass fast.
+        Similarly the game slows down with the - key. p is ofcourse for pausing the game. Once you are in the Paused
+        state you
+        can add another route, add or remove coaches in existing trains.
+      </p>
     </div>
     <div id='performance'>
       <h3>Performance</h3>
@@ -148,11 +194,11 @@
   <script src="path.js"></script>
   <script src="paths.js"></script>
   <script src="station.js"></script>
-  <script type = "text/javascript" src = "gui.js"></script>
+  <script type="text/javascript" src="gui.js"></script>
   <script src="cash.js"></script>
   <script src="cashflow.js"></script>
   <script src="game.js"></script>
-  <script src="script.js"></script> 
+  <script src="script.js"></script>
 
 </body>
 

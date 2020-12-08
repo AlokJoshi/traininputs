@@ -5,7 +5,6 @@ class Path {
 
   //this is extremely important. Decides how big the
   //range is for checking neighbors
-  static D = 3;
   static WPL = 3;
 
   constructor(game,ctx) {
@@ -49,16 +48,16 @@ class Path {
     this.points.pop()
   }
   get pathLength(){
-    let pl = 0
-    this.lineSegments.forEach(s=>{
-      console.log(`lineseg:${s.length}`)
-      pl+=s.length
-    })
-    this.quadraticSegments.forEach(s=>{
-      console.log(`QuadSeg:${s.length}`)
-      pl+=s.length
-    })
-    return pl
+    // let pl = 0
+    // this.lineSegments.forEach(s=>{
+    //   console.log(`lineseg:${s.length}`)
+    //   pl+=s.length
+    // })
+    // this.quadraticSegments.forEach(s=>{
+    //   console.log(`QuadSeg:${s.length}`)
+    //   pl+=s.length
+    // })
+    return this.wp.length*Path.WPL
   }
   get finalized(){
     return this._finalized
@@ -72,9 +71,41 @@ class Path {
       getClosestCity(this.game.cities,this.points[0].x,this.points[0].y) != '' && 
       getClosestCity(this.game.cities,this.points[this.length-1].x,this.points[this.length-1].y) != ''
   }
-  
+  getPathLengthOverWater(){
+    //for each of the way points check if it is over the water
+    //the context for the background is available in this.game.ctx_background
+    let length=0
+    for(let iwp=0;iwp<this.wp.length;iwp++){
+      let wpx=this.wp[iwp].x  
+      let wpy=this.wp[iwp].y  
+      let imgData = this.game.ctx_background.getImageData(wpx, wpy, 1, 1)
+      if(imgData.data[0]==77 && imgData.data[1]==77 & imgData.data[2]==243){
+        length++
+      }
+    }
+    return length*Path.WPL
+  }
+  getPathLengthInTunnel(){
+    //for each of the way points check if it is over the water
+    //the context for the background is available in this.game.ctx_background
+    let length=0
+    for(let iwp=0;iwp<this.wp.length;iwp++){
+      let wpx=this.wp[iwp].x  
+      let wpy=this.wp[iwp].y  
+      let imgData = this.game.ctx_background.getImageData(wpx, wpy, 1, 1)
+      if(imgData.data[0]==255 && imgData.data[1]==255 & imgData.data[2]==255){
+        length++
+      }
+    }
+    return length*Path.WPL
+  }
   get pathCapitalCost(){
-    return Math.floor(this.pathLength*Game.TRACK_COST_PER_UNIT)
+    //instead we check the length that is over the water
+    let overWater = this.getPathLengthOverWater()
+    let inTunnel = this.getPathLengthInTunnel()
+    let overLand = this.pathLength-overWater-inTunnel
+    console.log(`Over water: ${overWater}, over land:${overLand}`)
+    return Math.floor(overLand * Game.TRACK_COST_PER_UNIT + (overWater+inTunnel) * 20 * Game.TRACK_COST_PER_UNIT)
   }
   // addApproxStationLocation(x,y){
   //   this.approxStationLocations.push({x:x,y:y})
@@ -264,12 +295,13 @@ class Path {
         for(let wp=0;wp<Math.floor(d/wpl);wp++){
           let x = p1.x+(p2.x-p1.x)*wp*wpl/d
           let y = p1.y+(p2.y-p1.y)*wp*wpl/d
-          this.wp.push({n:n++,x,y})
+          let feature = getFeature(this.game.ctx_background,x,y)
+          this.wp.push({n:n++,x,y,feature:feature})
+          console.log(wp,feature)
         }
-        this.wp.push({n:n++,x:p2.x,y:p2.y})
+        let feature = getFeature(this.game.ctx_background,p2.x,p2.y)
+        this.wp.push({n:n++,x:p2.x,y:p2.y,feature:feature})
       }else{
-        //quad segments, now circular segments
-        let quadSegment = this._segments.segments[i].segment
         //line segment before this
         let seg1 = this._segments.segments[i-1].segment
         //line segment before this
@@ -277,12 +309,13 @@ class Path {
         let {p1:p1,p2:p2}=seg1
         let {p1:p3,p2:p4}=seg2
         let {x,y,radius} = circle(p1,p2,p3,p4)
-        console.log(`Seg: ${i},${x},${y},${radius}`)
+        //console.log(`Seg: ${i},${x},${y},${radius}`)
 
-        let finalpoints = pointsAlongArcNew(x,y,radius,p2.x,p2.y,p3.x,p3.y)
+        let finalpoints = pointsAlongArcNew(x,y,radius,p2.x,p2.y,p3.x,p3.y,this.ctx)
         for(let i=0;i<finalpoints.length;i++){
-          this.wp.push({n:n++,x:finalpoints[i].x,y:finalpoints[i].y})
-          console.log(`Along Curve:${n}, ${finalpoints[i].x},${finalpoints[i].y}`)
+          let feature = getFeature(this.game.ctx_background,x,y)
+          this.wp.push({n:n++,x:finalpoints[i].x,y:finalpoints[i].y,feature:feature})
+          //console.log(`Along Curve:${n}, ${finalpoints[i].x},${finalpoints[i].y}`)
         }
       }
     }
@@ -297,7 +330,7 @@ class Path {
       let rad
       let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 12 : 10
       let h = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 4 : 4
-      if (this.i - ptAdjust > -1) {
+      if ((this.i - ptAdjust > -1) && p1.feature!=Game.FEATURE_TUNNEL) {
         if (p3) {
           rad = Math.atan((p3.y - p1.y) / (p3.x - p1.x));
         }
@@ -393,7 +426,7 @@ class Path {
               event = new CustomEvent("info", {
                 detail: {
                   train: this.name,
-                  text: `${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`
+                  text: `${num} P, ${currCity.substring(0,3)}-${station.name.substring(0,3)} @ ${fare} = ${Math.ceil(num*fare/1000)} K`
                 }
               });
               document.dispatchEvent(event);
@@ -409,7 +442,7 @@ class Path {
           //take in passengers for the cities on the way back to the originating station
           this.stations.forEach(station=>{
             if(station.wpn<currCity_wpn){
-              let num = Math.floor(this.game.passengers.numAvailable(currCity,station.name))
+              let num = Math.ceil(this.game.passengers.numAvailable(currCity,station.name))
               //second check the room
               let room = this.train.passenger_room_available
               num = Math.min(num,room)
@@ -421,7 +454,7 @@ class Path {
               event = new CustomEvent("info", {
                 detail: {
                   train: this.name,
-                  text: `${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`
+                  text: `${num} P, ${currCity.substring(0,3)}-${station.name.substring(0,3)} @ ${fare} = ${Math.floor(num*fare/1000)} K`
                 }
               });
               document.dispatchEvent(event);

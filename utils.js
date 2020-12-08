@@ -208,29 +208,115 @@ function pointsAlongArc(x, y, r, p1x, p1y, p2x, p2y) {
 
   return finalpoints
 }
-function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y) {
-  console.log(x, y, r, p1x, p1y, p2x, p2y);
-  //find all the points along the circumfrence of a circle
-  const GAP = 2
-  let points = [];
-  let n = Math.floor(2 * Math.PI * r / GAP)
 
-  // for (let i = 0; i < n; i++) {
-  //   let _x = x + r * Math.cos((((i * 360) / n) * Math.PI) / 180);
-  //   let _y = y + r * Math.sin((((i * 360) / n) * Math.PI) / 180);
-  //   points.push(new Point(_x, _y));
-  // }
+function findPointOnCircle(x, y, r, extx, exty) {
+  let extl = lineLength(x, y, extx, exty);
+  //on line connecting x,y,extx.exty we get the point
+  //by prorating
+  let xCirc = x + ((extx - x) * r) / extl;
+  let yCirc = y + ((exty - y) * r) / extl;
+  return { x: xCirc, y: yCirc };
+}
+
+function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y, ctx) {
+
+  //display a circle
+  ctx.beginPath();
+  ctx.strokeStyle = "rgb(0,0,0)";
+  ctx.lineWidth = 0.1
+  ctx.moveTo(x+r, y);
+  ctx.arc(x, y, r, 0, 2*Math.PI);
+  ctx.stroke();
+
+  let points = [];
+  let d = 2;
+  let done = true;
+  do {
+      // points.push({ x: p1x, y: p1y });
+      // ctx.beginPath();
+      // ctx.fillStyle = "rgb(0,0,0)";
+      // ctx.moveTo(p1x, p1y);
+      // ctx.arc(p1x, p1y, 1, 0, Math.PI);
+      // ctx.fill();
+
+      let m = (y - p1y) / (x - p1x);
+      let theta = Math.atan(m);
+      // console.log(
+      //     `num:${num},theta:${theta}, S:${Number.parseFloat(d * Math.sin(theta)).toFixed(3)}, C:${Number.parseFloat(d * Math.cos(theta)).toFixed(3)}`
+      // );
+      //calculate 2 points on either side of p1
+      let p_1 = { x: p1x + d * Math.sin(theta), y: p1y - d * Math.cos(theta) };
+      let p_2 = { x: p1x - d * Math.sin(theta), y: p1y + d * Math.cos(theta) };
+      //calculate distance from those points to p2
+      let l_1 = lineLength(p_1.x, p_1.y, p2x, p2y);
+      let l_2 = lineLength(p_2.x, p_2.y, p2x, p2y);
+      if (l_1 <= l_2) {
+          //now p_1 becomes the new p1
+          //ensure that p_1 lies between p1 and p2
+          // console.log(
+          //     num,
+          //     p_1.x,
+          //     p_1.y,
+          //     "l_1",
+          //     lineLength(p_1.x, p_1.y, p2x, p2y) - d
+          // );
+          if (lineLength(p_1.x, p_1.y, p2x, p2y) > d) {
+              //find the point a new point on the findPointOnCircle
+              let p = findPointOnCircle(x, y, r, p_1.x, p_1.y);
+              p1x = p.x;
+              p1y = p.y;
+              done = false;
+          } else {
+              done = true;
+          }
+      } else {
+          //now p_2 becomes the new p1
+          // console.log(
+          //     num,
+          //     p_2.x,
+          //     p_2.y,
+          //     "l_2",
+          //     lineLength(p_2.x, p_2.y, p2x, p2y) - d
+          // );
+          if (lineLength(p_2.x, p_2.y, p2x, p2y) > d) {
+              let p = findPointOnCircle(x, y, r, p_2.x, p_2.y);
+              p1x = p.x;
+              p1y = p.y;
+              done = false;
+          } else {
+              done = true;
+          }
+      }
+      if (!done) {
+          points.push({ x: p1x, y: p1y });
+          ctx.beginPath();
+          ctx.fillStyle = "rgb(255,0,0)";
+          ctx.moveTo(p1x, p1y);
+          ctx.arc(p1x, p1y, 1, 0, Math.PI);
+          ctx.fill();
+      }
+  } while (!done);
+
+  return points
+}
+
+//replaced with another version. Renamed this to _previous
+function pointsAlongArcNew_previous(x, y, r, p1x, p1y, p2x, p2y) {
+  
+  console.log(x, y, r, p1x, p1y, p2x, p2y);
+
   //find the 2 points on either side of p1 on the arc
-  dtheta = 2*Math.PI/180 //2 degrees in radians
-  let newx = null
-  let newy = null
+  let dtheta = Math.PI/90 //2 degrees in radians
+  let arclength = dtheta*r
   let finalpoints = [];
   let done = true
   do {
-    finalpoints.push({x:p1x,y:p1y}) 
+    //finalpoints.push({x:p1x,y:p1y}) 
+    let m = (y-p1y)/(x-p1x)
+    let theta = Math.atan(m)
     //calculate 2 points on either side of p1 
-    let p_1 = {x: p1x + r*dtheta*Math.sin(dtheta),y: p1y + r*dtheta*Math.cos(dtheta)}
-    let p_2 = {x: p1x - r*dtheta*Math.sin(*dtheta),y: p1y - r*dtheta*Math.cos(dtheta)}
+    let p_1 = {x: p1x + arclength*Math.sin(theta),y: p1y - arclength*Math.cos(theta)}
+    let p_2 = {x: p1x - arclength*Math.sin(theta),y: p1y + arclength*Math.cos(theta)}
     //calculate distance from those points to p2 
     let l_1 = lineLength(p_1.x,p_1.y,p2x,p2y)
     let l_2 = lineLength(p_2.x,p_2.y,p2x,p2y)
@@ -253,6 +339,7 @@ function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y) {
         done=true
       }
     }
+    finalpoints.push({x:p1x,y:p1y}) 
   } while (!done);
 
   
@@ -296,4 +383,14 @@ function play( audio, time_in_milisec){
   //audio.loop = true;
   audio.play();
   setTimeout(() => { audio.pause(); }, time_in_milisec);
+}
+function getFeature(ctx,x,y){
+  let feature = Game.FEATURE_LAND
+  let imgData = ctx.getImageData(x, y, 1, 1)
+  if(imgData.data[0]==77 && imgData.data[0]==77 && imgData.data[0]==247){
+    feature = Game.FEATURE_WATER
+  }else if(imgData.data[0]==255 && imgData.data[0]==255 && imgData.data[0]==255){
+    feature = Game.FEATURE_TUNNEL
+  }
+  return feature
 }
