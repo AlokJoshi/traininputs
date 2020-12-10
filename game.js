@@ -163,7 +163,9 @@ class Game {
         this.currentMousePosition.x = event.offsetX
         this.currentMousePosition.y = event.offsetY
         if (!this.currentPath.finalized && this.state==Game.ROUTE_EDITING_STATE) {
+          //AJ 12/8/20 Commented out the following
           this.drawPaths()
+
           //if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
           //console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
           if (this.lastClick.x!=null) {
@@ -217,10 +219,16 @@ class Game {
             }
           }
         } else if (event.key == 'a') {
-          if (this.currentPath.isValid && !this.currentPath.finalized) {
+          if(!this.currentPath.isValid){
+            //delete this path and set the current path to null
+            this.paths.deletePath(this.currentPath)
+            this.currentPath = null
+            this.selectedPathNum--
+          } else if (!this.currentPath.finalized) {
             this.currentPath.finalized = true
-            this.currentPath.createWayPoints()
-            this.currentPath.updateStations()
+            //AJ 12/9/20 removed from here and added only if the path is finalized
+            //this.currentPath.createWayPoints()
+            //this.currentPath.updateStations()
             this.cashflow.trackcost = this.currentPath.pathCapitalCost
             this.cashflow.enginecost = Game.COST_ENGINE
             this.cashflow.coachcost = Game.COST_PASSENGER_COACH
@@ -229,17 +237,24 @@ class Game {
           this.lastClick.y=null
           this.currentPath = new Path(this,this.ctx_foreground)
           this.paths.addPath(this.currentPath)
+          this.selectedPathNum = this.paths.length
         }
       } 
       
 
       if (this.state == Game.TRAIN_EDITING_STATE) {
-        if(this.currentPath.isValid && !this.currentPath.finalized){
+        if(!this.currentPath.isValid){
+          //delete this path and set the current path to null
+          this.paths.deletePath(this.currentPath)
+          this.currentPath = null
+          this.selectedPathNum--
+        }else if(!this.currentPath.finalized){
           this.lastClick.x = null
           this.lastClick.y = null
           this.currentPath.finalized = true
-          this.currentPath.createWayPoints()
-          this.currentPath.updateStations()
+          //AJ 12/9/20 removed from here and added only if the path is finalized
+          //this.currentPath.createWayPoints()
+          //this.currentPath.updateStations()
           this.cashflow.trackcost = this.currentPath.pathCapitalCost
         }
         if(event.key == 'n'){
@@ -259,7 +274,7 @@ class Game {
           this.updateHUD()
         }
       }
-
+      
       if (this.state == Game.RUNNING_STATE) {
         if(event.key=='r' || event.key=='t'){
           return
@@ -284,19 +299,25 @@ class Game {
           this.updateHUD()
           return  
         }
-        if(this.currentPath.isValid && !this.currentPath.finalized){
+        if(!this.currentPath.isValid){
+          //delete this path and set the current path to null
+          this.paths.deletePath(this.currentPath)
+          this.currentPath = null
+          this.selectedPathNum--
+        }else if(!this.currentPath.finalized){
           this.lastClick.x = null
           this.lastClick.y = null
           this.currentPath.finalized = true
-          this.currentPath.createWayPoints()
-          this.currentPath.updateStations()
+          //AJ 12/9/20 removed from here and added only if the path is finalized
+          //this.currentPath.createWayPoints()
+          //this.currentPath.updateStations()
           this.cashflow.trackcost = this.currentPath.pathCapitalCost
         }
         if (this.paths.atLeastOnePathFinalized) {
           this.animationMode = true
           this.i = 0;
           this.paths.createWayPoints()
-          //this.paths.updateStations()
+          //AJ 12/8/20 commented out the following line..no
           this.paths.drawBackground(this.ctx_background)
           this.paths.drawStations(this.ctx_background)
           //cities.draw(ctx_background)
@@ -326,6 +347,7 @@ class Game {
   animate = () => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
+    
     if (this.state == Game.RUNNING_STATE) {
       if (this.frames % Game.FRAMES_PER_TIME_PERIOD == 0) {
         this.period = Math.floor(this.frames / Game.FRAMES_PER_TIME_PERIOD)
@@ -374,7 +396,7 @@ class Game {
       default:
         break;
     }
-    this.hud.display(txt,this.state,this.paths.paths[this.selectedPathNum-1].name)
+    this.hud.display(txt,this.state,this.selectedPathNum==0?'None':this.paths.paths[this.selectedPathNum-1].name)
   }
 }
 

@@ -6,6 +6,9 @@ class Paths {
   addPath(path) {
     this._paths.push(path)
   }
+  deletePath(path) {
+    this._paths = this._paths.filter(p=>p.number!=path.number)
+  }
   addApproxStationLocation(pathNum, x, y){
     this._paths[pathNum - 1].addApproxStationLocation(x, y)
   }

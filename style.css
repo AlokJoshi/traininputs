@@ -81,3 +81,9 @@ table, th, td {
 .sticky + .content {
   padding-top: 60px;
 }
+
+keytype {
+  font-style: italic;
+  font-weight: bold;
+  color: green;
+}

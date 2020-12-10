@@ -74,38 +74,40 @@
         lines,
         the game
         will automatically create curved lines between each pair of straight lines.
-        If you to delete the last point you clicked, you can press the 'd' key. If you have completed one route
+        If you to delete the last point you clicked, you can press the <keytype>d</keytype> key. If you have completed one route
         and want to create another route, you will press the 'a' key. This will start the process of adding another
         route.
         Once you have created the routes, they cannot be edited or deleted.
-        When you have created one or more routes, you can press the 'g' key to get into the game mode.
+        When you have created one or more routes, you can press the '<keytype><keytype>g</keytype></keytype>' key to get into the game mode.
         A separate train will run on each of the routes.
         Cost of the track is proportional to the distance of the route.
       </p>
       <h4>Train Editing State</h4>
       <p>Each route will automatically get one train. By default the train will consist of an engine and one passenger
         coach. If you want to add
-        another coach to the train, you will need to press the plus(+) key. To remove one coach from the train you will
-        press the minus key(-).
+        another coach to the train, you will need to press the plus(<keytype>+</keytype>) key. To remove one coach from the train you will
+        press the minus key(<keytype>-</keytype>).
       </p>
       <h4>Paused State</h4>
-      <p>You can pause the game. When you do this you will be in a Paused State. Time stops in this state.
+      <p>You can pause the game. When you do this you will be in a Paused State. Time stops in this state. Once you are 
+        in the paused state you can go to Route Editing State (r key), Train Editing State(t key). Note that when you come
+        back to Route Editing State from the Paused state, you have to click on the a key to start adding another route.
+        You go back to the running state by pressing the <keytype><keytype>g</keytype></keytype> key.
       </p>
       <h4>Running State</h4>
       <p>In this state you should see your trains moving around from one station to another.
       </p>
       <h4>How to get to these states?</h4>
       <p>Here again we use keyboard keys to get to various states</p>
-      <p>'r' will switch you to the Route Editing State if you are not in Running State</p>
+      <p><keytype>d</keytype> will switch you to the Route Editing State if you are not in Running State</p>
       <ul>
         <li>Clicking within the blue circle for any city will start the process of creating a route. Click at
           points between and then inside the blue circle of the destination city.
         </li>
       </ul>
-      <p>'s' will switch you to the Station Editing State if you are not in Running State</p>
-      <p>'t' will switch you to the Train Editing State if you are not in Running State</p>
-      <p>'p' will switch you to the Paused State if you are in the Running State</p>
-      <p>'g' for game, will switch you to the Running State</p>
+      <p><keytype>t</keytype> will switch you to the Train Editing State if you are not in Running State</p>
+      <p><keytype>p</keytype> will switch you to the Paused State if you are in the Running State</p>
+      <p><keytype>g</keytype> for game, will switch you to the Running State</p>
     </div>
     <div id='contact'>
       <h3>Contact</h3>
@@ -138,9 +140,9 @@
         or the computer.
       </p>
       <p>Try and become a Train Tycoon by Pd 500.</p>
-      <p>You can speed up the game by clicking on the + key once or repeatedly in the Running state. This makes the time
+      <p>You can speed up the game by clicking on the <keytype>+</keytype> key once or repeatedly in the Running state. This makes the time
         pass fast.
-        Similarly the game slows down with the - key. p is ofcourse for pausing the game. Once you are in the Paused
+        Similarly the game slows down with the <keytype>-</keytype> key. p is ofcourse for pausing the game. Once you are in the Paused
         state you
         can add another route, add or remove coaches in existing trains.
       </p>
@@ -157,18 +159,6 @@
         nobis quam, magnam doloremque itaque. Fugiat, iure quasi. Facere tenetur nam accusantium unde perferendis vitae
         excepturi nihil.</p>
     </div>
-    <!-- <div id='menu'>
-            <p>Menu</p>
-            <select id="railwaytracks">
-              <option></option>    
-            </select>
-            <p>Number of Passenger Coaches</p>
-            <p>Number of Freight Wagons</p>
-            <table id="passengers">
-            </table>
-            <table id="ticketprices">
-            </table>
-          </div> -->
   </div>
   <div id="canvases">
     <canvas id="background"></canvas>

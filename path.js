@@ -64,12 +64,21 @@ class Path {
   }
   set finalized(value){
     this._finalized=value 
+    if(value==true){
+      console.log(`Route ${this.number} finalized and way points being created`)
+      //this.createWayPoints()
+      this.updateStations()
+    }
   }
   get isValid(){
     //the length of points has to be greater than 1
-    return this.length>1 && 
-      getClosestCity(this.game.cities,this.points[0].x,this.points[0].y) != '' && 
-      getClosestCity(this.game.cities,this.points[this.length-1].x,this.points[this.length-1].y) != ''
+    // return this.length>1 && 
+    //   getClosestCity(this.game.cities,this.points[0].x,this.points[0].y) != '' && 
+    //   getClosestCity(this.game.cities,this.points[this.length-1].x,this.points[this.length-1].y) != ''
+    return this.length>1 &&
+      distanceToClosestCity(this.game.cities,this.points[0].x,this.points[0].y)<=Game.CITY_RADIUS &&
+      distanceToClosestCity(this.game.cities,this.points[this.length-1].x,this.points[this.length-1].y)<=Game.CITY_RADIUS
+
   }
   getPathLengthOverWater(){
     //for each of the way points check if it is over the water
@@ -168,8 +177,6 @@ class Path {
   }
 
   createSegments() {
-    //this._lineSegments = new Array()
-    //this._quadraticSegments = new Array()
     this._segments = new Segments()
     let segment_number=1
     for (let ip = 0; ip < this.length; ip++) {
@@ -208,18 +215,19 @@ class Path {
             //starting point is p2_
             //and ending point is this.game.MIN_LENGTH away from p2
             endPoint = new Point(p2.x + (p1.x - p2.x) * Game.MIN_LENGTH / l2, p2.y + (p1.y - p2.y) * Game.MIN_LENGTH / l2)
-            console.log(`endPoint calculated when ip<this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
+            // console.log(`endPoint calculated when ip<this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
           }else{
             endPoint = this.points[ip]  //added on 11/09/20
-            console.log(`endPoint calculated when ip==this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
+            // console.log(`endPoint calculated when ip==this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
           }//added on 11/09/20
           //this._lineSegments.push(new LinSeg(segment_number++,p2_, endPoint))
           this._segments.add(segment_number,true,new LinSeg(segment_number,p2_, endPoint))
         }else{
-          console.log(`_lineSegment not added for ip:${ip}`)
+          // console.log(`_lineSegment not added for ip:${ip}`)
         }
       }
     }
+    this.createWayPoints()
   }
   startingLinSegment(segment_number,p1, p2, d) {
     let l = Math.pow((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y), 0.5)
@@ -240,19 +248,6 @@ class Path {
     this._segments.draw(this.ctx, pathColor)
   }
   drawBackground(ctx) {
-    //AJ 11/30
-    // try {
-    //   this._lineSegments.forEach(l => l.drawBackground(ctx))
-    //   //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
-    // } catch (error) {
-    //   console.log('error: ' + error)
-    // }
-    // try {
-    //   this._quadraticSegments.forEach(l => l.drawBackground(ctx))
-    //   //console.log(`drawBackground on linSeg called for ${JSON.stringify(l)}` )
-    // } catch (error) {
-    //   console.log('error: ' + error)
-    // }
     this._segments.drawBackground(ctx)
   }
   atStation(i){
@@ -278,15 +273,16 @@ class Path {
   }
   createWayPoints(){
 
+    if(this.finalized) return
+
     //first create segments
-    this.createSegments()
+    //this.createSegments()
 
     //this replaces scanNeighbors
     let n = 0
     this.wp=[]
     let wpl=Path.WPL
     for(let i=0;i<this._segments.length;i++){
-      console.log(`this._segments.segments[${i}].lineSegment: ${this._segments.segments[i].lineSegment}`)
       if(this._segments.segments[i].lineSegment){
         //line segments
         let lineSegment = this._segments.segments[i].segment
@@ -297,7 +293,7 @@ class Path {
           let y = p1.y+(p2.y-p1.y)*wp*wpl/d
           let feature = getFeature(this.game.ctx_background,x,y)
           this.wp.push({n:n++,x,y,feature:feature})
-          console.log(wp,feature)
+          //console.log(wp,feature)
         }
         let feature = getFeature(this.game.ctx_background,p2.x,p2.y)
         this.wp.push({n:n++,x:p2.x,y:p2.y,feature:feature})
