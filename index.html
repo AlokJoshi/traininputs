@@ -44,10 +44,10 @@
       and this engine can pull any number of passenger coaches</p>
     <p><b>Passenger Coach:</b> Each Passenger Coach costs G$ 20000.
       Note that if you reduce the number of coaches, the coach does not earn
-      you any resales at all. Each passenger coach has a capacity of 30
+      you any resale. Each passenger coach has a capacity of 30
       passengers. Also note that when passengers are boarded, the passengers
       for the farthest destination are boarded first and so on for the
-      remaining destinations if there is any coach capacity left.
+      remaining destinations (from farthest to closest destination) if there is any coach capacity left.
     </p>
     <p><b>Station:</b> Each Station costs G$ 50000.
     </p>
@@ -57,7 +57,7 @@
     </p>
     <p><b>Depreciation Cost:</b> The depreciation is calculated internally to work out the profit after depreciation for 
       taxation purposes. The depreciation is a straight line depreciation over 200 periods. 
-      However, it flows back in to the cash.
+      However, it flows back in to the cash and your cash balance reflects that.
     </p>
     <p>You have no control over Maintenance Cost, Running Cost and Depreciation</p>
     <p>Once a train is started on any given route, there is no way to stop the train in this version of the game.</p>
@@ -65,22 +65,23 @@
     <p>The space bar will switch between the game screen and this scree</p>
     <div id='how'>
       <h3>How to Play</h3>
+      <p>Press <keytype>space</keytype> key to the game graphics screen</p>
       <p>At any time you will be in one of the following stages(states) of play</p>
       <h4>Route Editing State</h4>
       <p>Here the idea is to identify the route that your train should take between two or more cities. So you will
-        click
-        on one city
-        and then on another city or a point between those cities and so on tracing the route from one city to 2 or more
-        cities. As
-        you continue to click, you will see lines between those points. While you will be clicking to draw straight
-        lines,
-        the game
-        will automatically create curved lines between each pair of straight lines.
+        click on one city and then on another city or a point between those cities and so on tracing the route from one city to 2 or more
+        cities. As you continue to click, you will see lines between those points. While you will be clicking to draw straight
+        lines, the game will automatically create curved lines between each pair of straight lines that meet an an angle.
+        Note that since the train cannot take sharp turns, the angle beween 2 lines cannot be less than 90 degrees. Similarly each line
+        has to be a reasonable size. These two are incorporated in the user interface by ensuring that the click results in a line only
+        if both these conditions are true.
         If you to delete the last point you clicked, you can press the <keytype>d</keytype> key. If you have completed one route
-        and want to create another route, you will press the 'a' key. This will start the process of adding another
-        route.
+        and want to create another route, you will press the <keytype>a</keytype> key. This will start the process of adding another
+        route. Any number of routes can start at a city or end at a city or transit through a city.
         Once you have created the routes, they cannot be edited or deleted.
-        When you have created one or more routes, you can press the '<keytype><keytype>g</keytype></keytype>' key to get into the game mode.
+        When you have created one or more routes, you can press the <keytype>g</keytype> key to get into the game mode. However by
+        default a train will get only one coach. If you want to add a additional coach you should press the <keytype>t</keytype> key for Train Editing
+        and add a coach by pressing the <keytype>+</keytype> key.
         A separate train will run on each of the routes.
         Cost of the track is proportional to the distance of the route.
       </p>
@@ -103,15 +104,19 @@
       </p>
       <h4>How to get to these states?</h4>
       <p>Here again we use keyboard keys to get to various states</p>
+      <p>The keys you can press to get to various states are shown at the very top of the game graphics screen at all times</p>
+      <p>You always start in the Route Editing state</p>
+      <p>Typically once you finish creating a route you will press the <keytype>t</keytype> key to switch to the Train Editing state
+      and add additional coaches if you need to</p>
+      <p>Having done this you will typically switch to the Running State by pressing the <keytype>g</keytype> key to resume the game.</p>
       <p><keytype>d</keytype> will switch you to the Route Editing State if you are not in Running State</p>
-      <ul>
-        <li>Clicking within the blue circle for any city will start the process of creating a route. Click at
-          points between and then inside the blue circle of the destination city.
-        </li>
-      </ul>
-      <p><keytype>t</keytype> will switch you to the Train Editing State if you are not in Running State</p>
+      <p>Generally speaking you will use the following keys to switch to various states</p>
+      <p><keytype>t</keytype> will switch you to the Train Editing State if you are not in Running State. To go from Running State to Train Editing State
+      you have to press the <keytype>p</keytype> key to go to Paused State</p>
       <p><keytype>p</keytype> will switch you to the Paused State if you are in the Running State</p>
       <p><keytype>g</keytype> for game, will switch you to the Running State</p>
+      <p><keytype>space</keytype> key, will switch you to the documentation screen. If you are already in this screen, the <keytype>space</keytype> key
+      will switch you back to the Game graphics screen</p>
     </div>
     <div id='contact'>
       <h3>Contact</h3>

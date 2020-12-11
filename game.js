@@ -386,17 +386,17 @@ class Game {
     let txt=`Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash/1000)} K State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
-        txt=`Route Editing: ${this.previous_state==Game.ROUTE_EDITING_STATE?'click-click, ':''}a(add another route), t(train), g(resume game)`
+        txt=`Route Editing: ${this.previous_state==Game.ROUTE_EDITING_STATE?'click-click, ':''}a(add another route), t(train), g(resume game), space(to documentation and back)`
         break;
       case Game.TRAIN_EDITING_STATE:
         if(this.selectedPathNum==0) this.selectedPathNum=1
-        txt+=`Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game)`
+        txt+=`Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game), space(to documentation and back)`
         break;
       case Game.RUNNING_STATE:
-        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'}), n(next train info)`
+        txt+=`Running: p(pause), +(speed up), -(slow down), w(${this.makeSound==true?'whistle off':'whistle on'}), n(next train info), space(to documentation and back)`
         break;
       case Game.PAUSED_STATE:
-        txt+=`Paused: r(Route Editing), t(Train Editing), g(resume game)`
+        txt+=`Paused: r(Route Editing), t(Train Editing), g(resume game), space(to documentation and back)`
         break;
     
       default:
