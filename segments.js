@@ -11,9 +11,9 @@ class Segments{
       }
     )
   }
-  draw(ctx,pathEditMode){
-    this.segments.forEach(s=>s.segment.draw(ctx))
-  }
+  // draw(ctx,pathEditMode){
+  //   this.segments.forEach(s=>s.segment.draw(ctx))
+  // }
   drawBackground(ctx){
     this.segments.forEach(s=>s.segment.drawBackground(ctx))  
   }

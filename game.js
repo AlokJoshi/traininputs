@@ -174,7 +174,6 @@ class Game {
           //if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
           //console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
           if (this.lastClick.x!=null) {
-            console.log(`Clicked`)
             this.ctx_routedesign.beginPath()
             this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
             this.ctx_routedesign.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)

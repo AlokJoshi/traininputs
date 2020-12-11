@@ -20,7 +20,7 @@ class Path {
     this.wp = []
 
     this.i = 0
-    this.ptGap = 4
+    this.ptGap = 3
     this.approxStationLocations = new Array()
     this.stations = []
     this.numFrames = 0
@@ -48,17 +48,11 @@ class Path {
     console.log(`popPoint() called`)
     this.points.pop()
   }
+  get numWaypoints(){
+    return this.wp.length  
+  }
   get pathLength(){
-    // let pl = 0
-    // this.lineSegments.forEach(s=>{
-    //   console.log(`lineseg:${s.length}`)
-    //   pl+=s.length
-    // })
-    // this.quadraticSegments.forEach(s=>{
-    //   console.log(`QuadSeg:${s.length}`)
-    //   pl+=s.length
-    // })
-    return this.wp.length*Path.WPL
+    return this.numWaypoints*Path.WPL
   }
   get finalized(){
     return this._finalized
@@ -66,7 +60,7 @@ class Path {
   set finalized(value){
     this._finalized=value 
     if(value==true){
-      console.log(`Route ${this.number} finalized and way points being created`)
+      //console.log(`Route ${this.number} finalized and way points being created`)
       this.createSegments()
       this.createWayPoints()
       this.updateStations()
@@ -115,7 +109,7 @@ class Path {
     let overWater = this.getPathLengthOverWater()
     let inTunnel = this.getPathLengthInTunnel()
     let overLand = this.pathLength-overWater-inTunnel
-    console.log(`Over water: ${overWater}, over land:${overLand}`)
+    //console.log(`Over water: ${overWater}, over land:${overLand}`)
     return Math.floor(overLand * Game.TRACK_COST_PER_UNIT + (overWater+inTunnel) * 20 * Game.TRACK_COST_PER_UNIT)
   }
   // addApproxStationLocation(x,y){
@@ -170,7 +164,6 @@ class Path {
 
   get lineSegments() {
     return this._segments.lineSegments
-    //return this._lineSegments
   }
 
   get quadraticSegments() {
@@ -186,10 +179,8 @@ class Path {
         //second point
         //create one linear segment only
         if (this.length == 2) {
-          //this._lineSegments.push(new LinSeg(segment_number++,this.points[0], this.points[1]))
           this._segments.add(segment_number,true,new LinSeg(segment_number,this.points[0], this.points[1]))
         } else {
-          //this._lineSegments.push(this.startingLinSegment(segment_number++,this.points[0], this.points[1], this.game.MIN_LENGTH))
           this._segments.add(segment_number,true,this.startingLinSegment(segment_number,this.points[0], this.points[1], Game.MIN_LENGTH))
         }
       } else if (ip > 1) {
@@ -222,7 +213,6 @@ class Path {
             endPoint = this.points[ip]  //added on 11/09/20
             // console.log(`endPoint calculated when ip==this.length-1=${ip},${this.length-1}:${endPoint.x},${endPoint.y}`)
           }//added on 11/09/20
-          //this._lineSegments.push(new LinSeg(segment_number++,p2_, endPoint))
           this._segments.add(segment_number,true,new LinSeg(segment_number,p2_, endPoint))
         }else{
           // console.log(`_lineSegment not added for ip:${ip}`)
@@ -241,7 +231,7 @@ class Path {
     if(!this.finalized){
       this.createSegments()
     }
-    this._segments.draw(this.ctx, pathColor)
+    //this._segments.draw(this.ctx, pathColor)
   }
   drawRoute(pathColor) {
     //route is drawn on ctxRouteDesign. It uses the points array
@@ -325,7 +315,7 @@ class Path {
       p1 = this.wp[this.i - ptAdjust];
       p3 = this.wp[this.i + 1 - ptAdjust];
       let rad
-      let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 12 : 10
+      let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 12 : 8
       let h = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 4 : 4
       if ((this.i - ptAdjust > -1) && p1.feature!=Game.FEATURE_TUNNEL) {
         if (p3) {
@@ -343,13 +333,21 @@ class Path {
         ctx.fillRect(0, 0, w, h);
         //if(this.i%4==0 && (iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)){
         if((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)){
-          if(this.i%4==0){
+          if(this.i%6==0){
 
             //smoke
             ctx.beginPath()
             ctx.moveTo(this.going?w-2:2,0)
             ctx.arc(this.going?w-2:2,2,1,0,2*Math.PI)
             ctx.fillStyle='rgba(212,212,212,0.7)'
+            ctx.fill()
+          }else if(this.i%6==3){
+
+            //smoke
+            ctx.beginPath()
+            ctx.moveTo(this.going?w-2:2,0)
+            ctx.arc(this.going?w-4:4,2,4,0,2*Math.PI)
+            ctx.fillStyle='rgba(180,180,180,0.5)'
             ctx.fill()
           }
 

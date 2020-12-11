@@ -9,9 +9,7 @@ class Paths {
   deletePath(path) {
     this._paths = this._paths.filter(p=>p.number!=path.number)
   }
-  addApproxStationLocation(pathNum, x, y){
-    this._paths[pathNum - 1].addApproxStationLocation(x, y)
-  }
+  
   addStation(pathNum, x, y) {
     this._paths[pathNum - 1].addStation(x, y)
   }
@@ -69,13 +67,13 @@ class Paths {
   get paths() {
     return this._paths
   }
-  get pathLength(){
-    let pathlength=0
-    for (let i = 0; i < this.numPaths; i++) {
-      pathlength+=this._paths[i].pathLength
-    }
-    return pathlength
-  }
+  // get pathLength(){
+  //   let pathlength=0
+  //   for (let i = 0; i < this.numPaths; i++) {
+  //     pathlength+=this._paths[i].pathLength
+  //   }
+  //   return pathlength
+  // }
   draw() {
     for (let i = 0; i < this.numPaths; i++) {
       this._paths[i].draw(this.pathColor(i))
