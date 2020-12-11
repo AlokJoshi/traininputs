@@ -81,6 +81,11 @@ class Paths {
       this._paths[i].draw(this.pathColor(i))
     }
   }
+  drawRoute() {
+    for (let i = 0; i < this.numPaths; i++) {
+      this._paths[i].drawRoute(this.pathColor(i))
+    }
+  }
   drawStations(ctx){
     for (let i = 0; i < this.numPaths; i++) {
       this._paths[i].drawStations(ctx)

@@ -68,6 +68,7 @@ class Game {
 
     this.background = document.querySelector('#background')
     this.foreground = document.querySelector('#foreground')
+    this.routedesign = document.querySelector('#routedesign')
     this.hudElement = document.querySelector('#hud')
     this.tooltipElement = document.querySelector('#tooltip')
 
@@ -77,11 +78,16 @@ class Game {
     this.foreground.width = this.width//window.innerWidth
     this.foreground.height = this.height//window.innerHeight
 
+    this.routedesign.width = this.width//window.innerWidth
+    this.routedesign.height = this.height//window.innerHeight
+
     this.hudElement.width = this.width//window.innerWidth
     this.hudElement.height = 40 //window.innerHeight
 
     this.ctx_background = this.background.getContext('2d')
     this.ctx_foreground = this.foreground.getContext('2d')
+    this.ctx_routedesign = this.routedesign.getContext('2d')
+
     this.hud = new Hud(this.hudElement)
     this.tooltip = new ToolTip(this.tooltipElement)
 
@@ -98,7 +104,7 @@ class Game {
     this.ctx_foreground.lineWidth = Game.LINE_WIDTH
     this.ctx_foreground.globalCompositeOperation = 'source-over'
 
-    this.currentPath = new Path(this,this.ctx_foreground)
+    this.currentPath = new Path(this,this.ctx_foreground,this.ctx_routedesign)
     this.paths.addPath(this.currentPath)
     this.selectedPathNum = this.paths.numPaths
 
@@ -119,7 +125,7 @@ class Game {
 
 
   addEventListeners() {
-    this.foreground.addEventListener('click', (event)=> {
+    this.routedesign.addEventListener('click', (event)=> {
       if (this.state == Game.ROUTE_EDITING_STATE && !this.currentPath.finalized) {
         let city = getClosestCityObject(this.cities,event.offsetX,event.offsetY)
         let clickedWithinCityLimits = 'name' in city
@@ -146,9 +152,9 @@ class Game {
     })
   }
 
-  drawPaths() {
-    this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
-    this.paths.draw()
+  drawRoutes() {
+    this.ctx_routedesign.clearRect(0, 0, this.routedesign.width, this.routedesign.height)
+    this.paths.drawRoute()
   }
 
   addMouseListener() {
@@ -163,16 +169,16 @@ class Game {
         this.currentMousePosition.x = event.offsetX
         this.currentMousePosition.y = event.offsetY
         if (!this.currentPath.finalized && this.state==Game.ROUTE_EDITING_STATE) {
-          //AJ 12/8/20 Commented out the following
-          this.drawPaths()
+          this.drawRoutes()
 
           //if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
           //console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
           if (this.lastClick.x!=null) {
-            this.ctx_foreground.beginPath()
-            this.ctx_foreground.moveTo(this.lastClick.x, this.lastClick.y)
-            this.ctx_foreground.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
-            this.ctx_foreground.stroke()
+            console.log(`Clicked`)
+            this.ctx_routedesign.beginPath()
+            this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
+            this.ctx_routedesign.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
+            this.ctx_routedesign.stroke()
           }
         }
       }else if(this.state==Game.RUNNING_STATE){
@@ -219,23 +225,25 @@ class Game {
             }
           }
         } else if (event.key == 'a') {
-          if(!this.currentPath.isValid){
-            //delete this path and set the current path to null
-            this.paths.deletePath(this.currentPath)
-            this.currentPath = null
-            this.selectedPathNum--
-          } else if (!this.currentPath.finalized) {
-            this.currentPath.finalized = true
-            //AJ 12/9/20 removed from here and added only if the path is finalized
-            //this.currentPath.createWayPoints()
-            //this.currentPath.updateStations()
-            this.cashflow.trackcost = this.currentPath.pathCapitalCost
-            this.cashflow.enginecost = Game.COST_ENGINE
-            this.cashflow.coachcost = Game.COST_PASSENGER_COACH
+          if(this.currentPath!=null){
+            if(!this.currentPath.isValid){
+              //delete this path and set the current path to null
+              this.paths.deletePath(this.currentPath)
+              this.currentPath = null
+              this.selectedPathNum--
+            } else if (!this.currentPath.finalized) {
+              this.currentPath.finalized = true
+              //AJ 12/9/20 removed from here and added only if the path is finalized
+              //this.currentPath.createWayPoints()
+              //this.currentPath.updateStations()
+              this.cashflow.trackcost = this.currentPath.pathCapitalCost
+              this.cashflow.enginecost = Game.COST_ENGINE
+              this.cashflow.coachcost = Game.COST_PASSENGER_COACH
+            }
           }
           this.lastClick.x=null
           this.lastClick.y=null
-          this.currentPath = new Path(this,this.ctx_foreground)
+          this.currentPath = new Path(this,this.ctx_foreground,this.ctx_routedesign)
           this.paths.addPath(this.currentPath)
           this.selectedPathNum = this.paths.length
         }
@@ -320,7 +328,6 @@ class Game {
           //AJ 12/8/20 commented out the following line..no
           this.paths.drawBackground(this.ctx_background)
           this.paths.drawStations(this.ctx_background)
-          //cities.draw(ctx_background)
           if (this.makeSound) this.audiochugging.play()
           this.animate();
         } else {

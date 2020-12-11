@@ -2,7 +2,7 @@ class Cities{
     constructor(){
       this._cities = new Array()
       this._cities.push(new City('Mumba',80,60,100000,true,0.002))
-      this._cities.push(new City('Kata',1090,590,150000,false,0.001))
+      this._cities.push(new City('Kata',1090,560,150000,false,0.001))
       this._cities.push(new City('Haybad',840,120,75000,false,0.003))
       this._cities.push(new City('Dore',380,150,50000,false,0.004))
       this._cities.push(new City('Purnapur',240,290,80000,false,0.001))

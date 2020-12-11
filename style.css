@@ -41,7 +41,7 @@ body{
 table, th, td {
     border: 1px solid black;
   }
-#background,#foreground,#hud{
+#background,#foreground,#routedesign,#hud{
     position:absolute;
     top: 0;
     left: 0;

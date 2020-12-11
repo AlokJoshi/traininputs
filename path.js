@@ -7,10 +7,11 @@ class Path {
   //range is for checking neighbors
   static WPL = 3;
 
-  constructor(game,ctx) {
+  constructor(game,ctx,ctxRouteDesign) {
     this.game=game
-    this.number=`RTN${Math.floor(Math.random()*1000)}` 
     this.ctx = ctx
+    this.ctxRouteDesign = ctxRouteDesign
+    this.number=`RTN${Math.floor(Math.random()*1000)}` 
     this._finalized=false
     //critical points on the path
     this.points = new Array()
@@ -66,7 +67,8 @@ class Path {
     this._finalized=value 
     if(value==true){
       console.log(`Route ${this.number} finalized and way points being created`)
-      //this.createWayPoints()
+      this.createSegments()
+      this.createWayPoints()
       this.updateStations()
     }
   }
@@ -227,7 +229,6 @@ class Path {
         }
       }
     }
-    this.createWayPoints()
   }
   startingLinSegment(segment_number,p1, p2, d) {
     let l = Math.pow((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y), 0.5)
@@ -235,17 +236,21 @@ class Path {
     let py = p1.y + (p2.y - p1.y) * (l - d) / l
     return new LinSeg(segment_number,p1, new Point(px, py))
   }
-  endingLinSegment(segment_number,p1, p2, d) {
-    let l = Math.pow((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y), 0.5)
-    let px = p1.x + (p2.x - p1.x) * d / l
-    let py = p1.y + (p2.y - p1.y) * d / l
-    return new LinSeg(segment_number,new Point(px, py), p2)
-  }
+  
   draw(pathColor) {
     if(!this.finalized){
       this.createSegments()
     }
     this._segments.draw(this.ctx, pathColor)
+  }
+  drawRoute(pathColor) {
+    //route is drawn on ctxRouteDesign. It uses the points array
+    this.ctxRouteDesign.beginPath()
+    for(let i=0;i<this.points.length-1;i++){
+      this.ctxRouteDesign.moveTo(this.points[i].x,this.points[i].y)
+      this.ctxRouteDesign.lineTo(this.points[i+1].x,this.points[i+1].y)
+    }
+    this.ctxRouteDesign.stroke()
   }
   drawBackground(ctx) {
     this._segments.drawBackground(ctx)
@@ -273,12 +278,8 @@ class Path {
   }
   createWayPoints(){
 
-    if(this.finalized) return
+    //if(this.finalized) return
 
-    //first create segments
-    //this.createSegments()
-
-    //this replaces scanNeighbors
     let n = 0
     this.wp=[]
     let wpl=Path.WPL

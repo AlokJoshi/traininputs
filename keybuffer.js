@@ -31,6 +31,7 @@ class KeyBuffer {
           break;p
         case 'g':
         case 'G':
+          this.game.ctx_routedesign.clearRect(0,0,this.game.routedesign.width,this.game.routedesign.height)
           this.game.previous_state = this.game.state
           this.game.state = Game.RUNNING_STATE
           break;
