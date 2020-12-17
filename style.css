@@ -9,6 +9,8 @@ body{
     margin-left:10px;
 }
 .navbar{
+  /* position:fixed;
+  top:3em; */
   display:flex;
   justify-content: space-between;
   align-items: center;
@@ -52,21 +54,21 @@ table, th, td {
 #foreground{
     /* z-index: 10; */
 }
-#menu{
+/* #menu{
     position:absolute;
     top:100;
     left:100;
     width:100%;
     font-size: large;
     background-color: rgba(100,255,255,0.8);
-}
+} */
 #passengers,#ticketprices{
     font-size: small;
 }
 
 /* Page content */
 .content {
-  padding: 16px;
+  /* margin-top: 50px; */
 }
 
 /* The sticky class is added to the navbar with JS when it reaches its scroll position */
@@ -83,7 +85,28 @@ table, th, td {
 }
 
 keytype {
+  border:1px black solid;
+  border-radius: 3px;
   font-style: italic;
   font-weight: bold;
   color: green;
+  padding:2px;
+  background-color: lightgray;
+}
+
+#popup {
+  position: fixed;
+  z-index: 100;
+  background-color: rgb(255, 182, 193,0.5);
+  width: 200px;
+  height: 150px;
+  border: black 1px solid;
+  border-radius: 4px;
+  display: none
+  /* top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+}
+.hidden{
+  display:none;
 }

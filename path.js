@@ -126,14 +126,12 @@ class Path {
       for(let ip = 1; ip < this.points.length-1 ; ip++){
         let city = getClosestCityObject(this.game.cities,this.points[ip].x,this.points[ip].y)
         if('name' in city){
-          //this.addStation(this.points[ip].x,this.points[ip].y)
           this.addStation(city.name,city.x,city.y)
         }  
       }
     }
   }
   addStation(name,x, y) {
-    console.log(`adding station at ${x},${y}`)
     //compares x,y with all points in wp array and selects the wp item
     //that is closest to x,y
     let min = 100000
@@ -416,8 +414,15 @@ class Path {
               num = Math.min(num,room)
               //collect fare
               let fare = this.game.tickets.ticket(currCity,station.name)
-              //console.log(`Ticket Sales before: ${this.game.cashflow.ticketsales}`)
-              //console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
+              if(this.game.makeSound && Math.floor(num*fare/1000)>=Game.FARE_FOR_AUDIO){
+                event = new CustomEvent("money", {
+                  detail: {
+                    train: this.name,
+                    fare: Math.floor(num*fare/1000)
+                  }
+                });  
+                document.dispatchEvent(event)
+              }
               event = new CustomEvent("info", {
                 detail: {
                   train: this.name,
@@ -443,9 +448,15 @@ class Path {
               num = Math.min(num,room)
               //collect fare
               let fare = this.game.tickets.ticket(currCity,station.name)
-              //console.log(`Ticket Sales before: ${this.game.cashflow.ticketsales}`)
-              //console.log(`Take ${num} passengers from ${currCity}-${station.name} @${fare}`)
-              //console.log(`${num} pass from ${currCity}-${station.name} @ ${fare} = ${num*fare}`)
+              if(this.game.makeSound &&  Math.floor(num*fare/1000)>=Game.FARE_FOR_AUDIO){
+                event = new CustomEvent("money", {
+                  detail: {
+                    train: this.name,
+                    fare: Math.floor(num*fare/1000)
+                  }
+                });  
+                document.dispatchEvent(event)
+              }
               event = new CustomEvent("info", {
                 detail: {
                   train: this.name,

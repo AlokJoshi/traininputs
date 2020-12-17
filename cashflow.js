@@ -1,5 +1,5 @@
 class CashFlow {
-  constructor(game,openingcash,openingcumcapitalcost,openingcumdepreciation) {
+  constructor(game, openingcash, openingcumcapitalcost, openingcumdepreciation) {
     this.game = game
     this._openingcash = openingcash
     this._openingcumcapitalcost = openingcumcapitalcost
@@ -23,65 +23,79 @@ class CashFlow {
     this._cumtrackcost = 0
     this._cumstationcost = 0
   }
-  set ticketsales(value){
-    this._ticketsales+=value
+  set ticketsales(value) {
+    //console.log(`Ticket sales: ${value}`)
+    this._ticketsales += value
   }
-  get ticketsales(){
+  get ticketsales() {
     return this._ticketsales
   }
-  set trackcost(value){
-    this._trackcost+=value
-    this._cumtrackcost+=value
+  set trackcost(value) {
+    this._trackcost += value
+    this._cumtrackcost += value
   }
-  set stationcost(value){
-    this._stationcost+=value
-    this._cumstationcost+=value
+  set stationcost(value) {
+    this._stationcost += value
+    this._cumstationcost += value
   }
-  set coachcost(value){
-    this._coachcost+=value
+  set coachcost(value) {
+    this._coachcost += value
   }
-  set enginecost(value){
-    this._enginecost+=value
+  set enginecost(value) {
+    this._enginecost += value
   }
-  get runningcost(){
+  get runningcost() {
     return this._runningcost
   }
-  get maintenancecost(){
+  get maintenancecost() {
     this._maintenancecost
   }
-  get profit(){
+  get profit() {
     return this._profit
   }
-  get tax(){
+  get tax() {
     return this._tax
   }
-  get patd(){
+  get patd() {
     return this._patd
   }
-  get closingcash(){
+  get closingcash() {
     return Math.floor(this._closingcash)
   }
-
-  updateInterest(){
-    let cc = this.closingcash
-    if(cc<0){
-      this._interest = cc*Game.INTEREST_PAID_PER_PERIOD
-    }else{
-      this._interest = cc*Game.INTEREST_EARNED_PER_PERIOD
-    }
+  get interest(){
+    return this._interest
   }
-  updateMaintenanceCost(){
+  get cumstationcost(){
+    return this._cumstationcost
+  }
+  get cumtrackcost(){
+    return this._cumtrackcost
+  }
+  updateInterest() {
+    let cc = this.closingcash
+    if (cc < 0) {
+      this._interest = cc * Game.INTEREST_PAID_PER_PERIOD
+    } else {
+      this._interest = cc * Game.INTEREST_EARNED_PER_PERIOD
+    }
+    //console.log(`Cash: ${cc}, interest:${this.interest}`)
+  }
+  updateMaintenanceCost() {
     //maintenance cost is based on the amount of capital cost 
     this._maintenancecost = 0.003 * this._closingcumcapitalcost
   }
-  updateRunningCost(){
+  updateRunningCost() {
     //running cost is based on the total distance travelled by all the trains
-    this._runningcost = this._cumtrackcost*0.00001
-    this._runningcost = this._cumstationcost*0.001
+    this._runningcost = this._cumtrackcost * 0.00001
+    this._runningcost = this._cumstationcost * 0.001
   }
-  update(){
-    let capitalcost = this._trackcost + this._stationcost + this._coachcost + this._enginecost 
-    
+  update() {
+    this.updateMaintenanceCost()
+    this.updateRunningCost()
+    this.updateInterest()
+
+    let capitalcost = this._trackcost + this._stationcost + this._coachcost + this._enginecost
+
     //update the cum capital cost
     this._closingcumcapitalcost = this._openingcumcapitalcost + capitalcost
 
@@ -89,24 +103,26 @@ class CashFlow {
     //that the capital cost is incurred in the beginning of the period but only on the remainder
     //value
     let remaindervalue = this._closingcumcapitalcost - this._openingcumdepreciation
-    this._depreciation = remaindervalue * 1/200
+    this._depreciation = remaindervalue * 1 / 200
     this._closingcumdepreciation = this._openingcumdepreciation + this._depreciation
-    
+
     //profit
     this._profit = this._ticketsales + this._interest - this._runningcost - this._maintenancecost - this._depreciation
 
     //taxes
-    this._tax = this._profit>0?this._profit * 0.15:0
+    this._tax = this._profit > 0 ? this._profit * 0.15 : 0
 
     //profit after taxes and depreciation
     this._patd = this._profit - this._tax
 
     //closing cash
     this._closingcash = this._openingcash + this._patd + this._depreciation - capitalcost
-  
-    this._trackcost=0
-    this._stationcost=0
-    this._coachcost=0
+  }
+  initPeriodVariables(){
+    console.log(`game.perio:${game.period},ticketsales:${this._ticketsales}`)
+    this._trackcost = 0
+    this._stationcost = 0
+    this._coachcost = 0
     this._enginecost = 0
     this._ticketsales = 0
     this._interest = 0

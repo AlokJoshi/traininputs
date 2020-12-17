@@ -152,16 +152,8 @@ function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y, ctx) {
       let l_1 = lineLength(p_1.x, p_1.y, p2x, p2y);
       let l_2 = lineLength(p_2.x, p_2.y, p2x, p2y);
       if (l_1 <= l_2) {
-          //now p_1 becomes the new p1
-          //ensure that p_1 lies between p1 and p2
-          // console.log(
-          //     num,
-          //     p_1.x,
-          //     p_1.y,
-          //     "l_1",
-          //     lineLength(p_1.x, p_1.y, p2x, p2y) - d
-          // );
-          if (lineLength(p_1.x, p_1.y, p2x, p2y) > d) {
+          //if (lineLength(p_1.x, p_1.y, p2x, p2y) > d) {
+          if (Math.abs(lineLength(p_1.x, p_1.y, p2x, p2y) - d) > 1) {
               //find the point a new point on the findPointOnCircle
               let p = findPointOnCircle(x, y, r, p_1.x, p_1.y);
               p1x = p.x;
@@ -171,15 +163,8 @@ function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y, ctx) {
               done = true;
           }
       } else {
-          //now p_2 becomes the new p1
-          // console.log(
-          //     num,
-          //     p_2.x,
-          //     p_2.y,
-          //     "l_2",
-          //     lineLength(p_2.x, p_2.y, p2x, p2y) - d
-          // );
-          if (lineLength(p_2.x, p_2.y, p2x, p2y) > d) {
+          //if (lineLength(p_2.x, p_2.y, p2x, p2y) > d) {
+          if (Math.abs(lineLength(p_2.x, p_2.y, p2x, p2y) - d) > 1) {
               let p = findPointOnCircle(x, y, r, p_2.x, p_2.y);
               p1x = p.x;
               p1y = p.y;
@@ -201,87 +186,7 @@ function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y, ctx) {
   return points
 }
 
-//replaced with another version. Renamed this to _previous
-function pointsAlongArcNew_previous(x, y, r, p1x, p1y, p2x, p2y) {
-  
-  console.log(x, y, r, p1x, p1y, p2x, p2y);
-
-  //find the 2 points on either side of p1 on the arc
-  let dtheta = Math.PI/90 //2 degrees in radians
-  let arclength = dtheta*r
-  let finalpoints = [];
-  let done = true
-  do {
-    //finalpoints.push({x:p1x,y:p1y}) 
-    let m = (y-p1y)/(x-p1x)
-    let theta = Math.atan(m)
-    //calculate 2 points on either side of p1 
-    let p_1 = {x: p1x + arclength*Math.sin(theta),y: p1y - arclength*Math.cos(theta)}
-    let p_2 = {x: p1x - arclength*Math.sin(theta),y: p1y + arclength*Math.cos(theta)}
-    //calculate distance from those points to p2 
-    let l_1 = lineLength(p_1.x,p_1.y,p2x,p2y)
-    let l_2 = lineLength(p_2.x,p_2.y,p2x,p2y)
-    if(l_1 < l_2){
-      //now p_1 becomes the new p1
-      //ensure that p_1 lies between p1 and p2
-      if(((p1x <= p_1.x && p_1.x <= p2x) || (p1x >= p_1.x && p_1.x >= p2x)) && ((p1y <= p_1.y && p_1.y <= p2y) || (p1y >= p_1.y && p_1.y >= p2y))){
-        p1x = p_1.x
-        p1y = p_1.y
-        done = false
-      }else{
-        done=true
-      }
-    }else{
-      if(((p1x <= p_2.x && p_2.x <= p2x) || (p1x >= p_2.x && p_2.x >= p2x)) && ((p1y <= p_2.y && p_2.y <= p2y) || (p1y >= p_2.y && p_2.y >= p2y))){
-        p1x = p_2.x
-        p1y = p_2.y
-        done = false
-      }else{
-        done=true
-      }
-    }
-    finalpoints.push({x:p1x,y:p1y}) 
-  } while (!done);
-
-  
-  /* //find the closest point to p1 but between p1 and p2
-  let f = (array, p1x, p1y, p2x, p2y) => {
-    let pt = {x:null,y:null}
-    let distp1p2 = Math.sqrt(
-      (p2x - p1x) * (p2x - p1x) +
-      (p2y - p1y) * (p2y - p1y)
-    );
-    let dist = Infinity
-    for (let i = 0; i < array.length; i++) {
-      let l = Math.sqrt(
-        (array[i].x - p1x) * (array[i].x - p1x) +
-        (array[i].y - p1y) * (array[i].y - p1y)
-      );
-      let distp2 = Math.sqrt(
-        (array[i].x - p2x) * (array[i].x - p2x) +
-        (array[i].y - p2y) * (array[i].y - p2y)
-      );
-      if (l < dist && distp2 < distp1p2) {
-        pt = {x:array[i].x,y:array[i].y}
-        dist = l 
-      }
-    }
-    return pt;
-  };
-
-  let finalpoints = [];
-  finalpoints.push({x:p1x,y:p1y}) 
-  while (p1x != null && p2x != null) {
-    let nextPoint = f(points,p1x,p1y,p2x,p2y) 
-    p1x = nextPoint.x
-    p1y = nextPoint.y
-  }
- */
-  return finalpoints
-}
-
 function play( audio, time_in_milisec){
-  //audio.loop = true;
   audio.play();
   setTimeout(() => { audio.pause(); }, time_in_milisec);
 }
@@ -294,4 +199,27 @@ function getFeature(ctx,x,y){
     feature = Game.FEATURE_TUNNEL
   }
   return feature
+}
+
+function getMilestone(game){
+  if(game.period==1){
+    let milestone = 'Congratulations on launching the game.'
+    let routes = ''
+    for(let p = 0; p<game.paths.length; p++){
+      if(game.paths._paths[p].finalized){
+        routes+=game.paths._paths[p].name
+      }
+    }
+    milestone+=`You should see trains running on following routes: ${routes}`
+    return milestone
+  }
+  if(game.period>0 && game.period %5 ==0 ){
+    let milestone = 'In the last 5 periods '
+    let ticketsales = 0
+    for(let p = game.cash.periods.length-1; p>game.cash.periods.length-6; p--){
+      ticketsales+=game.cash.periods[p].ticketsales
+    }
+    milestone+=`you had ticket sales of : ${Math.ceil(ticketsales/1000)}K`
+    return milestone
+  }
 }

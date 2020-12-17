@@ -29,7 +29,9 @@ class Hud{
     this.ctx.font = "10px Comic Sans MS"
     this.ctx.fillText(`Train: ${train}`,0,150)
     for(let i = 0; i < newInfo.length ; i++ ){
-      this.ctx.fillText(newInfo[i].text,0,170+i*20)
+      if(170+i*20<Game.HEIGHT){
+        this.ctx.fillText(newInfo[i].text,0,170+i*20)
+      }
     }
   }
   displayCityInfo(city){
