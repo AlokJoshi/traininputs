@@ -214,12 +214,12 @@ function getMilestone(game){
     return milestone
   }
   if(game.period>0 && game.period %5 ==0 ){
-    let milestone = 'In the last 5 periods '
+    let milestone = 'In the last 5 periods you had ticket sales of : '
     let ticketsales = 0
     for(let p = game.cash.periods.length-1; p>game.cash.periods.length-6; p--){
       ticketsales+=game.cash.periods[p].ticketsales
     }
-    milestone+=`you had ticket sales of : ${Math.ceil(ticketsales/1000)}K`
+    milestone+=`${Math.ceil(ticketsales/1000)}K`
     return milestone
   }
 }

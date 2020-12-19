@@ -119,7 +119,7 @@ class CashFlow {
     this._closingcash = this._openingcash + this._patd + this._depreciation - capitalcost
   }
   initPeriodVariables(){
-    console.log(`game.perio:${game.period},ticketsales:${this._ticketsales}`)
+    // console.log(`game.perio:${game.period},ticketsales:${this._ticketsales}`)
     this._trackcost = 0
     this._stationcost = 0
     this._coachcost = 0

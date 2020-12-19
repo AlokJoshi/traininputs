@@ -6,7 +6,7 @@ class Path {
   //this is extremely important. Decides how big the
   //range is for checking neighbors
   static WPL = 3;
-
+  static NUM_FRAMES_TO_SKIP = 100
   constructor(game,ctx,ctxRouteDesign) {
     this.game=game
     this.ctx = ctx
@@ -21,10 +21,8 @@ class Path {
 
     this.i = 0
     this.ptGap = 3
-    this.approxStationLocations = new Array()
     this.stations = []
     this.numFrames = 0
-    this.numFramesToSkip = 100
     this.going = true
 
     this._train = new Train(1,0,0)
@@ -112,9 +110,7 @@ class Path {
     //console.log(`Over water: ${overWater}, over land:${overLand}`)
     return Math.floor(overLand * Game.TRACK_COST_PER_UNIT + (overWater+inTunnel) * 20 * Game.TRACK_COST_PER_UNIT)
   }
-  // addApproxStationLocation(x,y){
-  //   this.approxStationLocations.push({x:x,y:y})
-  // }
+  
   updateStations(){
     //first add the starting and ending locations as stations
     if(this.wp.length>0){
@@ -355,7 +351,7 @@ class Path {
     }
 
     //train not at station or atStation and time to move on
-    if(!this.atStation(this.i) || (this.atStation(this.i) && this.numFrames > this.numFramesToSkip)){
+    if(!this.atStation(this.i) || (this.atStation(this.i) && this.numFrames > Path.numFramesToSkip)){
       //start movement .. this is accomplished by advancing this.i
       this.i=this.going?this.i+1:this.i-1
       if (this.i == this.wp.length) {
@@ -369,9 +365,9 @@ class Path {
       this.numFrames=0
       //train at station but not time to move on
       //audiochugging=null
-    }else if((this.atStation(this.i) && this.numFrames <= this.numFramesToSkip)){
+    }else if((this.atStation(this.i) && this.numFrames <= Path.numFramesToSkip)){
       if(this.game.makeSound) {
-        if(this.numFrames==this.numFramesToSkip-10){
+        if(this.numFrames==Path.numFramesToSkip-10){
           let currCity_wpn = this.getStation(this.i).wpn
           if(currCity_wpn==0 && this.going || currCity_wpn==this.wp.length-1 && !this.going){
             this.game.audiowhistle.play()
