@@ -163,6 +163,7 @@ app.delete("/api/game/id/:id", (req, res) => {
       res.sendStatus(500)
     })
 })
+//------------Station-----------------
 app.get("/api/stations/pathid/:pathid", (req, res) => {
   const pathid = req.params.pathid
   knex('station')
@@ -218,4 +219,33 @@ app.post("/api/pathpoint", (req, res) => {
       res.sendStatus(500)
     })
 })
-const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+//------------Waypoint-----------------
+app.get("/api/waypoints/pathid/:pathid", (req, res) => {
+  const pathid = req.params.pathid
+  knex('waypoint')
+    .where('pathid', pathid)
+    .then(data => {
+      res.send(data)
+    })
+    .catch(err => {
+      res.sendStatus(500)
+    })
+})
+app.post("/api/waypoint", (req, res) => {
+  const pathid = req.body.pathid
+  const n = req.body.n
+  const x = req.body.x
+  const y = req.body.y
+  const feature = req.body.feature
+  console.log(`app.post("/api/waypoint",pathid:${pathid},${n},${x},${y},${feature}`)
+  knex('waypoint')
+    .insert({ pathid, n , x, y, feature })
+    .returning('id')
+    .then(data => {
+      res.send(data)
+    })
+    .catch(err => {
+      res.sendStatus(500)
+    })
+})
+const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
