@@ -48,7 +48,7 @@ function getClosestCityObject(cities, x, y) {
   let city = {}
   for (let c of cities.cities) {
     let dist = lineLength(x, y, c.x, c.y)
-    if (dist <= Game.CITY_RADIUS) {
+    if (dist < Game.CITY_RADIUS) {
       city = c
       break;
     }
@@ -130,16 +130,13 @@ function pointsAlongArcNew(x, y, r, p1x, p1y, p2x, p2y, ctx) {
   ctx.stroke();
 
   let points = [];
-  let d = 3;
+  let d = Game.WPL
   let done = true;
+  let count = 0
   do {
-      // points.push({ x: p1x, y: p1y });
-      // ctx.beginPath();
-      // ctx.fillStyle = "rgb(0,0,0)";
-      // ctx.moveTo(p1x, p1y);
-      // ctx.arc(p1x, p1y, 1, 0, Math.PI);
-      // ctx.fill();
-
+      
+      // to stop unending loop
+      if(count++>100) done=true 
       let m = (y - p1y) / (x - p1x);
       let theta = Math.atan(m);
       // console.log(
@@ -193,9 +190,9 @@ function play( audio, time_in_milisec){
 function getFeature(ctx,x,y){
   let feature = Game.FEATURE_LAND
   let imgData = ctx.getImageData(x, y, 1, 1)
-  if(imgData.data[0]==77 && imgData.data[0]==77 && imgData.data[0]==247){
+  if(imgData.data[0]==77 && imgData.data[1]==77 && imgData.data[2]==243){
     feature = Game.FEATURE_WATER
-  }else if(imgData.data[0]==255 && imgData.data[0]==255 && imgData.data[0]==255){
+  }else if(imgData.data[0]==255 && imgData.data[1]==255 && imgData.data[2]==255){
     feature = Game.FEATURE_TUNNEL
   }
   return feature
@@ -222,4 +219,30 @@ function getMilestone(game){
     milestone+=`${Math.ceil(ticketsales/1000)}K`
     return milestone
   }
+}
+
+function getBrightness(frame){
+  let fr = frame%100
+  if(fr>=0 && fr<=40){
+    //day
+    return 1
+  }else if(fr>=50 && fr<=90){
+    //night
+    return 0.2
+  }else if(fr>40 && fr<50){
+    //dusk
+    return (1-(fr-40)*8/90)
+  }else if(fr>90 && fr<=100){
+    //dawn
+    return (0.2+(fr-90)*8/90)
+  }
+}
+
+function pointIsOverWater(transform,x){
+  //returns true or false
+  game.ctx_background.restore()
+  game.ctx_background.setTransform(transform)
+  let imgData = game.ctx_background.getImageData(x, 0, 1, 2)
+  console.log(imgData.data[0], imgData.data[1], imgData.data[2],imgData.data[4], imgData.data[5], imgData.data[6])
+  return imgData.data[4]==77 && imgData.data[5]==77 & imgData.data[6]==243
 }

@@ -1,9 +1,7 @@
 class Train {
-  constructor(num_passenger_coaches,num_goods_coaches,timestarted) {
+  constructor(num_passenger_coaches,num_goods_coaches) {
     this.num_passenger_coaches = num_passenger_coaches
     this.num_goods_coaches = num_goods_coaches
-    this.timestarted = timestarted
-    this._num_passengers_on_train = 0
     this.passengers = {}
   }
   addPassengerCoach(){
@@ -60,5 +58,4 @@ class Train {
   get occupancy(){
     return 1-this.passenger_room_available/this.passenger_capacity
   }
-
 }

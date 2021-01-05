@@ -1,4 +1,6 @@
 let auth0 = null
+let loggedInUser = null
+let game = null
 const fetchAuthConfig = () => fetch("/auth_config.json")
 const conifigureClient = async () => {
   const response = await fetchAuthConfig()
@@ -19,9 +21,62 @@ const updateUI = async ()=>{
   if(isAuthenticated){
     document.getElementById("gated-content").classList.remove("hidden")
     document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently()
-    document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(await auth0.getUser())
+    loggedInUser = await auth0.getUser()
+    const email = loggedInUser.email
+    document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(loggedInUser)
+    const userInDB = await getUser(email)
+    console.log(`User in DB with an email of ${email}: ${JSON.stringify(userInDB)}`)
+    let userExistsInDB = userInDB!==undefined
+    console.log(`User exists: ${userExistsInDB}`)
+    if(userExistsInDB){
+      //is the user already playing a game? We can make that out if the email and 
+      //gameid value is 
+      //set in local storage
+      const emailInLocalStorage = localStorage.getItem('email')
+      if(email==emailInLocalStorage){
+        const gameid = localStorage.getItem('gameid')
+        if(gameid==null){
+          //no game created yet
+          let gameid = await createUserAndDefaultGame(email,Game.START_GAME_NAME)
+          if(gameid){
+            //store the results in local storage
+            localStorage.setItemItem('email',email)
+            localStorage.setItemItem('gameid',gameid)
+            alert(`Not implemented. Hence game could not be created for ${email}`)
+            game = new Game(email,gameid,Game.START_GAME_NAME)
+          }else{
+            alert(`game could not be created for ${email}`)
+          }
+        }else{
+          //------------------Todo---------------------
+          //here we should load the game that the user was
+          //playing last. However, since load is not complete
+          //we start the user with a new Game
+          game = new Game(email,gameid,Game.START_GAME_NAME)
+        }
+      }else if(emailInLocalStorage==null){
+        //the user is an authenticated user and exists in our DB and has a game going
+        //but playing on another device
+        //so load the current or latest game from DB
+        // ****************todo*****************************
+        // Game.loadFromDB
+        alert('Authenticated user and exists in our DB but was not playing on this device')
+        // ****************todo*****************************
+      }
+    }else{
+      //since the user has been authenticated but does not exist in DB
+      let gameid = await createUserAndDefaultGame(email,Game.START_GAME_NAME)
+      console.log(`Gameid returned by createUserAndDefaultGame: ${gameid}`)
+      game = new Game(email,gameid,Game.START_GAME_NAME)
+      localStorage.setItem('email',email)
+      localStorage.setItem('gameid',gameid)
+    }
   }else{
-    document.getElementById("gated-content").classList.add("hidden")  
+    //the user is not authenticated
+    document.getElementById("gated-content").classList.add("hidden")
+    game = new Game('anonymous',0,Game.START_GAME_NAME)  
+    localStorage.setItem('email','anonymous')
+    localStorage.setItem('gameid',null)
   }
 }
 
@@ -53,6 +108,7 @@ window.onload = async() => {
 
   //check for code and state parameters in the query string
   const query = window.location.search
+  console.log(query)
   if(query.includes("code=") && query.includes("state=")){
     //process the login state
     await auth0.handleRedirectCallback()
@@ -62,4 +118,3 @@ window.onload = async() => {
 
 
 }
-let game = new Game()

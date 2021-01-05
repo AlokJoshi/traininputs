@@ -29,6 +29,9 @@ class Game {
   static WIDTH = 1200
   static HEIGHT = 675
 
+  static WPL = 2
+  static START_GAME_NAME = 'My first game'
+
   ms = 150
   period = 0
   megaperiod = 0
@@ -54,17 +57,16 @@ class Game {
     y: null
   }
 
-  constructor() {
+  constructor(email,gameid,gamename) {
+    this.email = email 
+    this.gameid = gameid 
+    this.gamename = gamename
     this.request = null
     this.canvases = document.getElementById('canvases')
-    this.audiowhistle = document.createElement('audio')
-    this.audiowhistle.src = "steam engine whistle.mp3"
-    this.audiochugging = document.createElement('audio')
-    this.audiochugging.src = "chugging sound.mp3"
-    this.money = document.createElement('audio')
-    this.money.src = "money.mp3"
-    this.pop = document.createElement('audio')
-    this.pop.src = "pop.mp3"
+    this.audiowhistle = new Audio('steam engine whistle.mp3')
+    this.audiochugging = new Audio('chugging sound.mp3')
+    this.money = new Audio('money.mp3')
+    this.pop = new Audio('pop.mp3')
 
     this.keyBufffer = new KeyBuffer(this)
     this.passengers = new Passengers()
@@ -118,6 +120,8 @@ class Game {
     this.ctx_foreground.font = "20px Comic Sans MS";
     this.ctx_foreground.fillStyle = "black";
 
+    this.day_and_night = false
+
     this.addEventListeners()
     this.addMouseListener()
     this.addKeyEventListener()
@@ -129,7 +133,6 @@ class Game {
       this.hud.info = e.detail
     })
     document.addEventListener("money", e => {
-      console.log(`money sound played`)
       this.money.play()
     })
   }
@@ -182,8 +185,6 @@ class Game {
         if (!this.currentPath.finalized && this.state == Game.ROUTE_EDITING_STATE) {
           this.drawRoutes()
 
-          //if (this.lastClick.x!=null && distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS) {
-          //console.log(distanceToClosestCity(this.cities,event.offsetX,event.offsetY)<= Game.CITY_RADIUS)
           if (this.lastClick.x != null) {
             this.ctx_routedesign.beginPath()
             this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
@@ -335,7 +336,7 @@ class Game {
         if (this.paths.atLeastOnePathFinalized) {
           this.animationMode = true
           this.i = 0;
-          this.paths.createWayPoints()
+          //this.paths.createWayPoints()
           //AJ 12/8/20 commented out the following line..no
           this.paths.drawBackground(this.ctx_background)
           this.paths.drawStations(this.ctx_background)
@@ -362,11 +363,14 @@ class Game {
   }
 
 
-  animate = () => {
+  animate = async() => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
 
     if (this.state == Game.RUNNING_STATE) {
+      if(this.day_and_night){
+        this.background.style.filter = `brightness(${getBrightness(this.frames)})`
+      }
       if (this.frames % Game.FRAMES_PER_TIME_PERIOD == 0) {
         this.period = Math.floor(this.frames / Game.FRAMES_PER_TIME_PERIOD)
         updatePassengers(this.period, this.cities, this.passengers)
@@ -396,6 +400,16 @@ class Game {
           }
         )
         this.cashflow.initPeriodVariables()
+        //save the game to db
+        //first get the gameperiodid
+        //Todo: we need to get the cashid and passengerid
+        let json = getGamePeriodId(this.gameid,this.period,0,0)
+        json.then(data=>{
+          this.gameperiodid=data[0]
+          this.savePeriodDataToDB()
+        }).catch(err=>{
+          console.error(`Error in getGamePeriodId`)
+        })
         let milestone = getMilestone(this)
         if(milestone!=null){
           new Popup(milestone,
@@ -450,6 +464,24 @@ class Game {
     }
     this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum - 1].name)
   }
+
+  savePeriodDataToDB = () => {
+    //if the save is being done for the first time, we do not have an gameid for the game
+    //we do not save if this.email is 'anonymous'
+    if(this.email=='anonymous') return
+    console.log(`Saving game to db for ${this.gameid}, ${this.period}`)
+    this.paths.savePeriodDataToDB(this.gameperiodid)
+    //this.passengers.savePeriodDataToDB(this.gameid,this.period)
+
+  }
+  loadFromDB = () =>{
+    console.log(`Game being loaded from DB:${this.id}` )
+  }
+  async createGameInDB(){
+     this.gameid = await createUserAndDefaultGame(this.email,this.gamename)
+     console.log(`Game created with a gameid of ${gameid}`)
+  }
+  
 }
 
 

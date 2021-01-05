@@ -103,17 +103,22 @@ class Paths {
       }
     }
   }
-  updateNeighbors() {
-    for (let i = 0; i < this.numPaths; i++) {
-      this._paths[i].updateNeighbors()
-    }
-  }
-  createWayPoints(){
-    for (let i = 0; i < this.numPaths; i++) {
-      this._paths[i].createWayPoints()
-    }
-  }
+  // updateNeighbors() {
+  //   for (let i = 0; i < this.numPaths; i++) {
+  //     this._paths[i].updateNeighbors()
+  //   }
+  // }
+  // createWayPoints(){
+  //   for (let i = 0; i < this.numPaths; i++) {
+  //     this._paths[i].createWayPoints()
+  //   }
+  // }
   get atLeastOnePathFinalized(){
     return this._paths.some(p=>p.finalized)
+  }
+  savePeriodDataToDB(periodid){
+    for (let i = 0; i < this.numPaths; i++) {
+      this._paths[i].savePeriodDataToDB(periodid)
+    }  
   }
 }
