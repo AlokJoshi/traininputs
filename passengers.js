@@ -39,7 +39,7 @@ class Passengers{
     }
     return numSubtracted
   }
-  savePeriodDataToDB(gameid,period){
-    savePassengersToDB(gameid,period,this.info)  
-  }
+  // savePeriodDataToDB(gameid,period){
+  //   savePassengersToDB(gameid,period,this.info)  
+  // }
 }

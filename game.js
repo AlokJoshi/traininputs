@@ -19,6 +19,7 @@ class Game {
   static RUNNING_STATE = 4
   static TRAIN_EDITING_STATE = 3
   static PAUSED_STATE = 5
+  static READY_TO_EXIT_STATE = 6
 
   static TRAVEL_COST_PER_UNIT_DISTANCE = 2
   static FEATURE_LAND = 1
@@ -295,6 +296,14 @@ class Game {
         }
       }
 
+      if (this.state == Game.READY_TO_EXIT_STATE) {
+        if (event.key == 'g' || event.key == 'G') {
+          this.state == Game.RUNNING_STATE
+          return
+        }
+        
+      }
+
       if (this.state == Game.RUNNING_STATE) {
         if (event.key == 'r' || event.key == 't') {
           return
@@ -403,7 +412,7 @@ class Game {
         //save the game to db
         //first get the gameperiodid
         //Todo: we need to get the cashid and passengerid
-        let json = getGamePeriodId(this.gameid,this.period,0,0)
+        let json = getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost)
         json.then(data=>{
           this.gameperiodid=data[0]
           this.savePeriodDataToDB()
@@ -446,17 +455,20 @@ class Game {
     let txt = `Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash / 1000)} K State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
-        txt = `Route Editing: ${this.previous_state == Game.ROUTE_EDITING_STATE ? 'click-click, ' : ''}a(add another route), t(train), g(resume game), space(docs and back)`
+        txt = `Route Editing: ${this.previous_state == Game.ROUTE_EDITING_STATE ? 'click-click, ' : ''}a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1
-        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game), space(docs and back)`
+        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.RUNNING_STATE:
-        txt += `Running: p(pause), +(speed up), -(slow down), w(${this.makeSound == true ? 'whistle off' : 'whistle on'}), n(next train info), space(docs and back)`
+        txt += `Running: p(pause), +(speed up), -(slow down), w(${this.makeSound == true ? 'whistle off' : 'whistle on'}), n(next train info), space(docs and back), x(exit)`
         break;
       case Game.PAUSED_STATE:
-        txt += `Paused: r(Route Editing), t(Train Editing), g(resume game), space(docs and back)`
+        txt += `Paused: r(Route Editing), t(Train Editing), g(resume game), space(docs and back), x(exit)`
+        break;
+      case Game.READY_TO_EXIT_STATE:
+        txt += `Ready to exit: g(resume game), n(new game), s(switch to another game) space(docs and back), x(exit) `
         break;
 
       default:

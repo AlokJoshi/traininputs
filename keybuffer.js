@@ -35,6 +35,10 @@ class KeyBuffer {
           this.game.previous_state = this.game.state
           this.game.state = Game.RUNNING_STATE
           break;
+        case 'x':
+        case 'X':
+          this.game.state = Game.READY_TO_EXIT_STATE
+          break;
         case 'f':
         case 'F':
         case 'd':

@@ -110,12 +110,16 @@ async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, pass
   let json = await response.json()
   return json
 }
-async function getGamePeriodId(gameid, period, passengerid, cashid) {
+async function getGamePeriodId(gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost) {
   let data = {
     gameid: gameid,
     period: period,
     passengerid: passengerid,
-    cashid: cashid
+    openingcash: openingcash,
+    openingcumcapitalcost: openingcumcapitalcost,
+    openingcumdepreciation: openingcumdepreciation,
+    cumtrackcost: cumtrackcost,
+    cumstationcost: cumstationcost,
   }
   const response = await fetch(`/api/gameperiod`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },

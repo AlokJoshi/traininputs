@@ -5,10 +5,14 @@ function addGameperiod(req, res) {
   const gameid = req.body.gameid
   const period = req.body.period
   const passengerid = req.body.passengerid
-  const cashid = req.body.cashid
+  const openingcash = req.body.openingcash
+  const openingcumcapitalcost = req.body.openingcumcapitalcost
+  const openingcumdepreciation = req.body.openingcumdepreciation
+  const cumtrackcost = req.body.cumtrackcost
+  const cumstationcost = req.body.cumstationcost
   console.log(`addGameperiod called with ${gameid},${period},${passengerid},${passengerid}`)
   knex('gameperiod')
-    .insert({ gameid, period, passengerid, cashid })
+    .insert({ gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost})
     .returning('id')
     .then(data => {
       res.json(data)
