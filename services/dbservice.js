@@ -5,6 +5,7 @@ types.setTypeParser(20, function (val) {
   return parseInt(val)
 })
 
+console.log(process.env.DB_HOST, process.env.DB_USER,process.env.DB_PASSWORD, process.env.DB_DATABASE, process.env.PORT)
 let knex = require('knex')({
   client: 'pg',
   version: '9.6',
