@@ -19,7 +19,7 @@ function getUserWithEmail(req, res) {
     })
     .then(data => {
       console.log(`Data in getUserWithEmail with email: ${email}: ${data}`)
-      res.send(data)
+      res.json(data)
     })
     .catch(err => {
       console.log(`Error in getUserWithEmail with email: ${email}: ${err}`)

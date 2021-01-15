@@ -2,7 +2,6 @@ function lineLength(x1, y1, x2, y2) {
   return Math.pow((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2), 0.5)
 }
 
-
 function angleBetweenLinesIsOK(x1, y1, x2, y2, x3, y3, MIN_ANGLE) {
   //first line is x1,y1,x2,y2
   //second line is x2,y2,x3,y3
@@ -30,6 +29,7 @@ function FromToTravelDemand(period, cities, cityFrom, cityTo) {
   }
   return Math.floor(demand)
 }
+
 function getClosestCity(cities, x, y) {
   //cycle through all the cities
   let minDistance = 10000000
@@ -43,6 +43,7 @@ function getClosestCity(cities, x, y) {
   })
   return city
 }
+
 function getClosestCityObject(cities, x, y) {
   //cycle through all the cities
   let city = {}
@@ -70,8 +71,6 @@ function distanceToClosestCity(cities,x,y){
 
   return minDistance
 }
-
-
 
 function circle(p1, p2, p3, p4) {
   //returns the circle x,y,radius of the 
@@ -187,6 +186,7 @@ function play( audio, time_in_milisec){
   audio.play();
   setTimeout(() => { audio.pause(); }, time_in_milisec);
 }
+
 function getFeature(ctx,x,y){
   let feature = Game.FEATURE_LAND
   let imgData = ctx.getImageData(x, y, 1, 1)

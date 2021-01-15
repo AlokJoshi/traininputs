@@ -6,10 +6,10 @@ class Game {
   static FRAMES_PER_TIME_PERIOD = 100
   static PERIODS_PER_MEGA_PERIOD = 100
   static TRACK_COST_PER_UNIT = 1000
-  static COST_STATION = 50000
-  static COST_ENGINE = 100000
+  static COST_STATION = 200000
+  static COST_ENGINE = 500000
   static COST_GOODS_COACH = 500
-  static COST_PASSENGER_COACH = 20000
+  static COST_PASSENGER_COACH = 100000
   static INTEREST_EARNED_PER_PERIOD = 0.0005
   static INTEREST_PAID_PER_PERIOD = 0.001
   static DISTANCE_FACTOR = 1.05
@@ -40,13 +40,13 @@ class Game {
   makeSound = false
 
   state = Game.ROUTE_EDITING_STATE
-  previous_state = Game.ROUTE_EDITING_STATE
+  //previous_state = Game.ROUTE_EDITING_STATE
   menu = false
   stationEditMode = false
-  animationMode = false
-  selectedPathNum = 1
+  //animationMode = false
+  selectedPathNum = 0
   frames = 0
-  i = 0;
+  //i = 0;
 
 
   currentMousePosition = {
@@ -114,10 +114,6 @@ class Game {
     this.ctx_foreground.lineWidth = Game.LINE_WIDTH
     this.ctx_foreground.globalCompositeOperation = 'source-over'
 
-    this.currentPath = new Path(this, this.ctx_foreground, this.ctx_routedesign)
-    this.paths.addPath(this.currentPath)
-    this.selectedPathNum = this.paths.numPaths
-
     this.ctx_foreground.font = "20px Comic Sans MS";
     this.ctx_foreground.fillStyle = "black";
 
@@ -141,20 +137,23 @@ class Game {
 
   addEventListeners() {
     this.routedesign.addEventListener('click', (event) => {
-      if (this.state == Game.ROUTE_EDITING_STATE && !this.currentPath.finalized) {
+      if (this.state == Game.ROUTE_EDITING_STATE) {
         let city = getClosestCityObject(this.cities, event.offsetX, event.offsetY)
         let clickedWithinCityLimits = 'name' in city
         let finalPoint = { x: clickedWithinCityLimits ? city.x : event.offsetX, y: clickedWithinCityLimits ? city.y : event.offsetY }
         if (this.lastClick.x === null && clickedWithinCityLimits) {
-          //we are adding the first point
+          //we are adding the first point within a new path
+          this.currentPath = new Path(this, this.ctx_foreground, this.ctx_routedesign)
+          this.paths.addPath(this.currentPath)
+          this.selectedPathNum = this.paths.numPaths
           this.currentPath.addPoint(new Point(city.x, city.y))
           this.lastClick.x = city.x
           this.lastClick.y = city.y
-        } else if ((this.currentPath.length == 1) && (lineLength(this.lastClick.x, this.lastClick.y, finalPoint.x, finalPoint.y) > 2 * Game.MIN_LENGTH)) {
+        } else if (this.currentPath && (this.currentPath.length == 1) && (lineLength(this.lastClick.x, this.lastClick.y, finalPoint.x, finalPoint.y) > 2 * Game.MIN_LENGTH)) {
           this.currentPath.addPoint(new Point(finalPoint.x, finalPoint.y))
           this.lastClick.x = finalPoint.x
           this.lastClick.y = finalPoint.y
-        } else if ((this.currentPath.length > 1) && (lineLength(this.lastClick.x, this.lastClick.y, finalPoint.x, finalPoint.y) > 2 * Game.MIN_LENGTH)) {
+        } else if (this.currentPath && (this.currentPath.length > 1) && (lineLength(this.lastClick.x, this.lastClick.y, finalPoint.x, finalPoint.y) > 2 * Game.MIN_LENGTH)) {
           let lastTwoPoints = this.currentPath.lastTwoPoints
           if (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y,
             finalPoint.x, finalPoint.y, this.MIN_ANGLE)) {
@@ -183,10 +182,19 @@ class Game {
       if (this.state == Game.ROUTE_EDITING_STATE) {
         this.currentMousePosition.x = event.offsetX
         this.currentMousePosition.y = event.offsetY
-        if (!this.currentPath.finalized && this.state == Game.ROUTE_EDITING_STATE) {
+        if (this.currentPath && !this.currentPath.finalized && this.state == Game.ROUTE_EDITING_STATE) {
           this.drawRoutes()
 
           if (this.lastClick.x != null) {
+            
+            //testing 01/14/21
+            let lastTwoPoints = this.currentPath.lastTwoPoints
+            let bOK = ((this.currentPath.length == 1) || ((this.currentPath.length > 1) && 
+                (lineLength(this.lastClick.x, this.lastClick.y, this.currentMousePosition.x, this.currentMousePosition.y) > 2 * Game.MIN_LENGTH) &&
+                (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y,
+                  this.currentMousePosition.x, this.currentMousePosition.y, this.MIN_ANGLE)))) 
+            document.body.style.cursor = bOK ? 'crosshair' : 'not-allowed'
+
             this.ctx_routedesign.beginPath()
             this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
             this.ctx_routedesign.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
@@ -208,7 +216,8 @@ class Game {
   }
 
   addKeyEventListener() {
-    document.onkeypress = (event) => {
+    //document.onkeypress = (event) => {
+    document.onkeyup = (event) => {
 
       if (event.code === 'Space') {
         noncanvases.style.visibility = noncanvases.style.visibility === 'collapse' ? 'visible' : 'collapse'
@@ -225,8 +234,7 @@ class Game {
         this.tooltip.clearDisplay()
         return
       }
-      this.keyBufffer.addKey(event.key)
-      this.updateHUD()
+      
       if (this.state == Game.ROUTE_EDITING_STATE) {
         if (event.key == 'd') {
           if (!this.currentPath.finalized) {
@@ -246,12 +254,6 @@ class Game {
               this.selectedPathNum--
             } else if (!this.currentPath.finalized) {
               this.currentPath.finalized = true
-              //AJ 12/9/20 removed from here and added only if the path is finalized
-              //this.currentPath.createWayPoints()
-              //this.currentPath.updateStations()
-              this.cashflow.trackcost = this.currentPath.pathCapitalCost
-              this.cashflow.enginecost = Game.COST_ENGINE
-              this.cashflow.coachcost = Game.COST_PASSENGER_COACH
             }
           }
           this.lastClick.x = null
@@ -259,9 +261,64 @@ class Game {
           this.currentPath = new Path(this, this.ctx_foreground, this.ctx_routedesign)
           this.paths.addPath(this.currentPath)
           this.selectedPathNum = this.paths.length
+        } else if (event.key == 't') {
+          if (!this.currentPath.isValid) {
+            //delete this path and set the current path to null
+            this.paths.deletePath(this.currentPath)
+            this.currentPath = null
+            this.selectedPathNum--
+          } else if (!this.currentPath.finalized) {
+            this.currentPath.finalized = true
+            this.selectedPathNum = this.paths.length
+            this.lastClick.x = null
+            this.lastClick.y = null
+          }
+          this.state = Game.TRAIN_EDITING_STATE
+          this.updateHUD()
+        }else if (event.key == 'g') {
+          if (!this.currentPath.isValid) {
+            //delete this path and set the current path to null
+            this.paths.deletePath(this.currentPath)
+            this.currentPath = null
+            this.selectedPathNum--
+          } else if (!this.currentPath.finalized) {
+            this.currentPath.finalized = true
+            this.selectedPathNum = this.paths.length
+            this.lastClick.x = null
+            this.lastClick.y = null
+          }
+          if (this.paths.atLeastOnePathFinalized) {
+            //this.animationMode = true
+            //this.i = 0;
+            //this.paths.createWayPoints()
+            //AJ 12/8/20 commented out the following line..no
+            this.paths.drawBackground(this.ctx_background)
+            this.paths.drawStations(this.ctx_background)
+            if (this.makeSound) this.audiochugging.play()
+            this.ctx_routedesign.clearRect(0,0,this.routedesign.width,this.routedesign.height)
+            this.state = Game.RUNNING_STATE
+            this.animate();
+          } else {
+            console.log(`No path finalized yet`)
+          }
+        }else if(event.key == 'Escape'){
+          if (this.currentPath != null) {
+            if (!this.currentPath.isValid) {
+              //delete this path and set the current path to null
+              this.paths.deletePath(this.currentPath)
+              this.currentPath = null
+              this.selectedPathNum--
+            } else if (!this.currentPath.finalized) {
+              this.currentPath.finalized = true
+            }
+          }
+          console.log("escape key pressed")
+          this.lastClick.x = null
+          this.lastClick.y = null
+        }else{
+          console.log(`${event.key} pressed`)
         }
       }
-
 
       if (this.state == Game.TRAIN_EDITING_STATE) {
         if (!this.currentPath.isValid) {
@@ -276,7 +333,7 @@ class Game {
           //AJ 12/9/20 removed from here and added only if the path is finalized
           //this.currentPath.createWayPoints()
           //this.currentPath.updateStations()
-          this.cashflow.trackcost = this.currentPath.pathCapitalCost
+          //this.cashflow.trackcost = this.currentPath.pathCapitalCost
         }
         if (event.key == 'n') {
           let numPaths = this.paths.numPaths
@@ -294,12 +351,28 @@ class Game {
           this.paths.getPath(this.selectedPathNum).train.removePassengerCoach()
           this.updateHUD()
         }
+        if (event.key == 'g' || event.key == 'G') {
+          if (this.paths.atLeastOnePathFinalized) {
+            this.paths.drawBackground(this.ctx_background)
+            this.paths.drawStations(this.ctx_background)
+            if (this.makeSound) this.audiochugging.play()
+            this.ctx_routedesign.clearRect(0,0,this.routedesign.width,this.routedesign.height)
+            this.state = Game.RUNNING_STATE
+            this.updateHUD()
+            this.animate();
+          } else {
+            console.log(`No path finalized yet`)
+          }
+        }
       }
 
       if (this.state == Game.READY_TO_EXIT_STATE) {
         if (event.key == 'g' || event.key == 'G') {
           this.state == Game.RUNNING_STATE
           return
+        }
+        if (event.key == 'x' || event.key == 'X') {
+          alert('Game Over')
         }
         
       }
@@ -328,47 +401,58 @@ class Game {
           this.updateHUD()
           return
         }
-        if (!this.currentPath.isValid) {
-          //delete this path and set the current path to null
-          this.paths.deletePath(this.currentPath)
-          this.currentPath = null
-          this.selectedPathNum--
-        } else if (!this.currentPath.finalized) {
-          this.lastClick.x = null
-          this.lastClick.y = null
-          this.currentPath.finalized = true
-          //AJ 12/9/20 removed from here and added only if the path is finalized
-          //this.currentPath.createWayPoints()
-          //this.currentPath.updateStations()
-          this.cashflow.trackcost = this.currentPath.pathCapitalCost
+        if (event.key == 'p' || event.key == 'P') {
+          this.state = Game.PAUSED_STATE  
+          this.updateHUD()
+          return
         }
-        if (this.paths.atLeastOnePathFinalized) {
-          this.animationMode = true
-          this.i = 0;
-          //this.paths.createWayPoints()
-          //AJ 12/8/20 commented out the following line..no
-          this.paths.drawBackground(this.ctx_background)
-          this.paths.drawStations(this.ctx_background)
-          if (this.makeSound) this.audiochugging.play()
-          this.animate();
-        } else {
-          console.log(`No path finalized yet`)
+        if(!this.currentPath){
+          if (!this.currentPath.isValid) {
+            //delete this path and set the current path to null
+            this.paths.deletePath(this.currentPath)
+            this.currentPath = null
+            this.selectedPathNum--
+          } else if (!this.currentPath.finalized) {
+            this.lastClick.x = null
+            this.lastClick.y = null
+            this.currentPath.finalized = true
+          }
         }
-      } else if (this.state == Game.PAUSED_STATE) {
-        return
-      } else if (event.key == 'rightArrow') {
-        //window.scrollBy(10)
-      } else if (event.key == 'leftArrow') {
-        //window.scrollBy(-10)
+        this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
+        this.paths.draw()
+        //this.keyBufffer.addKey(event.key)
+        this.updateHUD()
+      } 
+      
+      if (this.state == Game.PAUSED_STATE) {
+        if (event.key == 'g' || event.key == 'G') {
+          this.state = Game.RUNNING_STATE
+          this.animate()
+          return
+        } else if (event.key == 'r' || event.key == 'R'){
+          this.state = Game.ROUTE_EDITING_STATE
+          this.updateHUD()
+          return
+        } else if (event.key == 'rightArrow') {
+          return
+        } else if (event.key == 'leftArrow') {
+          return
+        } else if (event.key=='t'||event.key=='T'){
+          this.state = Game.TRAIN_EDITING_STATE  
+          this.updateHUD()
+          return
+        }else if (event.key=='x'||event.key=='X'){
+          this.state = Game.READY_TO_EXIT_STATE  
+          this.updateHUD()
+          return
+        }
       }
+
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
       this.paths.draw()
+      //this.keyBufffer.addKey(event.key)
+      this.updateHUD()
     };
-    // document.onkeypress = (event) => {
-    //   if (this.state == Game.RUNNING_STATE){
-    //     this.ms += event.key == '+'?-10:event.key == '-'?+10:0 
-    //   }
-    // }
   }
 
 
@@ -408,17 +492,20 @@ class Game {
             cumstationcost: this.cashflow.cumstationcost,
           }
         )
-        this.cashflow.initPeriodVariables()
         //save the game to db
         //first get the gameperiodid
         //Todo: we need to get the cashid and passengerid
-        let json = getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost)
+        let json = getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,
+          this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost,
+          this.cashflow._maintenancecost+this.cashflow._runningcost,this.cashflow._ticketsales,this.cashflow._interest,
+          this.cashflow._tax,this.cashflow.profit,this.cashflow._cumcoachcost,this.cashflow._cumenginecost)
         json.then(data=>{
           this.gameperiodid=data[0]
           this.savePeriodDataToDB()
         }).catch(err=>{
           console.error(`Error in getGamePeriodId`)
         })
+        this.cashflow.initPeriodVariables()
         let milestone = getMilestone(this)
         if(milestone!=null){
           new Popup(milestone,
@@ -439,10 +526,6 @@ class Game {
       if ((this.period > 0) && (this.period % Game.PERIODS_PER_MEGA_PERIOD == 0)) {
       }
     }
-    // let txt = ''
-    // txt += `Period: ${this.period} MS per frame: ${this.ms}`
-    // //Money: ${this.cashflow.closingcash} ${state == PAUSED_STATE ? 'Paused' : ''} Menu: ${menu}`
-    // this.ctx_foreground.fillText(txt, 0, 40);
     this.updateHUD()
     setTimeout(() => {
       if (this.state == Game.RUNNING_STATE) {
@@ -455,7 +538,7 @@ class Game {
     let txt = `Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash / 1000)} K State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
-        txt = `Route Editing: ${this.previous_state == Game.ROUTE_EDITING_STATE ? 'click-click, ' : ''}a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
+        txt = `Route Editing: click-click, a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1
@@ -474,7 +557,7 @@ class Game {
       default:
         break;
     }
-    this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum - 1].name)
+    this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum-1].name)
   }
 
   savePeriodDataToDB = () => {

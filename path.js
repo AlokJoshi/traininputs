@@ -22,9 +22,9 @@ class Path {
     this.numFrames = 0
     this.going = true
 
-    this._train = new Train(3, 0)
-    this.game.cashflow.enginecost = Game.COST_ENGINE
-    this.game.cashflow.coachcost = Game.COST_PASSENGER_COACH
+    // this._train = new Train(3, 0)
+    // this.game.cashflow.enginecost = Game.COST_ENGINE
+    // this.game.cashflow.coachcost = 3*Game.COST_PASSENGER_COACH
 
     this._segments = null
     this.storedTransform = null
@@ -62,6 +62,9 @@ class Path {
       this.createWayPoints()
       this.updateStations()
       this.savePathInDB()
+      this._train = new Train(3, 0)
+      this.game.cashflow.enginecost = Game.COST_ENGINE
+      this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
     }
   }
   savePathInDB(){
@@ -72,7 +75,7 @@ class Path {
       for(let iwp=0;iwp<this.wp.length;iwp++){
         json2 = saveWayPointToDB(this.PathIdInDB,this.wp[iwp].n,this.wp[iwp].x,this.wp[iwp].y,this.wp[iwp].feature)
         json2.then(data=>{
-          console.log(`waypointid : ${data[0]}`)
+          //console.log(`waypointid : ${data[0]}`)
         }).catch(err=>{
           console.error(`Error in saveWayPointToDB: ${err}`)  
         })
@@ -379,7 +382,7 @@ class Path {
       p1 = this.wp[this.i - ptAdjust];
       p3 = this.wp[this.i + 1 - ptAdjust];
       let rad
-      let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 12 : 8
+      let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 9 : 7
       let h = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 4 : 4
       if ((this.i - ptAdjust > -1) && p1.feature != Game.FEATURE_TUNNEL) {
         if (p3) {

@@ -8,11 +8,11 @@ async function getUser(email) {
   if (!response.ok) {
     throw new Error('Network response was not ok')
   }
-  const user = await response.json()
-  return user[0]
+  const users = await response.json()
+  return users[0]
 }
 function userExists(email) {
-  return getUser(email)!=undefined
+  return !!getUser(email)
 }
 async function createUserAndDefaultGame(email, gamename) {
   let newGameId
@@ -110,16 +110,24 @@ async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, pass
   let json = await response.json()
   return json
 }
-async function getGamePeriodId(gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost) {
+async function getGamePeriodId(gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost,
+                               costs, sales, interest, tax, profit,cumcoachcost,cumenginecost) {
   let data = {
     gameid: gameid,
     period: period,
     passengerid: passengerid,
-    openingcash: openingcash,
-    openingcumcapitalcost: openingcumcapitalcost,
-    openingcumdepreciation: openingcumdepreciation,
-    cumtrackcost: cumtrackcost,
-    cumstationcost: cumstationcost,
+    openingcash: Math.round(openingcash),
+    openingcumcapitalcost: Math.round(openingcumcapitalcost),
+    openingcumdepreciation: Math.round(openingcumdepreciation),
+    cumtrackcost: Math.round(cumtrackcost),
+    cumstationcost: Math.round(cumstationcost),
+    costs: Math.round(costs),
+    sales: Math.round(sales),
+    interest: Math.round(interest),
+    tax: Math.round(tax),
+    profit: Math.round(profit),
+    cumcoachcost: Math.round(cumcoachcost),
+    cumenginecost: Math.round(cumenginecost)
   }
   const response = await fetch(`/api/gameperiod`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
@@ -168,5 +176,18 @@ async function saveWayPointToDB(pathid,n,x,y,feature){
   }
   let json = await response.json()
   return json
+
+}
+
+async function deleteUser(email){
+  
+  const response = await fetch(`/api/user/email/${email}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'DELETE'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  return true
 
 }

@@ -30,7 +30,7 @@ const passenger = require('./routes/route_passenger')
 app.get("/api/user", user.getAll)
 app.get("/api/user/email/:email", user.getUserWithEmail)
 app.post("/api/user", user.addUser)
-app.delete("/api/user/id/:id", user.deleteUserWithEmail)
+app.delete("/api/user/email/:email", user.deleteUserWithEmail)
 
 //------------Game-----------------
 app.get("/api/game", game.getAll)

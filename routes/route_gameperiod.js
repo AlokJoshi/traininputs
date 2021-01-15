@@ -4,15 +4,23 @@ const knex = require('../services/dbservice')
 function addGameperiod(req, res) {
   const gameid = req.body.gameid
   const period = req.body.period
-  const passengerid = req.body.passengerid
   const openingcash = req.body.openingcash
   const openingcumcapitalcost = req.body.openingcumcapitalcost
   const openingcumdepreciation = req.body.openingcumdepreciation
   const cumtrackcost = req.body.cumtrackcost
   const cumstationcost = req.body.cumstationcost
-  console.log(`addGameperiod called with ${gameid},${period},${passengerid},${passengerid}`)
+  const costs = req.body.costs
+  const sales = req.body.sales
+  const interest = req.body.interest
+  const tax = req.body.tax
+  const profit = req.body.profit
+  const cumcoachcost = req.body.cumcoachcost
+  const cumenginecost = req.body.cumenginecost
+  console.log(`addGameperiod called with ${gameid},${period},${sales},${interest}`)
   knex('gameperiod')
-    .insert({ gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost})
+    .insert({ gameid, period, openingcash, openingcumcapitalcost, 
+              openingcumdepreciation, cumtrackcost, cumstationcost,
+              costs, sales, interest, tax, profit, cumcoachcost, cumenginecost})
     .returning('id')
     .then(data => {
       res.json(data)

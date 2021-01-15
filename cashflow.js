@@ -22,6 +22,9 @@ class CashFlow {
 
     this._cumtrackcost = 0
     this._cumstationcost = 0
+    this._cumcoachcost = 0
+    this._cumenginecost = 0
+
   }
   set ticketsales(value) {
     //console.log(`Ticket sales: ${value}`)
@@ -40,9 +43,11 @@ class CashFlow {
   }
   set coachcost(value) {
     this._coachcost += value
+    this._cumcoachcost += value
   }
   set enginecost(value) {
     this._enginecost += value
+    this._cumenginecost += value
   }
   get runningcost() {
     return this._runningcost

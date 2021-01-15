@@ -37,8 +37,11 @@ body{
 }
 
 .brand-title{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
   font-size: 1.5rem;
   margin:.5rem;
+  justify-items: center;
 }
 table, th, td {
     border: 1px solid black;
