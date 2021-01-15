@@ -69,7 +69,6 @@ class Game {
     this.money = new Audio('money.mp3')
     this.pop = new Audio('pop.mp3')
 
-    this.keyBufffer = new KeyBuffer(this)
     this.passengers = new Passengers()
     this.cities = new Cities()
     updatePassengers(this.period, this.cities, this.passengers)
