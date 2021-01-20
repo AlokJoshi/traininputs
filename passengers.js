@@ -5,9 +5,12 @@ class Passengers{
   get passengers(){
     return this.info
   }
-  numWaitingAt(cityname){
+  numTotalWaitingAt(cityname){
     let x = this.info.filter(city=>city.from==cityname).map(city=>city.passengers)
     return x.reduce((cum,passengers)=>cum+passengers)
+  }
+  numWaitingForCities(cityname){
+    return this.info.filter(city=>city.from==cityname)
   }
   numAvailable(from,to){
     let i = this.info.findIndex((x)=>x.from==from && x.to==to) 

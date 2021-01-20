@@ -53,6 +53,133 @@ table, th, td {
 }
 #tooltip{
   position:absolute;
+  padding: 5;
+  color:rgba(0,0,0,.8);
+  font-size:small;
+  z-index: 1;
+  width : 100px;
+  background-color: rgb(255, 182, 193,0.7);
+  border: black 1px solid;
+  border-radius:4px;
+  display:block; 
+}
+.citypopup{
+  position:absolute;
+  padding: 5;
+  color:rgba(0,0,0,1);
+  font-size:small;
+  z-index: 1;
+  width : 50px;
+  background-color: green;
+  border-radius:4px;
+  display:block;
+  text-align: center; 
+  opacity: 1;
+  animation: anotherpulse 0.5s linear;
+}
+.citypopup2{
+  position:absolute;
+  padding: 5;
+  color:white;
+  font-size:small;
+  font-weight: bold;
+  z-index: 1;
+  width : 50px;
+  background-color: red;
+  border-radius:4px;
+  display:block;
+  text-align: center; 
+  opacity: 1;
+  animation: anotherpulse 0.5s linear;
+}
+.citypopup.active{
+  animation: pulse 0.5s linear;
+}
+.citypopup2.active2{
+  animation: pulse 0.5s linear;
+}
+#Mumba-popup{
+  left:55px;
+  top:35px;
+}
+#Kata-popup{
+  left:1065px;
+  top:535px;
+}
+#Haybad-popup{
+  left:815px;
+  top:95px;
+}
+#Dore-popup{
+  left:355px;
+  top:125px;
+}
+#Purnapur-popup{
+  left:215px;
+  top:265px;
+}
+#Ooby-popup{
+  left:555px;
+  top:275px;
+}
+#Poa-popup{
+  left:995px;
+  top:265px;
+}
+#Mannai-popup{
+  left:415px;
+  top:585px;
+}
+#Lochin-popup{
+  left:725px;
+  top:565px;
+}
+#Bangro-popup{
+  left:915px;
+  top:385px;
+}
+#foreground,#hud{
+  pointer-events:none;
+}
+#Mumba-popup2{
+  left:105px;
+  top:35px;
+}
+#Kata-popup2{
+  left:1115px;
+  top:535px;
+}
+#Haybad-popup2{
+  left:865px;
+  top:95px;
+}
+#Dore-popup2{
+  left:405px;
+  top:125px;
+}
+#Purnapur-popup2{
+  left:265px;
+  top:265px;
+}
+#Ooby-popup2{
+  left:605px;
+  top:275px;
+}
+#Poa-popup2{
+  left:1045px;
+  top:265px;
+}
+#Mannai-popup2{
+  left:465px;
+  top:585px;
+}
+#Lochin-popup2{
+  left:775px;
+  top:565px;
+}
+#Bangro-popup2{
+  left:965px;
+  top:385px;
 }
 #foreground,#hud{
   pointer-events:none;
@@ -102,18 +229,13 @@ keytype {
 }
 
 #popup {
-  position: fixed;
+  position: absolute;
   z-index: 100;
   background-color: rgb(255, 182, 193,0.7);
-  /* width: 500px;
-  height: 150px; */
   border: black 1px solid;
-  border-radius: 4px;
+  border-radius: 50px;
   display: none;
   pointer-events:none;
-  /* top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); */
 }
 .hidden{
   display:none;
@@ -121,10 +243,33 @@ keytype {
 .popupheader{
   padding: 10px 5px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   border-bottom: 1px solid black;
 }
 .popupbody{
   padding: 10px 15px;
+}
+
+@keyframes pulse {
+  0% {transform:rotateX(0deg); opacity:1;}
+  50%{opacity:0}
+  100% {transform:rotateX(360deg); opacity:1;}
+}
+@keyframes anotherpulse {
+  0% {transform:rotateX(0deg); opacity:1;}
+  50%{opacity:0}
+  100% {transform:rotateX(360deg); opacity:1;}
+}
+
+#car{
+  position:absolute;
+  top:0px;
+  left:600px;
+  z-index: 1;
+  animation: move 30s linear forwards;
+}
+@keyframes move{
+  from{transform:translateY(800px)}
+  to{transform:translateY(-50px)}
 }

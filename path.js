@@ -3,7 +3,7 @@ class Path {
   consists of a collection of points
   */
 
-  static NUM_FRAMES_TO_SKIP = 100
+  static NUM_FRAMES_TO_SKIP = 50
   __pathid=0
   constructor(game, ctx, ctxRouteDesign) {
     this.game = game
@@ -85,6 +85,8 @@ class Path {
     })
   }
   get isValid() {
+    //first prune the path if necessary
+    this.prunePoints()
     //the length of points has to be greater than 1
     return this.length > 1 &&
       distanceToClosestCity(this.game.cities, this.points[0].x, this.points[0].y) < Game.CITY_RADIUS &&
@@ -466,6 +468,8 @@ class Path {
 
         let currCity = this.getStation(this.i).name
         let currCity_wpn = this.getStation(this.i).wpn
+        let totalfare=0
+
         //first alight the passengers for this city
         if (currCity_wpn == 0 && this.going || currCity_wpn == this.wp.length - 1 && !this.going) {
           //starting point on going or returning back. No one is alighted here as that was done
@@ -483,6 +487,7 @@ class Path {
           // document.dispatchEvent(event);
         }
         //console.log(`Alighted ${numAlighted} at ${currCity}`)
+        let numNoRoom = 0
         if (this.going) {
           //take in passengers for the cities on the way back to the final station
 
@@ -493,6 +498,7 @@ class Path {
               let num = Math.floor(this.game.passengers.numAvailable(currCity, station.name))
               //second check the room
               let room = this.train.passenger_room_available
+              numNoRoom += (num>=room?num-room:0)
               num = Math.min(num, room)
               //collect fare
               let fare = this.game.tickets.ticket(currCity, station.name)
@@ -513,6 +519,7 @@ class Path {
               });
               document.dispatchEvent(event);
               this.game.cashflow.ticketsales = num * fare
+              totalfare += num * fare
               //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
               //third board the passengers
               this.train.boardPassengersFor(station.name, num)
@@ -520,6 +527,7 @@ class Path {
               this.game.passengers.subtractPassengers(currCity, station.name, num)
             }
           })
+          
         } else {
           //take in passengers for the cities on the way back to the originating station
           this.stations.forEach(station => {
@@ -527,6 +535,7 @@ class Path {
               let num = Math.ceil(this.game.passengers.numAvailable(currCity, station.name))
               //second check the room
               let room = this.train.passenger_room_available
+              numNoRoom += (num>=room?num-room:0)
               num = Math.min(num, room)
               //collect fare
               let fare = this.game.tickets.ticket(currCity, station.name)
@@ -547,6 +556,7 @@ class Path {
               });
               document.dispatchEvent(event);
               this.game.cashflow.ticketsales = num * fare
+              totalfare += num * fare
               //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
               //third board the passengers
               this.train.boardPassengersFor(station.name, num)
@@ -556,11 +566,18 @@ class Path {
           })
           this.numFrames++
         }
-
+        
+        let popup = document.querySelector(`#${currCity}-popup`)
+        popup.classList.toggle('active');
+        popup.innerHTML = `$${Math.ceil(totalfare / 1000)} K`
+        let popup2 = document.querySelector(`#${currCity}-popup2`)
+        popup2.style.left = popup.style.left + 40
+        popup2.top = popup.top
+        popup2.innerHTML = `&#x2639 ${numNoRoom}`
+        popup2.classList.toggle('active2');
       }
       this.numFrames++
       //audiochugging=null
-
     }
 
   }
@@ -585,6 +602,17 @@ class Path {
     //we should get the pathperiodid since we have to use that to save the
     //passenger data
   }
-
+  prunePoints(){
+    //sometimes a user creates a path that does not end in a city. prunePoints removes
+    //points from the end of the points array till it finds a point that is a city.
+    for(let i = this.points.length-1; i != 0; i--){
+      if(this.game.cities.cities.some(city=>city.x==this.points[i].x && city.y==this.points[i].y)){
+        return
+      }else{
+        let removedPoint = this.points.pop()
+        console.log(`Pruned the point ${JSON.stringify(removedPoint)} from the path`)
+      }
+    }
+  }
   
 }

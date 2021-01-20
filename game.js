@@ -144,7 +144,7 @@ class Game {
           //we are adding the first point within a new path
           this.currentPath = new Path(this, this.ctx_foreground, this.ctx_routedesign)
           this.paths.addPath(this.currentPath)
-          this.selectedPathNum = this.paths.numPaths
+          this.selectedPathNum = this.numPaths
           this.currentPath.addPoint(new Point(city.x, city.y))
           this.lastClick.x = city.x
           this.lastClick.y = city.y
@@ -171,6 +171,7 @@ class Game {
   }
 
   addMouseListener() {
+    let prevcityname=''
     document.onmousemove = (event) => {
 
       if (this.canvases.style.visibility == 'collapse') {
@@ -184,7 +185,7 @@ class Game {
         if (this.currentPath && !this.currentPath.finalized && this.state == Game.ROUTE_EDITING_STATE) {
           this.drawRoutes()
 
-          if (this.lastClick.x != null) {
+          //if (this.lastClick.x != null) {
             
             //testing 01/14/21
             let lastTwoPoints = this.currentPath.lastTwoPoints
@@ -193,22 +194,25 @@ class Game {
                 (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y,
                   this.currentMousePosition.x, this.currentMousePosition.y, this.MIN_ANGLE)))) 
             document.body.style.cursor = bOK ? 'crosshair' : 'not-allowed'
-
             this.ctx_routedesign.beginPath()
             this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
             this.ctx_routedesign.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
             this.ctx_routedesign.stroke()
-          }
+          //}
         }
       } else if (this.state == Game.RUNNING_STATE) {
         //where is the mouse
         //close to a city?
         let city = this.cities.getClosestCity(event.offsetX, event.offsetY)
         if (city != null) {
-          let waiting = Math.floor(this.passengers.numWaitingAt(city.name))
-          this.tooltip.display(city, waiting)
+          if(city.name != prevcityname){
+            let waiting = this.passengers.numWaitingForCities(city.name)
+            this.tooltip.display(city, waiting)
+            prevcityname = city.name
+          }
         } else {
           this.tooltip.clearDisplay()
+          prevcityname=''
         }
       }
     }
@@ -244,48 +248,33 @@ class Game {
               this.lastClick.y = null
             }
           }
-        } else if (event.key == 'a') {
-          if (this.currentPath != null) {
-            if (!this.currentPath.isValid) {
-              //delete this path and set the current path to null
-              this.paths.deletePath(this.currentPath)
-              this.currentPath = null
-              this.selectedPathNum--
-            } else if (!this.currentPath.finalized) {
-              this.currentPath.finalized = true
-            }
-          }
-          this.lastClick.x = null
-          this.lastClick.y = null
-          this.currentPath = new Path(this, this.ctx_foreground, this.ctx_routedesign)
-          this.paths.addPath(this.currentPath)
-          this.selectedPathNum = this.paths.length
         } else if (event.key == 't') {
           if (!this.currentPath.isValid) {
             //delete this path and set the current path to null
             this.paths.deletePath(this.currentPath)
             this.currentPath = null
-            this.selectedPathNum--
           } else if (!this.currentPath.finalized) {
             this.currentPath.finalized = true
-            this.selectedPathNum = this.paths.length
             this.lastClick.x = null
             this.lastClick.y = null
           }
+          this.selectedPathNum = this.numPaths
           this.state = Game.TRAIN_EDITING_STATE
           this.updateHUD()
         }else if (event.key == 'g') {
-          if (!this.currentPath.isValid) {
-            //delete this path and set the current path to null
-            this.paths.deletePath(this.currentPath)
-            this.currentPath = null
-            this.selectedPathNum--
-          } else if (!this.currentPath.finalized) {
-            this.currentPath.finalized = true
-            this.selectedPathNum = this.paths.length
-            this.lastClick.x = null
-            this.lastClick.y = null
+          if(this.currentPath){
+            //sometimes a user may not complete a path and press g
+            if (!this.currentPath.isValid) {
+              //delete this path and set the current path to null
+              this.paths.deletePath(this.currentPath)
+              this.currentPath = null
+            } else if (!this.currentPath.finalized) {
+              this.currentPath.finalized = true
+              this.lastClick.x = null
+              this.lastClick.y = null
+            }
           }
+          this.selectedPathNum = this.numPaths
           if (this.paths.atLeastOnePathFinalized) {
             //this.animationMode = true
             //this.i = 0;
@@ -300,13 +289,12 @@ class Game {
           } else {
             console.log(`No path finalized yet`)
           }
-        }else if(event.key == 'Escape'){
+        }else if(event.key == 'a' || event.key == 'Escape'){
           if (this.currentPath != null) {
             if (!this.currentPath.isValid) {
               //delete this path and set the current path to null
               this.paths.deletePath(this.currentPath)
               this.currentPath = null
-              this.selectedPathNum--
             } else if (!this.currentPath.finalized) {
               this.currentPath.finalized = true
             }
@@ -314,30 +302,27 @@ class Game {
           console.log("escape key pressed")
           this.lastClick.x = null
           this.lastClick.y = null
+          this.selectedPathNum = this.numPaths
+          
         }else{
           console.log(`${event.key} pressed`)
         }
       }
-
+      
       if (this.state == Game.TRAIN_EDITING_STATE) {
         if (!this.currentPath.isValid) {
           //delete this path and set the current path to null
           this.paths.deletePath(this.currentPath)
           this.currentPath = null
-          this.selectedPathNum--
+          this.selectedPathNum = this.numPaths
         } else if (!this.currentPath.finalized) {
           this.lastClick.x = null
           this.lastClick.y = null
           this.currentPath.finalized = true
-          //AJ 12/9/20 removed from here and added only if the path is finalized
-          //this.currentPath.createWayPoints()
-          //this.currentPath.updateStations()
-          //this.cashflow.trackcost = this.currentPath.pathCapitalCost
         }
         if (event.key == 'n') {
-          let numPaths = this.paths.numPaths
           this.selectedPathNum++
-          if (this.selectedPathNum > numPaths) this.selectedPathNum = 1
+          if (this.selectedPathNum > this.numPaths) this.selectedPathNum = 1
           this.updateHUD()
         }
         if (event.key == '+') {
@@ -389,9 +374,8 @@ class Game {
           return
         }
         if (event.key == 'n') {
-          let numPaths = this.paths.numPaths
           this.selectedPathNum++
-          if (this.selectedPathNum > numPaths) this.selectedPathNum = 1
+          if (this.selectedPathNum > this.numPaths) this.selectedPathNum = 1
           this.updateHUD()
           return
         }
@@ -405,17 +389,17 @@ class Game {
           this.updateHUD()
           return
         }
-        if(!this.currentPath){
+        if(this.currentPath){
           if (!this.currentPath.isValid) {
             //delete this path and set the current path to null
             this.paths.deletePath(this.currentPath)
             this.currentPath = null
-            this.selectedPathNum--
           } else if (!this.currentPath.finalized) {
             this.lastClick.x = null
             this.lastClick.y = null
             this.currentPath.finalized = true
           }
+          this.selectedPathNum = this.numPaths
         }
         this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
         this.paths.draw()
@@ -458,7 +442,11 @@ class Game {
   animate = async() => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
-
+    let pu = new Popup(
+      10000,
+      this.makeSound,
+      this.pop
+      )
     if (this.state == Game.RUNNING_STATE) {
       if(this.day_and_night){
         this.background.style.filter = `brightness(${getBrightness(this.frames)})`
@@ -507,15 +495,9 @@ class Game {
         this.cashflow.initPeriodVariables()
         let milestone = getMilestone(this)
         if(milestone!=null){
-          new Popup(milestone,
-          0,
-          0,
-          this.foreground.width,
-          this.foreground.height,
-          5000,
-          this.makeSound,
-          this.pop
-          ).show()
+          pu.show(milestone)
+          // let b=new Balloon(this.ctx_foreground,500,500,"abc")
+          // b.show()    
         }
       }
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
@@ -557,6 +539,9 @@ class Game {
         break;
     }
     this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum-1].name)
+  }
+  get numPaths(){
+    return this.paths.numPaths
   }
 
   savePeriodDataToDB = () => {

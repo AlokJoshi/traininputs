@@ -9,10 +9,9 @@
 </head>
 
 <body>
+  <!--
   <div id="tooltip"></div>
-  <!-- initial containing block for the popup is the body -->
   <div id="popup">
-    <!-- svg for a steam engine -->
     <div class="popupheader">
       <div class="popupimage">
         <img src="toytrain.png"/>
@@ -27,7 +26,17 @@
       deleniti error?
     </div>
   </div>
-
+  <div class="citypopup" id="Mumba-popup"></div>
+  <div class="citypopup" id="Kata-popup"></div>
+  <div class="citypopup" id="Haybad-popup"></div>
+  <div class="citypopup" id="Dore-popup"></div>
+  <div class="citypopup" id="Purnapur-popup"></div>
+  <div class="citypopup" id="Ooby-popup"></div>
+  <div class="citypopup" id="Poa-popup"></div>
+  <div class="citypopup" id="Mannai-popup"></div>
+  <div class="citypopup" id="Lochin-popup"></div>
+  <div class="citypopup" id="Bangro-popup"></div>
+-->
   <div class="brand-title">
     <img src="toytrain.png"/>
     <div>Train Tycoon</div>
@@ -49,6 +58,7 @@
     </div>
   </nav>
   <div id="noncanvases">
+    
     <div class="content">
       <div id='objective'>
         <h3>Objective</h3>
@@ -282,6 +292,46 @@
     </div>
   </div>
   <div id="canvases">
+    <div id="car">
+      <img src="./car10.png" alt="car">
+    </div>
+    <div id="tooltip"></div>
+    <div id="popup">
+      <!-- svg for a steam engine -->
+      <div class="popupheader">
+        <div class="popupimage">
+          <img src="toytrain.png"/>
+        </div>
+        <div class="popuptitle">
+          Info
+        </div>
+      </div>
+      <div class="popupbody">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate ad, eaque aperiam, sit debitis possimus
+        veritatis beatae, similique eum maiores placeat non corporis rerum! Provident voluptatem accusamus quidem
+        deleniti error?
+      </div>
+    </div>
+    <div class="citypopup" id="Mumba-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Kata-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Haybad-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Dore-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Purnapur-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Ooby-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Poa-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Mannai-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Lochin-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup" id="Bangro-popup" title="Ticket sales for the train that left most recently."></div>
+    <div class="citypopup2 tooltip" id="Mumba-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Kata-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Haybad-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Dore-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Ooby-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Poa-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Mannai-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Lochin-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Bangro-popup2" title="Number of passengers that could not be accomodated"></div>
     <canvas id="background"></canvas>
     <canvas id="foreground"></canvas>
     <canvas id="routedesign"></canvas>
@@ -291,6 +341,7 @@
   <script src="https://cdn.auth0.com/js/auth0-spa-js/1.9/auth0-spa-js.production.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js"></script>
   <script src="./services/dbutils.js"></script>
+  <script src="balloon.js"></script>
   <script src="navbar.js"></script>
   <script src="popup.js"></script>
   <script src="segments.js"></script>
