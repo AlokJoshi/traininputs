@@ -246,3 +246,25 @@ function pointIsOverWater(transform,x){
   console.log(imgData.data[0], imgData.data[1], imgData.data[2],imgData.data[4], imgData.data[5], imgData.data[6])
   return imgData.data[4]==77 && imgData.data[5]==77 & imgData.data[6]==243
 }
+function range(start, stop, step) {
+  if (typeof stop == 'undefined') {
+      // one param defined
+      stop = start;
+      start = 0;
+  }
+
+  if (typeof step == 'undefined') {
+      step = 1;
+  }
+
+  if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
+      return [];
+  }
+
+  var result = [];
+  for (var i = start; step > 0 ? i < stop : i > stop; i += step) {
+      result.push(i);
+  }
+
+  return result;
+};

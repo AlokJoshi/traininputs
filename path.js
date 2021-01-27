@@ -294,8 +294,8 @@ class Path {
             ctx.strokeStyle = "rgb(0,0,0)"
             ctx.lineWidth = 0.1
           } else if (this.wp[i].feature == Game.FEATURE_WATER) {
-            ctx.strokeStyle = "rgb(255,255,0)"
-            ctx.lineWidth = 1
+            ctx.strokeStyle = "rgb(0,0,0)"
+            ctx.lineWidth = 2
           }
           ctx.translate(0, 2)
           ctx.beginPath()
@@ -476,15 +476,6 @@ class Path {
           //already when the train was at this point coming into this station
         } else {
           let numAlighted = this.train.alightPassengersForCity(currCity)
-          //note: dispatching this event works but does not add any value
-          //console.log(`${numAlighted} alighted at ${currCity}`)
-          // event = new CustomEvent("info", {
-          //   detail: {
-          //     train: this.name,
-          //     text: `${numAlighted} alighted at ${currCity}`
-          //   }
-          // });
-          // document.dispatchEvent(event);
         }
         //console.log(`Alighted ${numAlighted} at ${currCity}`)
         let numNoRoom = 0

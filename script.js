@@ -1,3 +1,5 @@
+
+
 let auth0 = null
 let loggedInUser = null
 let game = null

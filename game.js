@@ -32,6 +32,7 @@ class Game {
 
   static WPL = 2
   static START_GAME_NAME = 'My first game'
+  
 
   ms = 150
   period = 0
@@ -101,6 +102,9 @@ class Game {
 
     this.img = new Image()
     this.img.src = "aerialview2.png"
+    this.carimage = document.getElementById('carimage')
+    this.truckimage = document.getElementById('truckimage')
+
     this.img.onload = () => {
       this.ctx_background.drawImage(this.img, 0, 0, this.background.width, this.background.height)
       this.cities.draw(this.ctx_background)
@@ -124,6 +128,38 @@ class Game {
     //start in this state
     this.state = Game.ROUTE_EDITING_STATE
     this.updateHUD()
+    this.bezierPaths = new BezierPaths(this.ctx_background,this.ctx_foreground)
+
+    this.vehicles = new Vehicles(this.ctx_foreground,this.ctx_background)
+
+    //mumba to haybad
+    //this.bezierPaths.add(0.25,0.1,0.0,1.0,80,60,840,120)
+    let rd = this.bezierPaths.add(0,0,1,1.0,80,60,840,120,10)
+    this.vehicles.add(rd,carimage,3)
+    this.vehicles.add(rd,this.truckimage,8)
+    
+    //haybad to Bangro
+    rd = this.bezierPaths.add(0,0,1,1.0,840,120,940,410,5)
+    this.vehicles.add(rd,carimage,1)
+    this.vehicles.add(rd,this.truckimage,5)
+
+    //Kata to Lochin
+    this.bezierPaths.add(0,0,1,1.0,1090,560,750,590,10)
+    
+    //Oooby to Mannai
+    this.bezierPaths.add(0,0,1,1.0,580,300,440,610,3)
+    
+    //Mumba to Mannai
+    this.bezierPaths.add(0,0,1,1.0,80,60,440,610,10)
+
+    this.bezierPaths.drawRoads()
+
+    //todo: later I should convert it into a Fields class
+    this.fields = []
+    for(let i = 0;i<8;i++){
+      this.fields.push(new Field(880+(i*40),120,40,30,this.ctx_foreground,this.ctx_background))
+    }
+
     document.addEventListener("info", e => {
       //console.log(`Event received: ${e.detail.text}` )
       this.hud.info = e.detail
@@ -282,6 +318,7 @@ class Game {
             //AJ 12/8/20 commented out the following line..no
             this.paths.drawBackground(this.ctx_background)
             this.paths.drawStations(this.ctx_background)
+            this.bezierPaths.drawRoads()
             if (this.makeSound) this.audiochugging.play()
             this.ctx_routedesign.clearRect(0,0,this.routedesign.width,this.routedesign.height)
             this.state = Game.RUNNING_STATE
@@ -339,6 +376,7 @@ class Game {
           if (this.paths.atLeastOnePathFinalized) {
             this.paths.drawBackground(this.ctx_background)
             this.paths.drawStations(this.ctx_background)
+            this.bezierPaths.drawRoads()
             if (this.makeSound) this.audiochugging.play()
             this.ctx_routedesign.clearRect(0,0,this.routedesign.width,this.routedesign.height)
             this.state = Game.RUNNING_STATE
@@ -366,11 +404,11 @@ class Game {
           return
         }
         if (event.key == '+') {
-          this.ms -= 10
+          this.ms -= (this.ms>=0?10:0)
           return
         }
         if (event.key == '-') {
-          this.ms += 10
+          this.ms += (this.ms<=500?10:0)
           return
         }
         if (event.key == 'n') {
@@ -501,6 +539,10 @@ class Game {
         }
       }
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
+      this.bezierPaths.animate()
+      this.vehicles.animate()
+      this.fields.forEach(f=>f.animate())
+      //this.field.animate()
       this.paths.animate(this.background, this.ctx_foreground)
       this.frames++
       this.megaperiod = Math.floor(this.period / Game.PERIODS_PER_MEGA_PERIOD)
