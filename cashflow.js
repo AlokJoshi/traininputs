@@ -11,6 +11,7 @@ class CashFlow {
     this._stationcost = 0
     this._enginecost = 0
     this._coachcost = 0
+    this._wagoncost = 0
     this._runningcost = 0
     this._maintenancecost = 0
     this._profit = 0
@@ -23,6 +24,7 @@ class CashFlow {
     this._cumtrackcost = 0
     this._cumstationcost = 0
     this._cumcoachcost = 0
+    this._cumwagoncost = 0
     this._cumenginecost = 0
 
   }
@@ -44,6 +46,10 @@ class CashFlow {
   set coachcost(value) {
     this._coachcost += value
     this._cumcoachcost += value
+  }
+  set wagoncost(value) {
+    this._wagoncost += value
+    this._cumwagoncost += value
   }
   set enginecost(value) {
     this._enginecost += value
@@ -99,7 +105,7 @@ class CashFlow {
     this.updateRunningCost()
     this.updateInterest()
 
-    let capitalcost = this._trackcost + this._stationcost + this._coachcost + this._enginecost
+    let capitalcost = this._trackcost + this._stationcost + this._coachcost + this._wagoncost + this._enginecost
 
     //update the cum capital cost
     this._closingcumcapitalcost = this._openingcumcapitalcost + capitalcost
@@ -128,6 +134,7 @@ class CashFlow {
     this._trackcost = 0
     this._stationcost = 0
     this._coachcost = 0
+    this._wagoncost = 0
     this._enginecost = 0
     this._ticketsales = 0
     this._interest = 0

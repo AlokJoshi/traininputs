@@ -22,16 +22,18 @@ class Path {
     this.numFrames = 0
     this.going = true
 
-    // this._train = new Train(3, 0)
-    // this.game.cashflow.enginecost = Game.COST_ENGINE
-    // this.game.cashflow.coachcost = 3*Game.COST_PASSENGER_COACH
-
     this._segments = null
     this.storedTransform = null
     this.PathIdInDB=null
   }
   get rects() {
-    return 1 + this.train.num_passenger_coaches + this.train.num_goods_coaches
+    return 1 + this.train.num_passenger_coaches + this.train.num_wagons
+  }
+  get passengercoaches (){
+    return this.train.num_passenger_coaches 
+  }
+  get wagons (){
+    return this.train.num_wagons 
   }
   get train() {
     return this._train
@@ -62,9 +64,10 @@ class Path {
       this.createWayPoints()
       this.updateStations()
       this.savePathInDB()
-      this._train = new Train(3, 0)
+      this._train = new Train(3, 1)
       this.game.cashflow.enginecost = Game.COST_ENGINE
       this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
+      this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
     }
   }
   savePathInDB(){
@@ -378,20 +381,21 @@ class Path {
     let p1, p3
     let event
     let ptgap = 6 - Game.WPL
-    for (let iRect = 0; iRect < this.rects; iRect++) {
+    let rects = 1 + this.passengercoaches + this.wagons
+    for (let iRect = 0; iRect < rects; iRect++) {
       //let ptAdjust = iRect * Path.PTGAP;
       let ptAdjust = iRect * ptgap
       p1 = this.wp[this.i - ptAdjust];
       p3 = this.wp[this.i + 1 - ptAdjust];
       let rad
-      let w = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 9 : 7
-      let h = ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) ? 4 : 4
+      let w = ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) ? 9 : 7
+      let h = ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) ? 4 : 4
       if ((this.i - ptAdjust > -1) && p1.feature != Game.FEATURE_TUNNEL) {
         if (p3) {
           rad = Math.atan((p3.y - p1.y) / (p3.x - p1.x));
         }
         ctx.save();
-        if ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) {
+        if ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) {
           ctx.fillStyle = "rgba(100,100,100)";
         } else {
           ctx.fillStyle = `rgba(255,0,0,${this.train.occupancy + 0.2})`;
@@ -400,7 +404,7 @@ class Path {
         ctx.rotate(rad);
         ctx.translate(-Math.floor(w / 2), - Math.floor(h / 2));
         ctx.fillRect(0, 0, w, h);
-        if ((iRect === 0 && this.going) || (iRect == this.rects - 1 && !this.going)) {
+        if ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) {
           let smokestack
           // if(iRect === 0){
           //   smokestack=this.going?w-10:w-10
@@ -581,8 +585,8 @@ class Path {
   }
 
   savePeriodDataToDB(gameperiodid) {
-    console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.num_passenger_coaches}, ${this.train.num_goods_coaches} saving to db.`)
-    let json = savePeriodPathToDB(gameperiodid,this.PathIdInDB,this.i,this.numFrames,this.going,this.train.num_passenger_coaches,this.train.num_goods_coaches)
+    console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.num_wagon}, ${this.train.num_passenger_coaches}, ${this.train.num_wagons} saving to db.`)
+    let json = savePeriodPathToDB(gameperiodid,this.PathIdInDB,this.i,this.numFrames,this.going,this.train.num_passenger_coaches,this.train.num_wagon,this.train.num_wagons)
     json.then(data=>{
       let pathperiodid = data[0]
       console.log(`pathperiodid returned from db: ${pathperiodid}`)

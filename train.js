@@ -1,7 +1,7 @@
 class Train {
-  constructor(num_passenger_coaches,num_goods_coaches) {
+  constructor(num_passenger_coaches,num_wagons) {
     this.num_passenger_coaches = num_passenger_coaches
-    this.num_goods_coaches = num_goods_coaches
+    this.num_wagons = num_wagons
     this.passengers = {}
   }
   addPassengerCoach(){
@@ -11,7 +11,7 @@ class Train {
     this.num_passenger_coaches--  
   }
   addGoodsCoach(){
-    this.num_goods_coaches++  
+    this.num_wagons++  
   }
   get capitalCost(){
     const engine = 10000
@@ -19,10 +19,10 @@ class Train {
     const passengercoach=1000
     //const path = paths.getPath(this.path)
     //const pathlength = path.pathLength
-    return engine+goodscoach*this.num_goods_coaches+passengercoach*this.num_passenger_coaches
+    return engine+goodscoach*this.num_wagons+passengercoach*this.num_passenger_coaches
   }
   get runningCostPerTimePeriod(){
-    return Math.floor(this.capitalCost*0.5)+this.num_passenger_coaches*5000+this.num_goods_coaches*2000
+    return Math.floor(this.capitalCost*0.5)+this.num_passenger_coaches*5000+this.num_wagons*2000
   }
   get passenger_capacity(){
     return this.num_passenger_coaches*Game.PASSENGER_COACH_CAPACITY

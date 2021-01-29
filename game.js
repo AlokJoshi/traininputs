@@ -1,5 +1,6 @@
 class Game {
   static PASSENGER_COACH_CAPACITY = 30
+  static GOODS_COACH_CAPACITY = 100
   static MIN_LENGTH = 45
   static LINE_WIDTH = 2
   static OPENING_CASH = 1000000
@@ -10,6 +11,7 @@ class Game {
   static COST_ENGINE = 500000
   static COST_GOODS_COACH = 500
   static COST_PASSENGER_COACH = 100000
+  static COST_GOODS_COACH = 50000
   static INTEREST_EARNED_PER_PERIOD = 0.0005
   static INTEREST_PAID_PER_PERIOD = 0.001
   static DISTANCE_FACTOR = 1.05
@@ -156,8 +158,10 @@ class Game {
 
     //todo: later I should convert it into a Fields class
     this.fields = []
-    for(let i = 0;i<8;i++){
-      this.fields.push(new Field(880+(i*40),120,40,30,this.ctx_foreground,this.ctx_background))
+    for(let j = 0;j<4;j++){
+      for(let i=0;i<8;i++){
+        this.fields.push(new Field(920+(i*40),120+j*30,40,30,this.ctx_foreground,this.ctx_background))
+      }
     }
 
     document.addEventListener("info", e => {
@@ -372,6 +376,16 @@ class Game {
           this.paths.getPath(this.selectedPathNum).train.removePassengerCoach()
           this.updateHUD()
         }
+        if (event.key == '>') {
+          this.cashflow.coachcost = Game.COST_GOODS_COACH
+          this.paths.getPath(this.selectedPathNum).train.addGoodsCoach()
+          this.updateHUD()
+        }
+        if (event.key == '<') {
+          this.cashflow.coachcost = -1 * Game.COST_GOODS_COACH
+          this.paths.getPath(this.selectedPathNum).train.removeGoodsCoach()
+          this.updateHUD()
+        }
         if (event.key == 'g' || event.key == 'G') {
           if (this.paths.atLeastOnePathFinalized) {
             this.paths.drawBackground(this.ctx_background)
@@ -565,7 +579,8 @@ class Game {
         break;
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1
-        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${this.paths.getPath(this.selectedPathNum).train.num_passenger_coaches}): +(add coach), -(remove coach), n(next route), g(resume game), space(docs and back), x(exit)`
+        let train = this.paths.getPath(this.selectedPathNum).train
+        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${train.num_passenger_coaches}, Wagons:${train.num_wagons}): +(add coach), -(remove coach), >(add wagon), <(remove wagon),n(next route), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.RUNNING_STATE:
         txt += `Running: p(pause), +(speed up), -(slow down), w(${this.makeSound == true ? 'whistle off' : 'whistle on'}), n(next train info), space(docs and back), x(exit)`

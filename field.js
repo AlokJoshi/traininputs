@@ -22,7 +22,7 @@ class Field {
     this.h = h
     this.ctx_f = ctx_foreground
     this.ctx_b = ctx_background
-    this.green = 150+Math.random()*200
+    this.green = 150+Math.random()*100
     this.color = `rgb(${Field.FIELD_CROP_RED},${this.green},${Field.FIELD_CROP_BLUE})`
     this.i = 0
     this.speed = 0.1
@@ -49,7 +49,7 @@ class Field {
       this.startHarvest = this.i+Field.TIME_TO_MATURE
     }
     if (this.state == Field.CROP_GROWING) {
-      this._drawCrop()
+      this._drawCropGrowing()
     } else if (this.state == Field.CROP_BEING_HARVESTED) {
       this._drawCrop()
       //now show the part of the field that does not have the crop any longer
@@ -104,7 +104,7 @@ class Field {
       this.ctx_f.save()
       this.ctx_f.beginPath()
       this.ctx_f.moveTo(this.x, this.y)
-      this.ctx_f.fillStyle = Field.f
+      this.ctx_f.fillStyle = Field.FALLOW_COLOR
       this.ctx_f.fillRect(this.x, this.y, this.w, this.h)
       this.ctx_f.fill()
       this.ctx_f.restore()
@@ -119,7 +119,7 @@ class Field {
     this.ctx_f.stroke()
     this.ctx_f.restore()
   }
-  _drawCrop() {
+  _drawCropGrowing() {
     //draws the field with the crop in the crop color
     this.ctx_f.save()
     this.ctx_f.beginPath()
@@ -129,14 +129,38 @@ class Field {
     this.ctx_f.fill()
     this.ctx_f.restore()
   }
+  _drawCrop() {
+    //draws the field with the crop in the crop color
+    this.ctx_f.save()
+    this.ctx_f.beginPath()
+    this.ctx_f.moveTo(this.x, this.y)
+    this.ctx_f.fillStyle = this.color
+    this.ctx_f.fillRect(this.x, this.y, this.w, this.h)
+    this.ctx_f.fill()
+    this.ctx_f.restore()
+  }
   _fieldColorNumber(){
-    return Field.FIELD_CROP_RED<<16 + this.green<<8 + Field.FIELD_CROP_BLUE
+    return (Field.FIELD_CROP_RED<<16) + (this.green<<8) + (Field.FIELD_CROP_BLUE)
   }
   _fieldColor(){
-    let x1 = this._fieldColorNumber()
-    let x2 = Field.fallowColorNumber()
-    let newval = x1-(x2-x1)*(this.startHarvest-this.i)/Field.TIME_TO_MATURE
-    newval="#" + newval.toString(16)
+    let factor= (this.startHarvest-this.i)/Field.TIME_TO_MATURE
+
+    let x1 = Field.FIELD_CROP_RED
+    let x2 = Field.FALLOW_RED
+    let newred = Math.round(x1-(x1-x2)*factor)
+
+    x1 = this.green
+    x2 = Field.FALLOW_GREEN
+    let newgreen = Math.round(x1-(x1-x2)*factor)
+    
+    x1 = Field.FIELD_CROP_BLUE
+    x2 = Field.FALLOW_BLUE
+    let newblue = Math.round(x1-(x1-x2)*factor)
+
+    
+    //let newval= Math.floor( newred * Math.pow(2,16) + newgreen * Math.pow(2,8) + newblue )
+
+    let newval = '#' + `${newred.toString(16)}`+`${newgreen.toString(16)}`+`${newblue.toString(16)}`
     console.log(`value returned by _fieldColor() ${newval}`)
     return newval
   }

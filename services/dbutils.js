@@ -56,7 +56,7 @@ async function addGameForEmail(email, gamename) {
   return response.json()
 }
 
-async function saveTrainToDB(pathid, period, num_passenger_coaches, num_goods_coaches) {
+async function saveTrainToDB(pathid, period, num_passenger_coaches, num_wagons) {
   let data = {
     pathid: pathid,
     period: period,
