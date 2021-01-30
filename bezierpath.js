@@ -1,5 +1,5 @@
 class BezierPath extends Bezier{
-  constructor(x1, y1, x2, y2, fromx, fromy, tox, toy, ctx_background, ctx_foreground,speed) {
+  constructor(x1, y1, x2, y2, fromx, fromy, tox, toy, ctx_background, ctx_foreground,speed,strokeStyle) {
     super(x1,y1,x2,y2)
 
     //Since the trains start from the center of the town, we find a point along 
@@ -24,6 +24,7 @@ class BezierPath extends Bezier{
     this.ctx_b = ctx_background
     this.ctx_f = ctx_foreground
     this.speed = speed
+    this.strokeStyle = strokeStyle
 
     //going from from to to
     // this.i = 0
@@ -148,7 +149,7 @@ class BezierPath extends Bezier{
     this.ctx_b.save()
     this.ctx_b.beginPath();
     this.ctx_b.lineWidth = 5
-    this.ctx_b.strokeStyle = 'rgb(228,228,228)'
+    this.ctx_b.strokeStyle = this.strokeStyle
     this.ctx_b.moveTo(this.fromx, this.fromy)
     this.ctx_b.bezierCurveTo(this.fromx + this.x1 * (this.tox - this.fromx), this.fromy + this.y1 * (this.toy - this.fromy), this.fromx + this.x2 * (this.tox - this.fromx), this.fromy + this.y2 * (this.toy - this.fromy), this.tox, this.toy);
     this.ctx_b.stroke()

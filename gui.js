@@ -106,6 +106,18 @@ function updatePassengers(period,cities,passengers){
      }
    }
  }
+function updateGoods(period,cities,goods){
+   for(let iFrom=0;iFrom<cities.cities.length;iFrom++){
+     let cityFrom = cities.cities[iFrom].name
+     for(let iTo=0;iTo<cities.cities.length;iTo++){ 
+       let cityTo = cities.cities[iTo].name
+       if(cityFrom!=cityTo){
+         let demand = FromToGoodsDemand(period,cities,cityFrom,cityTo)
+         goods.addGoods(cityFrom,cityTo,demand)
+       }
+     }
+   }
+ }
 
 function displayTicketPricesTable(rows){
    let tbl = document.getElementById('ticketprices')

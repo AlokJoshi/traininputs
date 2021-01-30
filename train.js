@@ -3,6 +3,7 @@ class Train {
     this.num_passenger_coaches = num_passenger_coaches
     this.num_wagons = num_wagons
     this.passengers = {}
+    this.goods = {}
   }
   addPassengerCoach(){
     this.num_passenger_coaches++  
@@ -17,8 +18,6 @@ class Train {
     const engine = 10000
     const goodscoach=500
     const passengercoach=1000
-    //const path = paths.getPath(this.path)
-    //const pathlength = path.pathLength
     return engine+goodscoach*this.num_wagons+passengercoach*this.num_passenger_coaches
   }
   get runningCostPerTimePeriod(){
@@ -26,6 +25,9 @@ class Train {
   }
   get passenger_capacity(){
     return this.num_passenger_coaches*Game.PASSENGER_COACH_CAPACITY
+  }
+  get wagon_capacity(){
+    return this.num_wagons*Game.WAGON_CAPACITY
   }
   get num_passengers_on_train(){
     //sums up passengers for each city
@@ -35,8 +37,20 @@ class Train {
     }
     return n
   }
+  get goods_on_train(){
+    //sums up goods for each city
+    // let n=0
+    // for (const city in this.goods) {
+    //   n+=this.goods[city]
+    // }
+    // return n
+    this.wagon_capacity
+  }
   get passenger_room_available(){
     return this.passenger_capacity-this.num_passengers_on_train
+  }
+  get wagon_capacity_available(){
+    return this.wagon_capacity-this.goods_on_train
   }
   boardPassengersFor(city,num){
     //passengers object has a key for each city. The value is the number of passengers
@@ -57,5 +71,8 @@ class Train {
   }
   get occupancy(){
     return 1-this.passenger_room_available/this.passenger_capacity
+  }
+  get wagonloading(){
+    return 1-this.passenger_room_available/this.wagon_capacity
   }
 }

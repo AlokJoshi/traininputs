@@ -4,7 +4,7 @@ class Path {
   */
 
   static NUM_FRAMES_TO_SKIP = 50
-  __pathid=0
+  __pathid = 0
   constructor(game, ctx, ctxRouteDesign) {
     this.game = game
     this.ctx = ctx
@@ -24,16 +24,16 @@ class Path {
 
     this._segments = null
     this.storedTransform = null
-    this.PathIdInDB=null
+    this.PathIdInDB = null
   }
   get rects() {
     return 1 + this.train.num_passenger_coaches + this.train.num_wagons
   }
-  get passengercoaches (){
-    return this.train.num_passenger_coaches 
+  get passengercoaches() {
+    return this.train.num_passenger_coaches
   }
-  get wagons (){
-    return this.train.num_wagons 
+  get wagons() {
+    return this.train.num_wagons
   }
   get train() {
     return this._train
@@ -70,20 +70,20 @@ class Path {
       this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
     }
   }
-  savePathInDB(){
-    let json1 = savePathToDB(this.game.gameid,this.number,this._finalized,this.points)
-    json1.then(data=>{
+  savePathInDB() {
+    let json1 = savePathToDB(this.game.gameid, this.number, this._finalized, this.points)
+    json1.then(data => {
       this.PathIdInDB = data[0]
       let json2
-      for(let iwp=0;iwp<this.wp.length;iwp++){
-        json2 = saveWayPointToDB(this.PathIdInDB,this.wp[iwp].n,this.wp[iwp].x,this.wp[iwp].y,this.wp[iwp].feature)
-        json2.then(data=>{
+      for (let iwp = 0; iwp < this.wp.length; iwp++) {
+        json2 = saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
+        json2.then(data => {
           //console.log(`waypointid : ${data[0]}`)
-        }).catch(err=>{
-          console.error(`Error in saveWayPointToDB: ${err}`)  
+        }).catch(err => {
+          console.error(`Error in saveWayPointToDB: ${err}`)
         })
       }
-    }).catch(err=>{
+    }).catch(err => {
       console.error(`Could not get pathIdInDB`)
     })
   }
@@ -268,27 +268,10 @@ class Path {
     //this._segments.drawBackground(ctx)
     let r, m
     ctx.save()
-    for (let i = 0; i < this.wp.length-1; i++) {
+    for (let i = 0; i < this.wp.length - 1; i++) {
       if (i % 3 == 0) {
-        
-        if (this.wp[i].feature != Game.FEATURE_TUNNEL) {
-          //the following works
-          // ctx.beginPath()
-          // ctx.resetTransform()
-          // m = (this.wp[i + 1].y - this.wp[i].y) / (this.wp[i + 1].x - this.wp[i].x)
-          // ctx.translate(this.wp[i].x, this.wp[i].y)
-          // ctx.rotate(Math.atan(m))
-          // if (this.wp[i].feature == Game.FEATURE_LAND) {
-          //   ctx.strokeStyle = "rgb(0,0,0)"
-          //   ctx.lineWidth = 0.1
-          // } else if (this.wp[i].feature == Game.FEATURE_WATER) {
-          //   ctx.strokeStyle = "rgb(255,255,0)"
-          //   ctx.lineWidth = 1
-          // }
-          // ctx.moveTo(0, -2)
-          // ctx.lineTo(0, 2)
-          // ctx.stroke()
 
+        if (this.wp[i].feature != Game.FEATURE_TUNNEL) {
           ctx.resetTransform()
           m = (this.wp[i + 1].y - this.wp[i].y) / (this.wp[i + 1].x - this.wp[i].x)
           ctx.translate(this.wp[i].x, this.wp[i].y)
@@ -302,6 +285,11 @@ class Path {
           }
           ctx.translate(0, 2)
           ctx.beginPath()
+          if(i%4==0 && this.wp[i].feature == Game.FEATURE_WATER){
+            ctx.moveTo(0,-2)
+            ctx.arc(0,-2,4,0,2*Math.PI)
+            ctx.fill()  
+          }
           ctx.moveTo(-2, 0)
           ctx.lineTo(2, 0)
           ctx.stroke()
@@ -382,6 +370,7 @@ class Path {
     let event
     let ptgap = 6 - Game.WPL
     let rects = 1 + this.passengercoaches + this.wagons
+    let nonwagons = 1 + this.passengercoaches
     for (let iRect = 0; iRect < rects; iRect++) {
       //let ptAdjust = iRect * Path.PTGAP;
       let ptAdjust = iRect * ptgap
@@ -397,6 +386,8 @@ class Path {
         ctx.save();
         if ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) {
           ctx.fillStyle = "rgba(100,100,100)";
+        } else if ((iRect > nonwagons - 1 && this.going) || (iRect <= rects - nonwagons - 1 && !this.going)) {
+          ctx.fillStyle = `rgba(8,23,11,${this.train.wagonloading + 0.2})`;
         } else {
           ctx.fillStyle = `rgba(255,0,0,${this.train.occupancy + 0.2})`;
         }
@@ -472,7 +463,7 @@ class Path {
 
         let currCity = this.getStation(this.i).name
         let currCity_wpn = this.getStation(this.i).wpn
-        let totalfare=0
+        let totalfare = 0
 
         //first alight the passengers for this city
         if (currCity_wpn == 0 && this.going || currCity_wpn == this.wp.length - 1 && !this.going) {
@@ -493,7 +484,7 @@ class Path {
               let num = Math.floor(this.game.passengers.numAvailable(currCity, station.name))
               //second check the room
               let room = this.train.passenger_room_available
-              numNoRoom += (num>=room?num-room:0)
+              numNoRoom += (num >= room ? num - room : 0)
               num = Math.min(num, room)
               //collect fare
               let fare = this.game.tickets.ticket(currCity, station.name)
@@ -522,7 +513,7 @@ class Path {
               this.game.passengers.subtractPassengers(currCity, station.name, num)
             }
           })
-          
+
         } else {
           //take in passengers for the cities on the way back to the originating station
           this.stations.forEach(station => {
@@ -530,7 +521,7 @@ class Path {
               let num = Math.ceil(this.game.passengers.numAvailable(currCity, station.name))
               //second check the room
               let room = this.train.passenger_room_available
-              numNoRoom += (num>=room?num-room:0)
+              numNoRoom += (num >= room ? num - room : 0)
               num = Math.min(num, room)
               //collect fare
               let fare = this.game.tickets.ticket(currCity, station.name)
@@ -561,7 +552,7 @@ class Path {
           })
           this.numFrames++
         }
-        
+
         let popup = document.querySelector(`#${currCity}-popup`)
         popup.classList.toggle('active');
         popup.innerHTML = `$${Math.ceil(totalfare / 1000)} K`
@@ -586,28 +577,28 @@ class Path {
 
   savePeriodDataToDB(gameperiodid) {
     console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.num_wagon}, ${this.train.num_passenger_coaches}, ${this.train.num_wagons} saving to db.`)
-    let json = savePeriodPathToDB(gameperiodid,this.PathIdInDB,this.i,this.numFrames,this.going,this.train.num_passenger_coaches,this.train.num_wagon,this.train.num_wagons)
-    json.then(data=>{
+    let json = savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.num_passenger_coaches, this.train.num_wagon, this.train.num_wagons)
+    json.then(data => {
       let pathperiodid = data[0]
       console.log(`pathperiodid returned from db: ${pathperiodid}`)
-      savePassengersOnTrainToDB(pathperiodid,this.train.passengers)
-    }).catch(err=>{
+      savePassengersOnTrainToDB(pathperiodid, this.train.passengers)
+    }).catch(err => {
       console.error(`Error in saving data in savePassengersOnTrainToDB`)
     })
     //we should get the pathperiodid since we have to use that to save the
     //passenger data
   }
-  prunePoints(){
+  prunePoints() {
     //sometimes a user creates a path that does not end in a city. prunePoints removes
     //points from the end of the points array till it finds a point that is a city.
-    for(let i = this.points.length-1; i != 0; i--){
-      if(this.game.cities.cities.some(city=>city.x==this.points[i].x && city.y==this.points[i].y)){
+    for (let i = this.points.length - 1; i != 0; i--) {
+      if (this.game.cities.cities.some(city => city.x == this.points[i].x && city.y == this.points[i].y)) {
         return
-      }else{
+      } else {
         let removedPoint = this.points.pop()
         console.log(`Pruned the point ${JSON.stringify(removedPoint)} from the path`)
       }
     }
   }
-  
+
 }

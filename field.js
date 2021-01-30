@@ -28,7 +28,7 @@ class Field {
     this.speed = 0.1
     this.harvestingcomplete = false
     this.state = Field.CROP_GROWING
-    this.startHarvest = Math.random() * 500
+    this.startHarvest = Math.random() * 3000
     this.startGrowing = null
   }
   animate() {

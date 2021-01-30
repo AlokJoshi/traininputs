@@ -1,6 +1,6 @@
 class Game {
   static PASSENGER_COACH_CAPACITY = 30
-  static GOODS_COACH_CAPACITY = 100
+  static WAGON_CAPACITY = 100
   static MIN_LENGTH = 45
   static LINE_WIDTH = 2
   static OPENING_CASH = 1000000
@@ -73,8 +73,10 @@ class Game {
     this.pop = new Audio('pop.mp3')
 
     this.passengers = new Passengers()
+    this.goods = new Goods()
     this.cities = new Cities()
     updatePassengers(this.period, this.cities, this.passengers)
+    updateGoods(this.period, this.cities, this.goods)
     this.tickets = new Tickets(Game.TRAVEL_COST_PER_UNIT_DISTANCE)
 
     this.background = document.querySelector('#background')
@@ -105,11 +107,13 @@ class Game {
     this.img = new Image()
     this.img.src = "aerialview2.png"
     this.carimage = document.getElementById('carimage')
+    this.cartimage = document.getElementById('cartimage')
     this.truckimage = document.getElementById('truckimage')
 
     this.img.onload = () => {
       this.ctx_background.drawImage(this.img, 0, 0, this.background.width, this.background.height)
       this.cities.draw(this.ctx_background)
+      this.water = new Water(Game.WIDTH,Game.HEIGHT,this.ctx_background,this.ctx_foreground)
     }
 
     this.paths = new Paths(this)
@@ -144,7 +148,7 @@ class Game {
     rd = this.bezierPaths.add(0,0,1,1.0,840,120,940,410,5)
     this.vehicles.add(rd,carimage,1)
     this.vehicles.add(rd,this.truckimage,5)
-
+    
     //Kata to Lochin
     this.bezierPaths.add(0,0,1,1.0,1090,560,750,590,10)
     
@@ -153,15 +157,30 @@ class Game {
     
     //Mumba to Mannai
     this.bezierPaths.add(0,0,1,1.0,80,60,440,610,10)
+    
+    //road from Haybad to the fields
+    rd = this.bezierPaths.add(0,0,1,1,840,120,1100,120,1)
+    this.vehicles.add(rd,cartimage,1)
 
+    //road from Poa to the fields
+    rd = this.bezierPaths.add(0.8,0,1,1,1020,290,1150,170,1)
+    this.vehicles.add(rd,cartimage,1)
     this.bezierPaths.drawRoads()
 
+    
     //todo: later I should convert it into a Fields class
     this.fields = []
     for(let j = 0;j<4;j++){
-      for(let i=0;i<8;i++){
-        this.fields.push(new Field(920+(i*40),120+j*30,40,30,this.ctx_foreground,this.ctx_background))
+      let numcols = j<2?7:j<3?6:5
+      for(let i=0;i<numcols;i++){
+        this.fields.push(new Field(900+(i*40+i*1),120+j*30+j*1,40,30,this.ctx_foreground,this.ctx_background))
       }
+    }
+
+    //factories
+    this.factories=[]
+    for(let i = 0;i<3;i++){
+      this.factories.push(new TimberMill(40+i*30,450+i*50,20,8,60-i*30,this.ctx_foreground))
     }
 
     document.addEventListener("info", e => {
@@ -555,9 +574,11 @@ class Game {
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
       this.bezierPaths.animate()
       this.vehicles.animate()
+      this.factories.forEach(f=>f.animate())
       this.fields.forEach(f=>f.animate())
       //this.field.animate()
       this.paths.animate(this.background, this.ctx_foreground)
+      this.water.animate()
       this.frames++
       this.megaperiod = Math.floor(this.period / Game.PERIODS_PER_MEGA_PERIOD)
       if ((this.period > 0) && (this.period % Game.PERIODS_PER_MEGA_PERIOD == 0)) {
