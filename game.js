@@ -1,4 +1,5 @@
 class Game {
+  //following static variables are refernced with Game.xxx
   static PASSENGER_COACH_CAPACITY = 30
   static WAGON_CAPACITY = 100
   static MIN_LENGTH = 45
@@ -35,23 +36,22 @@ class Game {
   static WPL = 2
   static START_GAME_NAME = 'My first game'
   
+  static HIGHWAY=1
+  static COUNTRYROAD=2
 
-  ms = 150
+  static TREE_IMAGE = document.getElementById('treeimage')
+  static PLANE_IMAGE = document.getElementById('airplaneimage')
+  //following variables are referenced with this.xx in Game methods
+  ms = 50
   period = 0
   megaperiod = 0
   MIN_ANGLE = 90
   makeSound = false
-
   state = Game.ROUTE_EDITING_STATE
-  //previous_state = Game.ROUTE_EDITING_STATE
   menu = false
   stationEditMode = false
-  //animationMode = false
   selectedPathNum = 0
   frames = 0
-  //i = 0;
-
-
   currentMousePosition = {
     x: 0,
     y: 0
@@ -83,23 +83,28 @@ class Game {
     this.foreground = document.querySelector('#foreground')
     this.routedesign = document.querySelector('#routedesign')
     this.hudElement = document.querySelector('#hud')
+    this.cloudsElement = document.querySelector('#cloud')
     this.tooltipElement = document.querySelector('#tooltip')
-
+    
     this.background.width = Game.WIDTH//window.innerWidth
     this.background.height = Game.HEIGHT//window.innerHeight
-
+    
     this.foreground.width = Game.WIDTH//window.innerWidth
     this.foreground.height = Game.HEIGHT//window.innerHeight
-
+    
     this.routedesign.width = Game.WIDTH//window.innerWidth
     this.routedesign.height = Game.HEIGHT//window.innerHeight
 
+    this.cloudsElement.width = Game.WIDTH//window.innerWidth
+    this.cloudsElement.height = Game.HEIGHT//window.innerHeight
+    
     this.hudElement.width = Game.WIDTH//window.innerWidth
     this.hudElement.height = 40 //window.innerHeight
-
+    
     this.ctx_background = this.background.getContext('2d')
     this.ctx_foreground = this.foreground.getContext('2d')
     this.ctx_routedesign = this.routedesign.getContext('2d')
+    this.ctx_clouds = this.cloudsElement.getContext('2d')
 
     this.hud = new Hud(this.hudElement)
     this.tooltip = new ToolTip(this.tooltipElement)
@@ -109,12 +114,14 @@ class Game {
     this.carimage = document.getElementById('carimage')
     this.cartimage = document.getElementById('cartimage')
     this.truckimage = document.getElementById('truckimage')
+    this.cloudimage = document.getElementById('cloudimage')
 
     this.img.onload = () => {
       this.ctx_background.drawImage(this.img, 0, 0, this.background.width, this.background.height)
       this.cities.draw(this.ctx_background)
       this.water = new Water(Game.WIDTH,Game.HEIGHT,this.ctx_background,this.ctx_foreground)
     }
+    this.cloud = new Cloud(this.cloudsElement.width,this.cloudsElement.height,this.cloudimage, this.ctx_clouds)
 
     this.paths = new Paths(this)
     this.cash = new Cash()
@@ -134,37 +141,38 @@ class Game {
     //start in this state
     this.state = Game.ROUTE_EDITING_STATE
     this.updateHUD()
-    this.bezierPaths = new BezierPaths(this.ctx_background,this.ctx_foreground)
+    this.bezierPaths = new BezierPaths(this.ctx_background,this.ctx_foreground,'rgb(112,112,112)')
 
     this.vehicles = new Vehicles(this.ctx_foreground,this.ctx_background)
 
     //mumba to haybad
     //this.bezierPaths.add(0.25,0.1,0.0,1.0,80,60,840,120)
-    let rd = this.bezierPaths.add(0,0,1,1.0,80,60,840,120,10)
-    this.vehicles.add(rd,carimage,3)
+    let rd = this.bezierPaths.add(0,0,1,1.0,80,60,840,120,10,Game.HIGHWAY)
+    this.vehicles.add(rd,this.carimage,3)
     this.vehicles.add(rd,this.truckimage,8)
     
     //haybad to Bangro
-    rd = this.bezierPaths.add(0,0,1,1.0,840,120,940,410,5)
-    this.vehicles.add(rd,carimage,1)
+    rd = this.bezierPaths.add(0,0,1,1.0,840,120,940,410,5,Game.HIGHWAY)
+    this.vehicles.add(rd,this.carimage,1)
     this.vehicles.add(rd,this.truckimage,5)
     
     //Kata to Lochin
-    this.bezierPaths.add(0,0,1,1.0,1090,560,750,590,10)
+    this.bezierPaths.add(0,0,1,1.0,1090,560,750,590,10,Game.HIGHWAY)
     
     //Oooby to Mannai
-    this.bezierPaths.add(0,0,1,1.0,580,300,440,610,3)
+    this.bezierPaths.add(0,0,1,1.0,580,300,440,610,3,Game.HIGHWAY)
     
     //Mumba to Mannai
-    this.bezierPaths.add(0,0,1,1.0,80,60,440,610,10)
+    this.bezierPaths.add(0,0,1,1.0,80,60,440,610,10,Game.HIGHWAY)
     
     //road from Haybad to the fields
-    rd = this.bezierPaths.add(0,0,1,1,840,120,1100,120,1)
+    rd = this.bezierPaths.add(0,0,1,1,840,120,1100,120,1,Game.COUNTRYROAD)
     this.vehicles.add(rd,cartimage,1)
 
     //road from Poa to the fields
-    rd = this.bezierPaths.add(0.8,0,1,1,1020,290,1150,170,1)
+    rd = this.bezierPaths.add(0.8,0,1,1,1020,290,1150,170,1,Game.COUNTRYROAD)
     this.vehicles.add(rd,cartimage,1)
+
     this.bezierPaths.drawRoads()
 
     
@@ -182,6 +190,13 @@ class Game {
     for(let i = 0;i<3;i++){
       this.factories.push(new TimberMill(40+i*30,450+i*50,20,8,60-i*30,this.ctx_foreground))
     }
+
+    this.villages=new Villages()
+    this.plane=new Plane([
+      {x1:0,y1:0.8,x2:1,y2:1,fromx:-100,fromy:700,tox:1340,toy:120,d:5},
+      {x1:0.5,y1:0.8,x2:1,y2:0.6,fromx:1340,fromy:120,tox:-100,toy:200,d:5},
+      {x1:0.5,y1:0.8,x2:1,y2:1,fromx:400,fromy:-120,tox:1400,toy:800,d:5}
+    ], this.ctx_foreground)
 
     document.addEventListener("info", e => {
       //console.log(`Event received: ${e.detail.text}` )
@@ -221,6 +236,11 @@ class Game {
           }
         }
       }
+    })
+    document.getElementById('p').addEventListener('click',e=>{
+      this.state = Game.PAUSED_STATE  
+      this.updateHUD()
+      return  
     })
   }
 
@@ -335,10 +355,6 @@ class Game {
           }
           this.selectedPathNum = this.numPaths
           if (this.paths.atLeastOnePathFinalized) {
-            //this.animationMode = true
-            //this.i = 0;
-            //this.paths.createWayPoints()
-            //AJ 12/8/20 commented out the following line..no
             this.paths.drawBackground(this.ctx_background)
             this.paths.drawStations(this.ctx_background)
             this.bezierPaths.drawRoads()
@@ -513,11 +529,7 @@ class Game {
   animate = async() => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
-    let pu = new Popup(
-      10000,
-      this.makeSound,
-      this.pop
-      )
+    
     if (this.state == Game.RUNNING_STATE) {
       if(this.day_and_night){
         this.background.style.filter = `brightness(${getBrightness(this.frames)})`
@@ -566,9 +578,12 @@ class Game {
         this.cashflow.initPeriodVariables()
         let milestone = getMilestone(this)
         if(milestone!=null){
+          let pu = new Popup(
+          10000,
+          this.makeSound,
+          this.pop
+          )
           pu.show(milestone)
-          // let b=new Balloon(this.ctx_foreground,500,500,"abc")
-          // b.show()    
         }
       }
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
@@ -576,9 +591,12 @@ class Game {
       this.vehicles.animate()
       this.factories.forEach(f=>f.animate())
       this.fields.forEach(f=>f.animate())
+      this.villages.animate(this.period,this.ctx_foreground)
       //this.field.animate()
       this.paths.animate(this.background, this.ctx_foreground)
       this.water.animate()
+      this.plane.animate()
+      this.cloud.animate()
       this.frames++
       this.megaperiod = Math.floor(this.period / Game.PERIODS_PER_MEGA_PERIOD)
       if ((this.period > 0) && (this.period % Game.PERIODS_PER_MEGA_PERIOD == 0)) {
@@ -618,6 +636,7 @@ class Game {
     }
     this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum-1].name)
   }
+
   get numPaths(){
     return this.paths.numPaths
   }
@@ -629,11 +648,12 @@ class Game {
     console.log(`Saving game to db for ${this.gameid}, ${this.period}`)
     this.paths.savePeriodDataToDB(this.gameperiodid)
     //this.passengers.savePeriodDataToDB(this.gameid,this.period)
-
   }
+
   loadFromDB = () =>{
     console.log(`Game being loaded from DB:${this.id}` )
   }
+
   async createGameInDB(){
      this.gameid = await createUserAndDefaultGame(this.email,this.gamename)
      console.log(`Game created with a gameid of ${gameid}`)

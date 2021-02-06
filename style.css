@@ -8,22 +8,30 @@ body{
     background:#f1f1f1;
     margin-left:10px;
 }
+
 .navbar{
-  /* position:fixed;
-  top:3em; */
-  display:flex;
+  width:100%;
+  display:grid;
+  grid-template-columns: 1fr;
   justify-content: space-between;
   align-items: center;
   background-color: #333;
   color:white;
   overflow:hidden;
 }
+.linksandbuttons{
+  display:grid;
+  grid-template-columns: 3fr 1fr;
+}
+.navbar-links ul{
+  grid-template-columns: 1fr 1fr;
+}
 .navbar-links ul{
   margin:0;
   padding:0;
   display:flex;
 }
-.navbar-links li{
+.linksandbuttons li{
   list-style: none;
 }
 .navbar-links li a{
@@ -37,16 +45,27 @@ body{
 }
 
 .brand-title{
+  width:100%;
   display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr auto 1fr;
   font-size: 1.5rem;
   margin:.5rem;
   justify-items: center;
 }
+#loginlogoutbuttons{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+#loginlogoutbuttons li a{
+    text-decoration:none; 
+    color:white;
+    padding:1rem;
+    display:block; 
+}
 table, th, td {
     border: 1px solid black;
   }
-#background,#foreground,#routedesign,#hud{
+#background,#foreground,#routedesign,#hud,#cloud{
     position:absolute;
     top: 0;
     left: 0;
@@ -188,34 +207,8 @@ table, th, td {
   filter: brightness(1);
   transition: filter .2s ease
 }
-/* #menu{
-    position:absolute;
-    top:100;
-    left:100;
-    width:100%;
-    font-size: large;
-    background-color: rgba(100,255,255,0.8);
-} */
 #passengers,#ticketprices{
     font-size: small;
-}
-
-/* Page content */
-.content {
-  /* margin-top: 50px; */
-}
-
-/* The sticky class is added to the navbar with JS when it reaches its scroll position */
-.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-/* Add some top padding to the page content to prevent sudden quick movement 
-(as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
-.sticky + .content {
-  padding-top: 60px;
 }
 
 keytype {
@@ -261,7 +254,7 @@ keytype {
   50%{opacity:0}
   100% {transform:rotateX(360deg); opacity:1;}
 }
-
+/* 
 #car{
   position:absolute;
   top:0px;
@@ -272,4 +265,21 @@ keytype {
 @keyframes move{
   from{transform:translateY(800px)}
   to{transform:translateY(-50px)}
+}
+*/
+#buttonmenu{
+  position:fixed;
+  top:650px;
+  left:0px;
+  padding: 5;
+  color:rgba(0,0,0,.8);
+  font-size:small;
+  z-index: 1;
+  border: black 1px solid;
+  border-radius:4px;
+  display:flex; 
+
+}
+#noncanvases{
+  width:100%;
 }

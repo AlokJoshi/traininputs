@@ -243,7 +243,7 @@ function getFeature(ctx, x, y) {
 }
 
 function getMilestone(game) {
-  if (game.period == 1) {
+  if (game.period == 0) {
     let milestone = 'Congratulations on launching the game.'
     let routes = ''
     for (let p = 0; p < game.paths.length; p++) {
@@ -312,3 +312,51 @@ function range(start, stop, step) {
 
   return result;
 };
+function wayPointsFromBezierCurves(bezierCurves){
+  //accepts and array of bezier curves and returns the waypoint along those curves
+  //each element is an object with x1,y1,x2,y2,fromx,fromy,tox,toy,d properties
+  let waypoints=[]
+  let b_arr = [], nexti = 0;
+  for(let n=0;n<bezierCurves.length;n++){
+    let {x1,y1,x2,y2,fromx,fromy,tox,toy,d}=bezierCurves[n]
+    let getBezier = bezier(x1,y1,x2,y2)
+    let rangex = range(fromx, tox, fromx < tox ? 1 : -1)
+    rangex.forEach(x => {
+      //normalize the x to a value between 0 and 1
+      //get bezier function has to be passed a fraction between 0 and 1
+      let val = (x - fromx) / (tox - fromx)
+      let progress = getBezier(val);
+      //the value returned(progress) is a fraction between 0 and 1
+      console.assert(progress >= 0 && progress <= 1, `progress(${progress}) is not between 0 and 1`)
+      let y = fromy + progress * (toy - fromy)
+      b_arr.push({ x: x, y: y });
+    })
+    
+    //create a new array that has x and y points along the bezier curve such
+    //that each point is d distance from the neighbor
+    nexti = 0;
+    let startx, starty;
+    startx = b_arr[0].x;
+    starty = b_arr[0].y;
+    waypoints.push({ x: startx, y: starty });
+    do {
+      nexti++;
+      //console.log(`nexti: ${nexti}`);
+      //length between startx,starty and the point on the bezier curve(b_arr)
+      let l = Math.sqrt(
+        (startx - b_arr[nexti].x) * (startx - b_arr[nexti].x) +
+        (starty - b_arr[nexti].y) * (starty - b_arr[nexti].y)
+        );
+        if (l > d) {
+          //console.log(`element at ${nexti} being added`);
+          startx = b_arr[nexti].x;
+          starty = b_arr[nexti].y;
+          waypoints.push({ x: startx, y: starty });
+        } else {
+          //console.log(`l:${l} is less than d:${d}`);
+        }
+      } while (nexti < b_arr.length - 1);
+      
+    }
+    return waypoints
+}

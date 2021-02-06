@@ -161,7 +161,7 @@ class Field {
     //let newval= Math.floor( newred * Math.pow(2,16) + newgreen * Math.pow(2,8) + newblue )
 
     let newval = '#' + `${newred.toString(16)}`+`${newgreen.toString(16)}`+`${newblue.toString(16)}`
-    console.log(`value returned by _fieldColor() ${newval}`)
+    //console.log(`value returned by _fieldColor() ${newval}`)
     return newval
   }
 }

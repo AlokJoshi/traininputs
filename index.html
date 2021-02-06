@@ -9,57 +9,29 @@
 </head>
 
 <body>
-  <!--
-  <div id="tooltip"></div>
-  <div id="popup">
-    <div class="popupheader">
-      <div class="popupimage">
-        <img src="toytrain.png"/>
-      </div>
-      <div class="popuptitle">
-        Info
-      </div>
-    </div>
-    <div class="popupbody">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate ad, eaque aperiam, sit debitis possimus
-      veritatis beatae, similique eum maiores placeat non corporis rerum! Provident voluptatem accusamus quidem
-      deleniti error?
-    </div>
-  </div>
-  <div class="citypopup" id="Mumba-popup"></div>
-  <div class="citypopup" id="Kata-popup"></div>
-  <div class="citypopup" id="Haybad-popup"></div>
-  <div class="citypopup" id="Dore-popup"></div>
-  <div class="citypopup" id="Purnapur-popup"></div>
-  <div class="citypopup" id="Ooby-popup"></div>
-  <div class="citypopup" id="Poa-popup"></div>
-  <div class="citypopup" id="Mannai-popup"></div>
-  <div class="citypopup" id="Lochin-popup"></div>
-  <div class="citypopup" id="Bangro-popup"></div>
--->
-  <div class="brand-title">
-    <img src="toytrain.png"/>
-    <div>Train Tycoon</div>
-    <div class="user">Anonymous</div>
-  </div>
-  <nav class="navbar">
-    <div class="navbar-links">
-      <ul>
-        <li><a href="#how">How</a></li>
-        <li><a href="#info">Info</a></li>
-        <li><a href="#objective">Objective</a></li>
-        <li><a href="#performance">Performance</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <button id="btn-login" disabled="true" onclick="login()">Log in</button>
-      <button id="btn-logout" disabled="true" onclick="logout()">Log out</button>
-    </div>
-  </nav>
   <div id="noncanvases">
-    
     <div class="content">
+      <nav class="navbar">
+        <div class="brand-title">
+          <img src="toytrain.png"/>
+          <div>Train Tycoon</div>
+          <div class="user">Anonymous</div>
+        </div>
+        <div class="linksandbuttons">
+          <div class="navbar-links">
+            <ul>
+              <li><a href="#how">How</a></li>
+              <li><a href="#info">Info</a></li>
+              <li><a href="#objective">Objective</a></li>
+              <li><a href="#performance">Performance</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li id="btn-login" onclick="login()"><a href=#>Log in</a></li>
+              <li id="btn-logout" onclick="logout()"><a href=#>Log out</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
       <div id='objective'>
         <h3>Objective</h3>
         <p>The objective of the game is to become a Train Tycoon - by amassing a lot of money.</p>
@@ -292,10 +264,11 @@
     </div>
   </div>
   <div id="canvases">
-    <div id="car">
-      <img id="carimage" src="./car10.png" alt="car">
-    </div>
-    <img id="cartimage" src="./cart.png" alt="car">
+    <img id="cloudimage" src="./clouds.png" alt="cloud">
+    <img id="treeimage" src="./tree.png" alt="tree">
+    <img id="carimage" src="./car10.png" alt="car">
+    <img id="cartimage" src="./cart.png" alt="cart">
+    <img id="airplaneimage" src="./airplane.png" alt="airplane">
     <img id="truckimage" src="./truck10.png" alt="truck">
     <div id="tooltip"></div>
     <div id="popup">
@@ -336,10 +309,22 @@
     <div class="citypopup2 tooltip" id="Bangro-popup2" title="Number of passengers that could not be accomodated"></div>
     <canvas id="background"></canvas>
     <canvas id="foreground"></canvas>
+    <canvas id="cloud"></canvas>
     <canvas id="routedesign"></canvas>
     <canvas id="hud"></canvas>
+    <div id="buttonmenu">
+      <button id="p">P</button>
+      <button id="r">R</button>
+      <button id="t">T</button>
+      <button id="+">+</button>
+      <button id="-">-</button>
+    </div>
   </div>
 
+  <script src="cloud.js"></script>
+  <script src="location.js"></script>
+  <script src="village.js"></script>
+  <script src="villages.js"></script>
   <script src="water.js"></script>
   <script src="factory.js"></script>
   <script src="field.js"></script>
@@ -376,6 +361,7 @@
   <script src="cash.js"></script>
   <script src="cashflow.js"></script>
   <script src="game.js"></script>
+  <script src="plane.js"></script>
   <script src="script.js"></script>
 </body>
 
