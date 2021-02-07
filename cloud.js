@@ -24,6 +24,7 @@ class Cloud {
       this.ctx.beginPath()
       let offsetx = this.w*(-1+2*(this.i-Cloud.FRAME_WHEN_CLOUD_APPEARS)/Cloud.FRAME_WHEN_CLOUD_APPEARS)
       let offsety = this.h*(-1+2*(this.i-Cloud.FRAME_WHEN_CLOUD_APPEARS)/Cloud.FRAME_WHEN_CLOUD_APPEARS)
+      this.ctx.globalAlpha = (this.i-Cloud.FRAME_WHEN_CLOUD_APPEARS)/Cloud.FRAME_WHEN_CLOUD_APPEARS
       this.ctx.drawImage(this.cloudImage,0,0,this.cloudImage.width, this.cloudImage.height,offsetx,offsety,this.w, this.h)
       this.ctx.restore()
     }
