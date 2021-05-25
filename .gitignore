@@ -23,3 +23,6 @@ yarn-error.log*
 
 # Gimp files
 *.xcf
+
+#keys
+rootkey.csv
