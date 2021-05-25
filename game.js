@@ -141,7 +141,7 @@ class Game {
     //start in this state
     this.state = Game.ROUTE_EDITING_STATE
     this.updateHUD()
-    this.bezierPaths = new BezierPaths(this.ctx_background,this.ctx_foreground,'rgb(112,112,112)')
+    this.bezierPaths = new BezierPaths(this.ctx_background,this.ctx_foreground,'rgb(224,224,224)')
 
     this.vehicles = new Vehicles(this.ctx_foreground,this.ctx_background)
 
