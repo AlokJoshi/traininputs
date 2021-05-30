@@ -14,15 +14,12 @@ class Train {
   addGoodsCoach(){
     this.num_wagons++  
   }
-  get capitalCost(){
-    const engine = 10000
-    const goodscoach=500
-    const passengercoach=1000
-    return engine+goodscoach*this.num_wagons+passengercoach*this.num_passenger_coaches
-  }
-  get runningCostPerTimePeriod(){
-    return Math.floor(this.capitalCost*0.5)+this.num_passenger_coaches*5000+this.num_wagons*2000
-  }
+  // get capitalCost(){
+  //   return Game.COST_ENGINE + Game.COST_GOODS_COACH*this.num_wagons+Game.COST_PASSENGER_COACH*this.num_passenger_coaches
+  // }
+  // get runningCostPerTimePeriod(){
+  //   return Math.floor(this.capitalCost*0.5)+this.num_passenger_coaches*5000+this.num_wagons*2000
+  // }
   get passenger_capacity(){
     return this.num_passenger_coaches*Game.PASSENGER_COACH_CAPACITY
   }

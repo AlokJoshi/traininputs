@@ -10,7 +10,7 @@ class Game {
   static TRACK_COST_PER_UNIT = 1000
   static COST_STATION = 200000
   static COST_ENGINE = 500000
-  static COST_GOODS_COACH = 500
+  static COST_GOODS_COACH = 50000
   static COST_PASSENGER_COACH = 100000
   static COST_GOODS_COACH = 50000
   static INTEREST_EARNED_PER_PERIOD = 0.0005
@@ -41,6 +41,10 @@ class Game {
 
   static TREE_IMAGE = document.getElementById('treeimage')
   static PLANE_IMAGE = document.getElementById('airplaneimage')
+
+  static TUNNEL_COST_MULTIPLIER = 20
+  static BRIDGE_COST_MULTIPLIER = 20
+
   //following variables are referenced with this.xx in Game methods
   ms = 50
   period = 0
@@ -302,6 +306,7 @@ class Game {
     document.onkeyup = (event) => {
 
       if (event.code === 'Space') {
+        console.log(`Space key pressed`)
         noncanvases.style.visibility = noncanvases.style.visibility === 'collapse' ? 'visible' : 'collapse'
         canvases.style.visibility = canvases.style.visibility === 'collapse' ? 'visible' : 'collapse'
         displayPassengersTable(this.passengers.passengers)
@@ -565,16 +570,19 @@ class Game {
         //save the game to db
         //first get the gameperiodid
         //Todo: we need to get the cashid and passengerid
-        let json = getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,
-          this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost,
-          this.cashflow._maintenancecost+this.cashflow._runningcost,this.cashflow._ticketsales,this.cashflow._interest,
-          this.cashflow._tax,this.cashflow.profit,this.cashflow._cumcoachcost,this.cashflow._cumenginecost)
-        json.then(data=>{
-          this.gameperiodid=data[0]
-          this.savePeriodDataToDB()
-        }).catch(err=>{
-          console.error(`Error in getGamePeriodId`)
-        })
+        if(this.gameid){
+
+          let json = getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,
+            this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost,
+            this.cashflow._maintenancecost+this.cashflow._runningcost,this.cashflow._ticketsales,this.cashflow._interest,
+            this.cashflow._tax,this.cashflow.profit,this.cashflow._cumcoachcost,this.cashflow._cumenginecost)
+          json.then(data=>{
+            this.gameperiodid=data[0]
+            this.savePeriodDataToDB()
+          }).catch(err=>{
+            console.error(`Error in getGamePeriodId`)
+          })
+        }
         this.cashflow.initPeriodVariables()
         let milestone = getMilestone(this)
         if(milestone!=null){
@@ -644,7 +652,7 @@ class Game {
   savePeriodDataToDB = () => {
     //if the save is being done for the first time, we do not have an gameid for the game
     //we do not save if this.email is 'anonymous'
-    if(this.email=='anonymous') return
+    //if(this.email=='anonymous') return
     console.log(`Saving game to db for ${this.gameid}, ${this.period}`)
     this.paths.savePeriodDataToDB(this.gameperiodid)
     //this.passengers.savePeriodDataToDB(this.gameid,this.period)

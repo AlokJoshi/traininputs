@@ -59,7 +59,7 @@ class CashFlow {
     return this._runningcost
   }
   get maintenancecost() {
-    this._maintenancecost
+    return this._maintenancecost
   }
   get profit() {
     return this._profit
@@ -97,8 +97,7 @@ class CashFlow {
   }
   updateRunningCost() {
     //running cost is based on the total distance travelled by all the trains
-    this._runningcost = this._cumtrackcost * 0.00001
-    this._runningcost = this._cumstationcost * 0.001
+    this._runningcost = this._cumtrackcost * 0.00001 + this._cumstationcost * 0.001
   }
   update() {
     this.updateMaintenanceCost()

@@ -13,7 +13,7 @@
     <div class="content">
       <nav class="navbar">
         <div class="brand-title">
-          <img src="toytrain.png"/>
+          <img src="toytrain.png" />
           <div>Train Tycoon</div>
           <div class="user">Anonymous</div>
         </div>
@@ -31,222 +31,245 @@
           </div>
         </div>
       </nav>
-      
+
       <div id='objective'>
         <h3>Objective</h3>
-        <p>The objective of the game is to become a Train Tycoon - by amassing a lot of money.</p>
-        <p>You start with G$ 1,000,000</p>
-        <p>You decide on the number of trains to start</p>
-        <p>You decide on the route you want your train to take and the stations it must stop and the number of
-          passenger
-          coaches it must have</p>
-        <p>If you spend too much money (beyond what you have) you will be charged a steep interst rate (10%) by your
-          bank/financiers</p>
-        <p>You earn a little interest (5%) on the money you have in the bank</p>
-        <p>You can review Passenger Demand and Ticket Prices in the Info menu item.</p>
-        <p>Your performance in terms of the G$ is shown on the top left of your screen along with the current period
-          you
-          are in. This also shows the State you are in and your options.
-          You can review your detailed performance in the Performance menu item.</p>
-        Also note that the color of the coaches varies from light red to dark red based on the occupancy of the
-        train. Higher the occupancy, darker the color.
-        <p>You train-wise performance can be seen on the left of your game screen (most recent on top). You can
-          switch
-          between the trains by pressing the <keytype>n</keytype> (next train info> key in the Running state.
-        </p>
-        <p>Note that the data is not saved anywhere. Hence you will need to start again once you close the Game
-          browser
-          window
-          or the computer.
-        </p>
-        <p>Try and become a Train Tycoon by Pd 500.</p>
-        <p>You can speed up the game by clicking on the <keytype>+</keytype> key once or repeatedly in the Running
-          state.
-          This makes the time
-          pass fast.
-          Similarly the game slows down with the <keytype>-</keytype> key. <keytype>p</keytype> key is ofcourse for
-          pausing the game. Once you are in the Paused
-          state you can add another route, by first pressing the <keytype>r</keytype> key to get into the route
-          editing
-          state and then by pressing the
-          <keytype>a</keytype> key to add a route and then clicking on the starting station and so forth. Similarly
-          from
-          the paused state you can add or remove coaches
-          in any of the existing trains. You do this by first pressing the <keytype>t</keytype> for getting in to
-          the
-          Train Editing state and then selecting the right
-          train by pressing the <keytype>n</keytype> key and once the correct train is selected, pressing the
-          <keytype>+
-          </keytype> to add a coach and <keytype>-</keytype> to
-          remove a coach.
-        </p>
+        <div class="explanation">
+
+          <p>The objective of the game is to become a Train Tycoon - by amassing a lot of money.</p>
+          <p>You start with G$ 1,000,000</p>
+          <p>You decide on the number of trains to start</p>
+          <p>You decide on the route you want your train to take and the stations it must stop and the number of
+            passenger
+            coaches it must have</p>
+          <p>If you spend too much money (beyond what you have) you will be charged a steep interst rate (10%) by your
+            bank/financiers</p>
+          <p>You earn a little interest (5%) on the money you have in the bank</p>
+          <p>You can review Passenger Demand and Ticket Prices in the Info menu item.</p>
+          <p>Your performance in terms of the G$ is shown on the top left of your screen along with the current period
+            you
+            are in. This also shows the State you are in and your options.
+            You can review your detailed performance in the Performance menu item.</p>
+          Also note that the color of the coaches varies from light red to dark red based on the occupancy of the
+          train. Higher the occupancy, darker the color.
+          <p>You train-wise performance can be seen on the left of your game screen (most recent on top). You can
+            switch
+            between the trains by pressing the <keytype>n</keytype> (next train info> key in the Running state.
+          </p>
+          <p>Note that the data is not saved anywhere. Hence you will need to start again once you close the Game
+            browser
+            window
+            or the computer.
+          </p>
+          <p>Try and become a Train Tycoon by Pd 500.</p>
+          <p>You can speed up the game by clicking on the <keytype>+</keytype> key once or repeatedly in the Running
+            state.
+            This makes the time
+            pass fast.
+            Similarly the game slows down with the <keytype>-</keytype> key. <keytype>p</keytype> key is ofcourse for
+            pausing the game. Once you are in the Paused
+            state you can add another route, by first pressing the <keytype>r</keytype> key to get into the route
+            editing
+            state and then by pressing the
+            <keytype>a</keytype> key to add a route and then clicking on the starting station and so forth. Similarly
+            from
+            the paused state you can add or remove coaches
+            in any of the existing trains. You do this by first pressing the <keytype>t</keytype> for getting in to
+            the
+            Train Editing state and then selecting the right
+            train by pressing the <keytype>n</keytype> key and once the correct train is selected, pressing the
+            <keytype>+
+            </keytype> to add a coach and <keytype>-</keytype> to
+            remove a coach.
+          </p>
+        </div>
       </div>
       <div id="info">
-        <h4>Info</h4>
-        <p>Passenger Estimates</p>
-        <table id="passengers">
-        </table>
-        <p>Ticket Prices</p>
-        <table id="ticketprices">
-        </table>
-        <h4>Costs in G$(Game Dollars)</h4>
-        <p><b>Track:</b> Depends on the distance. It is about G$ 1000
-          per unit distance ie per pixel on the screen. However going over
-          the lake, while possible, will cost you about 20 times of the
-          regular track cost. Similarly you can go under the snow covered mountain
-          through a tunnel but that too will cost you 20 times the regular track
-          cost.
-        </p>
-        <p><b>Engine:</b> The Engine costs G$ 100000
-          and this engine can pull any number of passenger coaches</p>
-        <p><b>Passenger Coach:</b> Each Passenger Coach costs G$ 20000.
-          Note that if you reduce the number of coaches, the coach does not earn
-          you any resale. Each passenger coach has a capacity of 30
-          passengers. Also note that when passengers are boarded, the passengers
-          for the farthest destination are boarded first and so on for the
-          remaining destinations (from farthest to closest destination) if there is any coach capacity left.
-        </p>
-        <p><b>Station:</b> Each Station costs G$ 50000.
-        </p>
-        <p><b>Maintainance Cost:</b> This proportional to the total capital cost
-        </p>
-        <p><b>Running Cost:</b> This proportional to the total track length, and number of Stations
-        </p>
-        <p><b>Depreciation Cost:</b> The depreciation is calculated internally to work out the profit after
-          depreciation
-          for
-          taxation purposes. The depreciation is a straight line depreciation over 200 periods.
-          However, it flows back in to the cash and your cash balance reflects that.
-        </p>
-        <p>You have no control over Maintenance Cost, Running Cost and Depreciation</p>
-        <p>Once a train is started on any given route, there is no way to stop the train in this version of the
-          game.
-        </p>
-        <h4>Switching Between Game Screen and this screen</h4>
-        <p>The <keytype>space</keytype> bar will switch between the game screen and this screen.</p>
+        <h3>Info</h3>
+        <div class="explanation">
+          <p>Passenger Estimates</p>
+          <table id="passengers">
+          </table>
+          <p>Ticket Prices</p>
+          <table id="ticketprices">
+          </table>
+          <h4>Costs in G$(Game Dollars)</h4>
+          <p><b>Track:</b> Depends on the distance. It is about G$ 1000
+            per unit distance ie per pixel on the screen. However going over
+            the lake, while possible, will cost you about 20 times of the
+            regular track cost. Similarly you can go under the snow covered mountain
+            through a tunnel but that too will cost you 20 times the regular track
+            cost.
+          </p>
+          <p><b>Engine:</b> The Engine costs G$ 100000
+            and this engine can pull any number of passenger coaches</p>
+          <p><b>Passenger Coach:</b> Each Passenger Coach costs G$ 20000.
+            Note that if you reduce the number of coaches, the coach does not earn
+            you any resale. Each passenger coach has a capacity of 30
+            passengers. Also note that when passengers are boarded, the passengers
+            for the farthest destination are boarded first and so on for the
+            remaining destinations (from farthest to closest destination) if there is any coach capacity left.
+          </p>
+          <p><b>Station:</b> Each Station costs G$ 50000.
+          </p>
+          <p><b>Maintainance Cost:</b> This proportional to the total capital cost
+          </p>
+          <p><b>Running Cost:</b> This proportional to the total track length, and number of Stations
+          </p>
+          <p><b>Depreciation Cost:</b> The depreciation is calculated internally to work out the profit after
+            depreciation
+            for
+            taxation purposes. The depreciation is a straight line depreciation over 200 periods.
+            However, it flows back in to the cash and your cash balance reflects that.
+          </p>
+          <p>You have no control over Maintenance Cost, Running Cost and Depreciation</p>
+          <p>Once a train is started on any given route, there is no way to stop the train in this version of the
+            game.
+          </p>
+          <h4>Switching Between Game Screen and this screen</h4>
+          <p>The <keytype>space</keytype> bar will switch between the game screen and this screen.</p>
+        </div>
       </div>
       <div id='how'>
         <h3>How to Play</h3>
-        <p>At any time you will be in one of the following stages(states) of play</p>
-        <h4>Route Editing State</h4>
-        <p>Here the idea is to identify the route that your train should take between two or more cities. So you
-          will
-          click on one city and then on another city or a point between those cities and so on tracing the route
-          from
-          one
-          city to 2 or more
-          cities. As you continue to click, you will see lines between those points. While you will be clicking to
-          draw
-          straight
-          lines, the game will automatically create curved lines between each pair of straight lines that meet an an
-          angle.
-          Note that since the train cannot take sharp turns, the angle beween 2 lines cannot be less than 90
-          degrees.
-          Similarly each line
-          has to be a reasonable size. These two are incorporated in the user interface by ensuring that the click
-          results
-          in a line only
-          if both these conditions are true.
-          If you to delete the last point you clicked, you can press the <keytype>d</keytype> key. If you have
-          completed
-          one route
-          and want to create another route, you will press the <keytype>a</keytype> key. This will start the process
-          of
-          adding another
-          route. Any number of routes can start at a city or end at a city or transit through a city.
-          Once you have created the routes, they cannot be edited or deleted.
-          When you have created one or more routes, you can press the <keytype>g</keytype> key to get into the game
-          mode.
-          However by
-          default a train will get only one coach. If you want to add a additional coach you should press the
-          <keytype>t
-          </keytype> key for Train Editing
-          and add a coach by pressing the <keytype>+</keytype> key.
-          A separate train will run on each of the routes.
-          Cost of the track is proportional to the distance of the route.
-        </p>
-        <h4>Train Editing State</h4>
-        <p>Each route will automatically get one train. By default the train will consist of an engine and one
-          passenger
-          coach. If you want to add
-          another coach to the train, you will need to press the plus(<keytype>+</keytype>) key. To remove one coach
-          from
-          the train you will
-          press the minus key(<keytype>-</keytype>).
-        </p>
-        <h4>Paused State</h4>
-        <p>You can pause the game. When you do this you will be in a Paused State. Time stops in this state. Once
-          you
-          are
-          in the paused state you can go to Route Editing State (r key), Train Editing State(t key). Note that when
-          you
-          come
-          back to Route Editing State from the Paused state, you have to click on the a key to start adding another
-          route.
-          You go back to the running state by pressing the <keytype>g</keytype> key.
-        </p>
-        <h4>Running State</h4>
-        <p>In this state you should see your trains moving around from one station to another. Also in this state on
-          the
-          left
-          of your screen you should see the number of passengers the train has boarded for each of the destinations
-          and
-          the
-          money that has earned you. In this state, if you hover your cursor over any city, you get to see some
-          relevant
-          info.
-        </p>
-        <p>Press <keytype>space</keytype> key to switch back to the game graphics screen</p>
-        <h4>How to get to these states?</h4>
-        <p>Here again we use keyboard keys to get to various states</p>
-        <p>The keys you can press to get to various states are shown at the very top of the game graphics screen at
-          all
-          times</p>
-        <p>You always start in the Route Editing state</p>
-        <p>Typically once you finish creating a route you will press the <keytype>t</keytype> key to switch to the
-          Train
-          Editing state
-          and add additional coaches if you need to</p>
-        <p>Having done this you will typically switch to the Running State by pressing the <keytype>g</keytype> key
-          to
-          resume the game.</p>
-        <p>
-          <keytype>d</keytype> will switch you to the Route Editing State if you are not in Running State
-        </p>
-        <p>Generally speaking you will use the following keys to switch to various states</p>
-        <p>
-          <keytype>t</keytype> will switch you to the Train Editing State if you are not in Running State. To go
-          from
-          Running State to Train Editing State
-          you have to press the <keytype>p</keytype> key to go to Paused State
-        </p>
-        <p>
-          <keytype>p</keytype> will switch you to the Paused State if you are in the Running State
-        </p>
-        <p>
-          <keytype>g</keytype> for game, will switch you to the Running State
-        </p>
-        <p>
-          <keytype>space</keytype> key, will switch you to the documentation screen. If you are already in this
-          screen,
-          the <keytype>space</keytype> key
-          will switch you back to the Game graphics screen
-        </p>
+        <div class="explanation">
+          <p>At any time you will be in one of the following stages(states) of play</p>
+          <h4>Route Editing State</h4>
+          <div class="explanation">
+
+            <p>Here the idea is to identify the route that your train should take between two or more cities. So you
+              will
+              click on one city and then on another city or a point between those cities and so on tracing the route
+              from
+              one
+              city to 2 or more
+              cities. As you continue to click, you will see lines between those points. While you will be clicking to
+              draw
+              straight
+              lines, the game will automatically create curved lines between each pair of straight lines that meet an an
+              angle.
+              Note that since the train cannot take sharp turns, the angle beween 2 lines cannot be less than 90
+              degrees.
+              Similarly each line
+              has to be a reasonable size. These two are incorporated in the user interface by ensuring that the click
+              results
+              in a line only
+              if both these conditions are true.
+              If you to delete the last point you clicked, you can press the <keytype>d</keytype> key. If you have
+              completed
+              one route
+              and want to create another route, you will press the <keytype>a</keytype> key. This will start the process
+              of
+              adding another
+              route. Any number of routes can start at a city or end at a city or transit through a city.
+              Once you have created the routes, they cannot be edited or deleted.
+              When you have created one or more routes, you can press the <keytype>g</keytype> key to get into the game
+              mode.
+              However by
+              default a train will get only one coach. If you want to add a additional coach you should press the
+              <keytype>t
+              </keytype> key for Train Editing
+              and add a coach by pressing the <keytype>+</keytype> key.
+              A separate train will run on each of the routes.
+              Cost of the track is proportional to the distance of the route.
+            </p>
+          </div>
+          <h4>Train Editing State</h4>
+          <div class="explanation">
+
+            <p>Each route will automatically get one train. By default the train will consist of an engine and one
+              passenger
+              coach. If you want to add
+              another coach to the train, you will need to press the plus(<keytype>+</keytype>) key. To remove one coach
+              from
+              the train you will
+              press the minus key(<keytype>-</keytype>).
+            </p>
+          </div>
+          <h4>Paused State</h4>
+          <div class="explanation">
+
+            <p>You can pause the game. When you do this you will be in a Paused State. Time stops in this state. Once
+              you
+              are
+              in the paused state you can go to Route Editing State (r key), Train Editing State(t key). Note that when
+              you
+              come
+              back to Route Editing State from the Paused state, you have to click on the a key to start adding another
+              route.
+              You go back to the running state by pressing the <keytype>g</keytype> key.
+            </p>
+          </div>
+          <h4>Running State</h4>
+          <div class="explanation">
+
+            <p>In this state you should see your trains moving around from one station to another. Also in this state on
+              the
+              left
+              of your screen you should see the number of passengers the train has boarded for each of the destinations
+              and
+              the
+              money that has earned you. In this state, if you hover your cursor over any city, you get to see some
+              relevant
+              info.
+            </p>
+            <p>Press <keytype>space</keytype> key to switch back to the game graphics screen</p>
+          </div>
+          <h4>How to get to these states?</h4>
+          <div class="explanation">
+
+            <p>Here again we use keyboard keys to get to various states</p>
+            <p>The keys you can press to get to various states are shown at the very top of the game graphics screen at
+              all
+              times</p>
+            <p>You always start in the Route Editing state</p>
+            <p>Typically once you finish creating a route you will press the <keytype>t</keytype> key to switch to the
+              Train
+              Editing state
+              and add additional coaches if you need to</p>
+            <p>Having done this you will typically switch to the Running State by pressing the <keytype>g</keytype> key
+              to
+              resume the game.</p>
+            <p>
+              <keytype>d</keytype> will switch you to the Route Editing State if you are not in Running State
+            </p>
+            <p>Generally speaking you will use the following keys to switch to various states</p>
+            <p>
+              <keytype>t</keytype> will switch you to the Train Editing State if you are not in Running State. To go
+              from
+              Running State to Train Editing State
+              you have to press the <keytype>p</keytype> key to go to Paused State
+            </p>
+            <p>
+              <keytype>p</keytype> will switch you to the Paused State if you are in the Running State
+            </p>
+            <p>
+              <keytype>g</keytype> for game, will switch you to the Running State
+            </p>
+            <p>
+              <keytype>space</keytype> key, will switch you to the documentation screen. If you are already in this
+              screen,
+              the <keytype>space</keytype> key
+              will switch you back to the Game graphics screen
+            </p>
+          </div>
+        </div>
       </div>
       <div id='contact'>
         <h3>Contact</h3>
-        <p>I am the developer responsible for the bugs that you are encountering. Give me as much detail as possible
-          so
-          that
-          I can
-          reproduce the bug. I will try and fix the bugs as soon as possible.</p>
-        <p>Similarly, if you have suggestions I will gladly listen to them.</p>
-        <p>Contact me at ajoshi@flash.net</p>
+        <div class="explanation">
+          <p>I am the developer responsible for the bugs that you are encountering. Give me as much detail as possible
+            so that I can reproduce the bug. I will try and fix the bugs as soon as possible.</p>
+          <p>Similarly, if you have suggestions I will gladly listen to them.</p>
+          <p>Contact me at ajoshi@flash.net</p>
+        </div>
       </div>
 
       <div id='performance'>
         <h3>Performance</h3>
-        <table id="performancetable"></table>
+        <div class="explanation">
+          <table id="performancetable"></table>
+        </div>
       </div>
       <div class="hidden" id="gated-content">
         <p>
@@ -275,7 +298,7 @@
       <!-- svg for a steam engine -->
       <div class="popupheader">
         <div class="popupimage">
-          <img src="toytrain.png"/>
+          <img src="toytrain.png" />
         </div>
         <div class="popuptitle">
           Info
@@ -301,7 +324,8 @@
     <div class="citypopup2 tooltip" id="Kata-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Haybad-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Dore-popup2" title="Number of passengers that could not be accomodated"></div>
-    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated">
+    </div>
     <div class="citypopup2 tooltip" id="Ooby-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Poa-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Mannai-popup2" title="Number of passengers that could not be accomodated"></div>

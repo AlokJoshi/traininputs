@@ -3,12 +3,18 @@
     padding:0;
     box-sizing: border-box;
     font-family: "Comic Sans MS", cursive, sans-serif;
+    line-height: 1.5em;
 }
 body{
     background:#f1f1f1;
     margin-left:10px;
 }
-
+.explanation{
+  margin:10px;
+}
+.explanation > p:nth-child(2n){
+  color: #6a83f1;
+}
 .navbar{
   width:100%;
   display:grid;

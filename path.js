@@ -65,27 +65,32 @@ class Path {
       this.updateStations()
       this.savePathInDB()
       this._train = new Train(3, 1)
+      this.game.cashflow.trackcost = this.pathLength * Game.TRACK_COST_PER_UNIT 
+                                     + this.getPathLengthInTunnel()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
+                                     + this.getPathLengthOverWater()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
       this.game.cashflow.enginecost = Game.COST_ENGINE
       this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
       this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
     }
   }
   savePathInDB() {
-    let json1 = savePathToDB(this.game.gameid, this.number, this._finalized, this.points)
-    json1.then(data => {
-      this.PathIdInDB = data[0]
-      let json2
-      for (let iwp = 0; iwp < this.wp.length; iwp++) {
-        json2 = saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
-        json2.then(data => {
-          //console.log(`waypointid : ${data[0]}`)
-        }).catch(err => {
-          console.error(`Error in saveWayPointToDB: ${err}`)
-        })
-      }
-    }).catch(err => {
-      console.error(`Could not get pathIdInDB`)
-    })
+    if(this.game.gameid){
+      let json1 = savePathToDB(this.game.gameid, this.number, this._finalized, this.points)
+      json1.then(data => {
+        this.PathIdInDB = data[0]
+        let json2
+        for (let iwp = 0; iwp < this.wp.length; iwp++) {
+          json2 = saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
+          json2.then(data => {
+            //console.log(`waypointid : ${data[0]}`)
+          }).catch(err => {
+            console.error(`Error in saveWayPointToDB: ${err}`)
+          })
+        }
+      }).catch(err => {
+        console.error(`Could not get pathIdInDB`)
+      })
+    }
   }
   get isValid() {
     //first prune the path if necessary

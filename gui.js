@@ -1,7 +1,9 @@
 let noncanvases= document.getElementById('noncanvases')
 let canvases= document.getElementById('canvases')
 
-noncanvases.style.visibility='collapse'
+//starting state
+noncanvases.style.visibility='visible'
+canvases.style.visibility='collapse'
 
 let sb = document.getElementById('railwaytracks')
 var tbl = document.getElementById("passengers");

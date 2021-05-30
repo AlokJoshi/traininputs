@@ -11,9 +11,11 @@ async function getUser(email) {
   const users = await response.json()
   return users[0]
 }
+
 function userExists(email) {
   return !!getUser(email)
 }
+
 async function createUserAndDefaultGame(email, gamename) {
   let newGameId
   const data = { email, gamename }
@@ -34,12 +36,13 @@ async function getAllGamesForEmail(email) {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
     method: 'GET'
   })
-  if (response.ok) {
+  if (!response.ok) {
     throw new Error('Network response was not ok')
   }
-  let games = response.json()
+  let games = await response.json()
   return games
 }
+
 async function addGameForEmail(email, gamename) {
   let data = {
     email: email,

@@ -15,90 +15,79 @@ const conifigureClient = async () => {
 }
 
 const updateUI = async () => {
-  const isAuthenticated = await auth0.isAuthenticated()
-  document.getElementById('btn-login').disabled = isAuthenticated
-  document.getElementById('btn-logout').disabled = !isAuthenticated
 
-  //logic to show or hide the gated content after authentication
-  if (isAuthenticated) {
+  try {
 
-    document.getElementById("gated-content").classList.remove("hidden")
-    document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently()
-    loggedInUser = await auth0.getUser()
-    const email = loggedInUser.email
-    document.querySelector(".user").innerHTML = email
-    document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(loggedInUser)
-    const userInDB = await getUser(email)
-    console.log(`User in DB with an email of ${email}: ${JSON.stringify(userInDB)}`)
-    let userExistsInDB = userInDB !== undefined
-    console.log(`User exists: ${userExistsInDB}`)
-    if (userExistsInDB) {
-      /* Todo :Commented out till the saving into db is completed and tested
+    const isAuthenticated = await auth0.isAuthenticated()
+    document.getElementById('btn-login').disabled = isAuthenticated
+    document.getElementById('btn-logout').disabled = !isAuthenticated
 
-      //is the user already playing a game? We can make that out if the email and 
-      //gameid value is 
-      //set in local storage
-      const emailInLocalStorage = localStorage.getItem('email')
-      if(email==emailInLocalStorage){
-        const gameid = localStorage.getItem('gameid')
-        if(gameid==null){
-          //no game created yet
-          let gameid = await createUserAndDefaultGame(email,Game.START_GAME_NAME)
-          if(gameid){
-            //store the results in local storage
-            localStorage.setItemItem('email',email)
-            localStorage.setItemItem('gameid',gameid)
-            alert(`Not implemented. Hence game could not be created for ${email}`)
-            game = new Game(email,gameid,Game.START_GAME_NAME)
-          }else{
-            alert(`game could not be created for ${email}`)
+    //logic to show or hide the gated content after authentication
+    if (isAuthenticated) {
+
+      document.getElementById("gated-content").classList.remove("hidden")
+      document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently()
+      loggedInUser = await auth0.getUser()
+      const email = loggedInUser.email
+      document.querySelector(".user").innerHTML = email
+      document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(loggedInUser)
+      const userInDB = await getUser(email)
+      console.log(`User in DB with an email of ${email}: ${JSON.stringify(userInDB)}`)
+      let userExistsInDB = userInDB !== undefined
+      console.log(`User exists?userInDB:${userInDB}, userExistsInDB:${userExistsInDB}`)
+      if (userExistsInDB) {
+        //get the last game that the user was playing
+        let games = await getAllGamesForEmail(email)
+        console.log(`data for getAllGamesForEmail(${email} is : ${JSON.stringify(games)})`)
+        //games is an array of all games that this email was playing
+        if(games.length>0){
+          let done=false
+          let list = games.map(game=>game.gamename + `, Id:(${game.id})`).join(",")
+          let gameid =''
+          while (!done) {
+            let gameid = prompt(`Enter the game Id of the game you want to continue playing. The games you have played so far are: ${list}`)
+            done = games.map(game=>game.id).includes(gameid*1)
           }
+          localStorage.setItem('gameid',gameid)
+          localStorage.setItem('email',email)
+          game = new Game(email,gameid,games.filter(game=>game.id==gameid).gamename)
+          game.loadFromDB() 
         }else{
-          //------------------Todo---------------------
-          //here we should load the game that the user was
-          //playing last. However, since load is not complete
-          //we start the user with a new Game
-          game = new Game(email,gameid,Game.START_GAME_NAME)
+          game = new Game(games[0].id,gameid,games[0].gamename)
+          game.loadFromDB() 
         }
-      }else if(emailInLocalStorage==null){
-        //the user is an authenticated user and exists in our DB and has a game going
-        //but playing on another device
-        //so load the current or latest game from DB
-        // ****************todo*****************************
-        // Game.loadFromDB
-        game = new Game('anonymous',0,Game.START_GAME_NAME)
-        alert('Authenticated user and exists in our DB but was not playing on this device')
-        // ****************todo*****************************
-      }
-
-       */
-      let ok = await deleteUser(email)
-      console.log(`ok in if(userExists) in script.js: ${ok}`)
-      if(ok){
-        let json2 = createUserAndDefaultGame(email, Game.START_GAME_NAME)
-        json2.then(data => {
-          console.log(`user and default game created successfully: ${data}`)
-          gameid = data
-          game = new Game(email, gameid, Game.START_GAME_NAME)
-        }).catch(err => {
-          console.error(`Error in creating user and default game : ${err}`)
-        })
+      } else {
+        //since the user has been authenticated but does not exist in DB
+        let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
+        console.log(`Gameid returned by createUserAndDefaultGame: ${gameid}`)
+        game = new Game(email, gameid, Game.START_GAME_NAME)
+        localStorage.setItem('email', email)
+        localStorage.setItem('gameid', gameid)
       }
     } else {
-      //since the user has been authenticated but does not exist in DB
-      let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
-      console.log(`Gameid returned by createUserAndDefaultGame: ${gameid}`)
-      game = new Game(email, gameid, Game.START_GAME_NAME)
-      localStorage.setItem('email', email)
-      localStorage.setItem('gameid', gameid)
+      //the user is not authenticated
+      //however the user may have got authenticated earlier
+      //this can be judged from the fact that the gameid is not null
+      let gameid = localStorage.getItem('gameid')
+      let email = localStorage.getItem('email')
+      if(!gameid && !email){
+        document.getElementById("gated-content").classList.add("hidden")
+        game = new Game('anonymous', 0, Game.START_GAME_NAME)
+        localStorage.setItem('email', 'anonymous')
+        localStorage.setItem('gameid', null)
+      }else{
+        let games = await getAllGamesForEmail(email)
+        if(games.length==0){
+          game = new Game(email, gameid, Game.START_GAME_NAME)
+        }else{
+          game = new Game(email, gameid, games.filter(game=>game.id==gameid).gamename)
+          game.loadFromDB()
+        }
+      }
     }
-  } else {
-    //the user is not authenticated
-    document.getElementById("gated-content").classList.add("hidden")
-    game = new Game('anonymous', 0, Game.START_GAME_NAME)
-    localStorage.setItem('email', 'anonymous')
-    localStorage.setItem('gameid', null)
-  }
+  } catch (err) {
+    console.log(`Error in UpdateUI: ${err}`)
+  } //end of try catch block
 }
 
 const login = async () => {
@@ -128,12 +117,20 @@ window.onload = async () => {
   }
 
   //check for code and state parameters in the query string
+  //this happens only when the user has initiated a login
+  //when user initiates a login, the Auth0 checks the user details
+  //against the user data it has and calls back our web site with
+  //code and state query string parameters. The handleRedirectCallback
+  //is then able to read the code and state query string parameters
+  //and establish a connection with Auth0 web site.
+
   const query = window.location.search
   console.log(query)
   if (query.includes("code=") && query.includes("state=")) {
     //process the login state
     await auth0.handleRedirectCallback()
     updateUI()
+    //this is to remove the query strings of code and state etc.
     window.history.replaceState({}, document.title, "/");
   }
 
