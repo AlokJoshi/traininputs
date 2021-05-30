@@ -194,3 +194,14 @@ async function deleteUser(email){
   return true
 
 }
+
+async function getGamePeriodData(gameid) {
+  const response = await fetch(`/api/gameperiod/${gameid}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'GET'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  return response.json()
+}

@@ -40,20 +40,23 @@ const updateUI = async () => {
         let games = await getAllGamesForEmail(email)
         console.log(`data for getAllGamesForEmail(${email} is : ${JSON.stringify(games)})`)
         //games is an array of all games that this email was playing
-        if(games.length>0){
+        if(games.length>1){
           let done=false
           let list = games.map(game=>game.gamename + `, Id:(${game.id})`).join(",")
-          let gameid =''
+          let selectedgameid = 0
           while (!done) {
-            let gameid = prompt(`Enter the game Id of the game you want to continue playing. The games you have played so far are: ${list}`)
-            done = games.map(game=>game.id).includes(gameid*1)
+            selectedgameid = prompt(`Enter the game Id of the game you want to continue playing. The games you have played so far are: ${list}`)
+            selectedgameid*=1
+            done = games.map(game=>game.id).includes(selectedgameid)
           }
-          localStorage.setItem('gameid',gameid)
+          localStorage.setItem('gameid',selectedgameid)
           localStorage.setItem('email',email)
-          game = new Game(email,gameid,games.filter(game=>game.id==gameid).gamename)
+          game = new Game(email,selectedgameid,games.filter(game=>game.id==selectedgameid).gamename)
           game.loadFromDB() 
         }else{
-          game = new Game(games[0].id,gameid,games[0].gamename)
+          game = new Game(email,games[0].id,games[0].gamename)
+          localStorage.setItem('gameid',games[0].id)
+          localStorage.setItem('email',email)
           game.loadFromDB() 
         }
       } else {

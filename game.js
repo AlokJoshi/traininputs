@@ -658,8 +658,36 @@ class Game {
     //this.passengers.savePeriodDataToDB(this.gameid,this.period)
   }
 
-  loadFromDB = () =>{
-    console.log(`Game being loaded from DB:${this.id}` )
+  loadFromDB = async () =>{
+    console.log(`Game being loaded from DB:${this.gameid}`)
+    //load from gameperiod
+    let gameperiod_data = await getGamePeriodData(this.gameid)
+    //console.log(JSON.stringify(gameperiod_data))
+    let numPeriods = gameperiod_data.rowCount
+    let dataArray = gameperiod_data.rows
+    console.log(numRows)
+    console.log(JSON.stringify(dataArray))
+    for(let i=0;i<numRows;i++){
+      //create a cashflow object 
+      let cashflow = new CashFlow()
+      cashflow.game=this
+      cashflow._openingcash=dataArray[i].openingcash
+      cashflow._openingcumcapitalcost=dataArray[i].openingcumcapitalcost
+      cashflow._openingcumdepreciation=dataArray[i].openingcumdepreciation
+      cashflow._interest=dataArray[i].interest
+      cashflow._ticketsales=dataArray[i].sales
+      cashflow._profit=dataArray[i].profit
+      cashflow._tax=dataArray[i].tax
+      cashflow._cumtrackcost=dataArray[i].cumtrackcost
+      cashflow._cumstationcost=dataArray[i].cumstationcost
+      cashflow._cumcoachcost=dataArray[i].cumcoachcost
+      cashflow._cumwagoncost=dataArray[i].cumwagoncost
+      cashflow._cumenginecost=dataArray[i].cumenginecost
+      this.cash.add(cashflow)
+    }
+
+    //fix the frames based on the number of periods
+    this.frames = Game.FRAMES_PER_TIME_PERIOD*numPeriods
   }
 
   async createGameInDB(){

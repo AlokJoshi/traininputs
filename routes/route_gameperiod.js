@@ -72,7 +72,21 @@ function getHighestPeriodGivenGameid(req, res) {
   //   res.sendStatus(500)
   // })
 }
+function getGamePeriodDataGivenGameid(req, res) {
+  const gameid = req.params.gameid
+  const query = `select * from gameperiod where gameid = ${gameid}`
+  knex.raw(query)
+  .on('query', query => console.log(query.sql))
+  .then(data => {
+    res.json(data)
+  })
+  .catch(err => {
+    console.log(err)
+    res.sendStatus(500)
+  })
+}
 module.exports = {
   getHighestPeriodGivenGameid,
-  addGameperiod
+  addGameperiod,
+  getGamePeriodDataGivenGameid
 }

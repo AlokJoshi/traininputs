@@ -41,6 +41,7 @@ app.delete("/api/game/id/:id", game.deleteGame)
 
 //------------Gameperiod-----------------
 app.get("/api/gameperiod/gameid/:gameid", gameperiod.getHighestPeriodGivenGameid)
+app.get("/api/gameperiod/:gameid", gameperiod.getGamePeriodDataGivenGameid)
 app.post("/api/gameperiod", gameperiod.addGameperiod)
 
 //------------Pathperiod-----------------
