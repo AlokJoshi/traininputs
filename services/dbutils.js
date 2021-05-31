@@ -140,7 +140,7 @@ async function getGamePeriodId(gameid, period, passengerid, openingcash, opening
   if(!response.ok){
     throw new Error("Network response was not ok")
   }
-  const json = response.json()
+  const json = await response.json()
   return json
 }
 async function savePathToDB(gameid, routenumber, finalized, points) {
@@ -203,5 +203,36 @@ async function getGamePeriodData(gameid) {
   if(!response.ok){
     throw new Error("Network response was not ok")
   }
-  return response.json()
+  let json = await response.json()
+  console.log(`getGamePeriodData should return some data:`)
+  console.log(json)
+  return json
+}
+
+async function getPathData(gameid) {
+  const response = await fetch(`/api/path/gameid/${gameid}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'GET'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
+  console.log(`getPathData should return some data:`)
+  console.log(json)
+  return json
+}
+
+async function getWaypointData(pathid) {
+  const response = await fetch(`/api/waypoint/pathid/${pathid}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'GET'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
+  console.log(`getPathData should return some data:`)
+  console.log(json)
+  return json
 }

@@ -11,16 +11,16 @@ function getPath(req,res){
       res.sendStatus(500)
     })
 }
-function getPathsGivenGameperiodId(req,res){
-  const gameperiodid = req.params.gameperiodid
+function getPathsGivenGameId(req,res){
+  const gameid = req.params.gameid
   knex('path')
-    .where('gameperiodid', gameperiodid)
-    .then(data => {period
-      res.send(data)
-    })
-    .catch(err => {
-      res.sendStatus(500)
-    })
+  .where('gameid', gameid)
+  .then(data => {
+    res.send(data)
+  })
+  .catch(err => {
+    res.sendStatus(500)
+  })
 }
 function addPath(req,res){
   const gameid = req.body.gameid
@@ -51,6 +51,6 @@ function addPath(req,res){
 }
 module.exports = {
   getPath,
-  getPathsGivenGameperiodId,
+  getPathsGivenGameId,
   addPath
 }

@@ -665,9 +665,9 @@ class Game {
     //console.log(JSON.stringify(gameperiod_data))
     let numPeriods = gameperiod_data.rowCount
     let dataArray = gameperiod_data.rows
-    console.log(numRows)
+    console.log(numPeriods)
     console.log(JSON.stringify(dataArray))
-    for(let i=0;i<numRows;i++){
+    for(let i=0;i<numPeriods;i++){
       //create a cashflow object 
       let cashflow = new CashFlow()
       cashflow.game=this
@@ -685,9 +685,42 @@ class Game {
       cashflow._cumenginecost=dataArray[i].cumenginecost
       this.cash.add(cashflow)
     }
-
     //fix the frames based on the number of periods
     this.frames = Game.FRAMES_PER_TIME_PERIOD*numPeriods
+
+    //now create all the paths for the game
+    let path_data = await getPathData(this.gameid)
+    let numPaths = path_data.length
+    let pathArray = path_data
+    console.log(numPaths)
+    console.log(JSON.stringify(pathArray))
+    this.paths = new Paths(this)
+    for(let iPath=0;iPath<numPaths;iPath++){
+      let path = new Path(this,this.ctx_foreground, this.ctx_routedesign)
+      path.game=this
+      path.number = pathArray[iPath].routenumber
+      path._finalized = false
+      path.points = pathArray[iPath].pathpoints
+      let pathid =pathArray[iPath].id 
+      //we use this pathid to find out all the waypoints
+      let waypoint_data = await getWaypointData(pathid)
+      let waypointCount = waypoint_data.length
+      let waypointArray = waypoint_data
+      console.log(waypointCount)
+      console.log(JSON.stringify(waypointArray))
+      for(let iwp=0;iwp<waypointCount;iwp++){
+        path.wp.push({
+          n:waypointArray[iwp].n,
+          x:waypointArray[iwp].x,
+          y:waypointArray[iwp].y,
+          feature:waypointArray[iwp].feature,
+        })
+      }
+      if(pathArray[iPath].finalized){
+        path.finalized =true
+      }
+      this.paths.addPath(path)
+    }
   }
 
   async createGameInDB(){

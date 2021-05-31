@@ -65,7 +65,7 @@ app.post("/api/train", train.addTrain)
 
 //------------Path-----------------
 app.get("/api/path/id/:id", path.getPath)
-app.get("/api/path/gameperiodid/:gameperiodid", path.getPathsGivenGameperiodId)
+app.get("/api/path/gameid/:gameid", path.getPathsGivenGameId)
 app.post("/api/path", path.addPath)
 
 //------------Passenger-----------------
