@@ -61,7 +61,7 @@ app.post("/api/waypoint", waypoint.addWaypoint)
 
 //------------Train-----------------
 app.get("/api/train/pathid/:pathid", train.getTrainGivenPathid)
-app.post("/api/train", train.addTrain)
+app.post("/api/train", train.updateTrainInfo)
 
 //------------Path-----------------
 app.get("/api/path/id/:id", path.getPath)

@@ -1,30 +1,38 @@
 class Train {
-  constructor(num_passenger_coaches,num_wagons) {
-    this.num_passenger_coaches = num_passenger_coaches
-    this.num_wagons = num_wagons
+  constructor(path,passengercoaches,goodscoaches) {
+    this.path = path
+    this.passengercoaches = passengercoaches
+    this.goodscoaches = goodscoaches
     this.passengers = {}
     this.goods = {}
   }
-  addPassengerCoach(){
-    this.num_passenger_coaches++  
+  async addPassengerCoach(){
+    this.passengercoaches++  
+    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
-  removePassengerCoach(){
-    this.num_passenger_coaches--  
+  async removePassengerCoach(){
+    this.passengercoaches--  
+    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
-  addGoodsCoach(){
-    this.num_wagons++  
+  async addGoodsCoach(){
+    this.goodscoaches++  
+    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
+  }
+  async removeGoodsCoach(){
+    this.goodscoaches-- 
+    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
   // get capitalCost(){
-  //   return Game.COST_ENGINE + Game.COST_GOODS_COACH*this.num_wagons+Game.COST_PASSENGER_COACH*this.num_passenger_coaches
+  //   return Game.COST_ENGINE + Game.COST_GOODS_COACH*this.goodscoaches+Game.COST_PASSENGER_COACH*this.passengercoaches
   // }
   // get runningCostPerTimePeriod(){
-  //   return Math.floor(this.capitalCost*0.5)+this.num_passenger_coaches*5000+this.num_wagons*2000
+  //   return Math.floor(this.capitalCost*0.5)+this.passengercoaches*5000+this.goodscoaches*2000
   // }
   get passenger_capacity(){
-    return this.num_passenger_coaches*Game.PASSENGER_COACH_CAPACITY
+    return this.passengercoaches*Game.PASSENGER_COACH_CAPACITY
   }
   get wagon_capacity(){
-    return this.num_wagons*Game.WAGON_CAPACITY
+    return this.goodscoaches*Game.WAGON_CAPACITY
   }
   get num_passengers_on_train(){
     //sums up passengers for each city
@@ -71,5 +79,9 @@ class Train {
   }
   get wagonloading(){
     return 1-this.passenger_room_available/this.wagon_capacity
+  }
+  async saveInDB(){
+    console.log(`%cSaving train running on ${this.path.number}, 'background: #222; color: #bada55'`)
+    saveTrainToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
 }

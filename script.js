@@ -75,13 +75,19 @@ const updateUI = async () => {
       let email = localStorage.getItem('email')
       if(!gameid && !email){
         document.getElementById("gated-content").classList.add("hidden")
-        game = new Game('anonymous', 0, Game.START_GAME_NAME)
-        localStorage.setItem('email', 'anonymous')
-        localStorage.setItem('gameid', null)
+        let email = 'anonymous-'+ Date.now()
+        let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
+        game = new Game(email, gameid, Game.START_GAME_NAME)
+        localStorage.setItem('email', email)
+        localStorage.setItem('gameid', gameid)
       }else{
         let games = await getAllGamesForEmail(email)
         if(games.length==0){
+          let email = 'anonymous-'+ Date.now()
+          let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
           game = new Game(email, gameid, Game.START_GAME_NAME)
+          localStorage.setItem('email', email)
+          localStorage.setItem('gameid', gameid)
         }else{
           game = new Game(email, gameid, games.filter(game=>game.id==gameid).gamename)
           game.loadFromDB()

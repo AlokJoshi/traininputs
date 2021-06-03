@@ -128,6 +128,7 @@ class Game {
     this.cloud = new Cloud(this.cloudsElement.width,this.cloudsElement.height,this.cloudimage, this.ctx_clouds)
 
     this.paths = new Paths(this)
+    this.currentPath = null
     this.cash = new Cash()
     this.cashflow = new CashFlow(this, Game.OPENING_CASH, 0, 0)
 
@@ -627,7 +628,7 @@ class Game {
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1
         let train = this.paths.getPath(this.selectedPathNum).train
-        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${train.num_passenger_coaches}, Wagons:${train.num_wagons}): +(add coach), -(remove coach), >(add wagon), <(remove wagon),n(next route), g(resume game), space(docs and back), x(exit)`
+        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${train.passengercoaches}, goodscoaches:${train.goodscoaches}): +(add coach), -(remove coach), >(add wagon), <(remove wagon),n(next route), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.RUNNING_STATE:
         txt += `Running: p(pause), +(speed up), -(slow down), w(${this.makeSound == true ? 'whistle off' : 'whistle on'}), n(next train info), space(docs and back), x(exit)`
@@ -658,7 +659,7 @@ class Game {
     //this.passengers.savePeriodDataToDB(this.gameid,this.period)
   }
 
-  loadFromDB = async () =>{
+  loadFromDB = async () => {
     console.log(`Game being loaded from DB:${this.gameid}`)
     //load from gameperiod
     let gameperiod_data = await getGamePeriodData(this.gameid)
@@ -693,21 +694,22 @@ class Game {
     let numPaths = path_data.length
     let pathArray = path_data
     console.log(numPaths)
-    console.log(JSON.stringify(pathArray))
+    console.log(JSON.stringify(pathArray[0]))
     this.paths = new Paths(this)
     for(let iPath=0;iPath<numPaths;iPath++){
       let path = new Path(this,this.ctx_foreground, this.ctx_routedesign)
       path.game=this
       path.number = pathArray[iPath].routenumber
-      path._finalized = false
+      path._finalized =pathArray[iPath].finalized
       path.points = pathArray[iPath].pathpoints
-      let pathid =pathArray[iPath].id 
+
       //we use this pathid to find out all the waypoints
+      let pathid =pathArray[iPath].id 
       let waypoint_data = await getWaypointData(pathid)
       let waypointCount = waypoint_data.length
       let waypointArray = waypoint_data
       console.log(waypointCount)
-      console.log(JSON.stringify(waypointArray))
+      console.log(JSON.stringify(waypointArray[0]))
       for(let iwp=0;iwp<waypointCount;iwp++){
         path.wp.push({
           n:waypointArray[iwp].n,
@@ -715,12 +717,24 @@ class Game {
           y:waypointArray[iwp].y,
           feature:waypointArray[iwp].feature,
         })
-      }
-      if(pathArray[iPath].finalized){
-        path.finalized =true
+      } 
+      //todo replace this with the train info from the DB
+      path.PathIdInDB = pathid
+      path._train = new Train(path,pathArray[iPath].passengercoaches,pathArray[iPath].goodscoaches)
+
+      //add all the stations in that paths
+      path.stations = []
+      let stations = await getStations(pathid)
+      for(let i=0;i<stations.length;i++){
+        let station = new Station(path,stations[i].name,stations[i].wpn,stations[i].x,stations[i].y)
+        path.stations.push(station)
       }
       this.paths.addPath(path)
     }
+    this.selectedPathNum=0
+    console.log(`selectedPathNum value set to: ${this.selectedPathNum}`)
+
+
   }
 
   async createGameInDB(){

@@ -59,13 +59,17 @@ async function addGameForEmail(email, gamename) {
   return response.json()
 }
 
-async function saveTrainToDB(pathid, period, num_passenger_coaches, num_wagons) {
+async function saveTrainToDB(pathid, passengercoaches, goodscoaches) {
+  if(!pathid){
+    console.log(`%cTrain info not saved to DB since the pathid was null`,`color:red`)
+    return
+  }
   let data = {
     pathid: pathid,
-    period: period,
-    gamename: gamename
+    passengercoaches: passengercoaches,
+    goodscoaches: goodscoaches
   }
-  const response = await fetch(`/api/game`, {
+  const response = await fetch(`/api/train`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
     method: 'POST',
     body: Qs.stringify(data)
@@ -76,6 +80,10 @@ async function saveTrainToDB(pathid, period, num_passenger_coaches, num_wagons) 
   return response.json()
 }
 async function savePassengersOnTrainToDB(pathperiodid, passengers) {
+  if(!Object.hasOwnProperty(passengers)){
+    console.log(`%cPassengers Object is empty and hence not saved`,'color:red')
+    return
+  }
   let data = {
     pathperiodid: pathperiodid,
     passengers: passengers
@@ -232,7 +240,55 @@ async function getWaypointData(pathid) {
     throw new Error("Network response was not ok")
   }
   let json = await response.json()
-  console.log(`getPathData should return some data:`)
+  console.log(`getWaypointData should return some data:`)
+  console.log(json)
+  return json
+}
+async function saveStationToDB(pathid, name, wpn, x, y) {
+  if(!pathid){
+    console.log(`%cStation info not saved to DB since the pathid was null`,`color:red`)
+    return
+  }
+  let data = {
+    pathid: pathid,
+    name: name,
+    wpn: wpn,
+    x: x,
+    y: y
+  }
+  const response = await fetch(`/api/station`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'POST',
+    body: Qs.stringify(data)
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  return response.json()
+}
+async function getStations(pathid) {
+  const response = await fetch(`/api/station/pathid/${pathid}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'GET'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
+  console.log(`getStations should return some data:`)
+  console.log(json)
+  return json
+}
+
+async function saveUpdatedTrainInfoToDB(pathid,passengercoaches,goodscoaches) {
+  const response = await fetch(`/api/train`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'POST'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
   console.log(json)
   return json
 }

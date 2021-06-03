@@ -24,6 +24,7 @@ function getStationsGivenPathid(req, res){
         res.send(data)
       })
       .catch(err => {
+        console.log(`Error in addStation: ${err}`)
         res.sendStatus(500)
       })
   }

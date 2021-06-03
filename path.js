@@ -13,10 +13,8 @@ class Path {
     this._finalized = false
     //critical points on the path
     this.points = []
-
     //way points
     this.wp = []
-
     this.i = 0
     this.stations = []
     this.numFrames = 0
@@ -27,13 +25,13 @@ class Path {
     this.PathIdInDB = null
   }
   get rects() {
-    return 1 + this.train.num_passenger_coaches + this.train.num_wagons
+    return 1 + this.train.passengercoaches + this.train.goodscoaches
   }
   get passengercoaches() {
-    return this.train.num_passenger_coaches
+    return this.train.passengercoaches
   }
-  get wagons() {
-    return this.train.num_wagons
+  get goodscoaches() {
+    return this.train.goodscoaches
   }
   get train() {
     return this._train
@@ -59,37 +57,54 @@ class Path {
   set finalized(value) {
     this._finalized = value
     if (value == true) {
-      //console.log(`Route ${this.number} finalized and way points being created`)
-      this.createSegments()
-      this.createWayPoints()
-      this.updateStations()
-      this.savePathInDB()
-      this._train = new Train(3, 1)
-      this.game.cashflow.trackcost = this.pathLength * Game.TRACK_COST_PER_UNIT 
-                                     + this.getPathLengthInTunnel()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
-                                     + this.getPathLengthOverWater()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
-      this.game.cashflow.enginecost = Game.COST_ENGINE
-      this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
-      this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
+      //code moved to onFinalized async method since
+      //set cannot be async
+      this.onFinalized()
     }
   }
-  savePathInDB() {
+  onFinalized = async ()=>{
+    //console.log(`Route ${this.number} finalized and way points being created`)
+    this.createSegments()
+    this.createWayPoints()
+    await this.savePathInDB()
+    this.updateStations()
+    this._train = new Train(this,3, 1)
+    await this._train.saveInDB()
+    this.game.cashflow.trackcost = this.pathLength * Game.TRACK_COST_PER_UNIT 
+                                   + this.getPathLengthInTunnel()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
+                                   + this.getPathLengthOverWater()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
+    this.game.cashflow.enginecost = Game.COST_ENGINE
+    this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
+    this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
+  }
+
+  savePathInDB = async ()=>{
     if(this.game.gameid){
-      let json1 = savePathToDB(this.game.gameid, this.number, this._finalized, this.points)
-      json1.then(data => {
-        this.PathIdInDB = data[0]
-        let json2
-        for (let iwp = 0; iwp < this.wp.length; iwp++) {
-          json2 = saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
-          json2.then(data => {
-            //console.log(`waypointid : ${data[0]}`)
-          }).catch(err => {
-            console.error(`Error in saveWayPointToDB: ${err}`)
-          })
+      try{
+
+        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points)
+          console.log(`%cPathIdInDB should be: ${json1[0]}`,'backgroundColor:red')
+          this.PathIdInDB = json1[0]
+          let json2
+          for (let iwp = 0; iwp < this.wp.length; iwp++) {
+            try{
+              json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
+              //console.log(`waypointid : ${json2[0]}`)
+              // json2.then(data => {
+                //console.log(`waypointid : ${data[0]}`)
+                // }).catch(err => {
+                  //   console.error(`Error in saveWayPointToDB: ${err}`)
+                  // })
+            }catch(err){
+              console.log(`Error in saveWayPointToDB: ${err}`)
+            }
+          }
+        }catch(err){
+          console.log(`Error in savePathInDB: ${err}`)
         }
-      }).catch(err => {
-        console.error(`Could not get pathIdInDB`)
-      })
+      // }).catch(err => {
+      //   console.error(`Could not get pathIdInDB`)
+      // })
     }
   }
   get isValid() {
@@ -140,10 +155,13 @@ class Path {
 
   updateStations() {
     //first add the starting and ending locations as stations
+    let station
     if (this.wp.length > 0) {
       this.stations = []
-      this.stations.push(new Station(getClosestCity(this.game.cities, this.wp[0].x, this.wp[0].y), 0, this.wp[0].x, this.wp[0].y))
-      this.stations.push(new Station(getClosestCity(this.game.cities, this.wp[this.wp.length - 1].x, this.wp[this.wp.length - 1].y), this.wp[this.wp.length - 1].n, this.wp[this.wp.length - 1].x, this.wp[this.wp.length - 1].y))
+      station = new Station(this, getClosestCity(this.game.cities, this.wp[0].x, this.wp[0].y), 0, this.wp[0].x, this.wp[0].y)
+      this.stations.push(station)
+      station = new Station(this, getClosestCity(this.game.cities, this.wp[this.wp.length - 1].x, this.wp[this.wp.length - 1].y), this.wp[this.wp.length - 1].n, this.wp[this.wp.length - 1].x, this.wp[this.wp.length - 1].y)
+      this.stations.push(station)
       this.game.cashflow.stationcost = 2 * Game.COST_STATION
       //automatically add stations at all intermediate points that are in city limits
       for (let ip = 1; ip < this.points.length - 1; ip++) {
@@ -167,8 +185,7 @@ class Path {
       }
     }
     if (n != -1 && !this.atStation(n)) {
-      //this.stations.push(new Station(name,n,this.wp[n].x,this.wp[n].y))
-      this.stations.push(new Station(name, n, x, y))
+      this.stations.push(new Station(this,name, n, x, y))
       this.game.cashflow.stationcost = Game.COST_STATION
     }
   }
@@ -374,8 +391,8 @@ class Path {
     let p1, p3
     let event
     let ptgap = 6 - Game.WPL
-    let rects = 1 + this.passengercoaches + this.wagons
-    let nonwagons = 1 + this.passengercoaches
+    let rects = 1 + this.passengercoaches + this.goodscoaches
+    let nongoodscoaches = 1 + this.passengercoaches
     for (let iRect = 0; iRect < rects; iRect++) {
       //let ptAdjust = iRect * Path.PTGAP;
       let ptAdjust = iRect * ptgap
@@ -391,7 +408,7 @@ class Path {
         ctx.save();
         if ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) {
           ctx.fillStyle = "rgba(100,100,100)";
-        } else if ((iRect > nonwagons - 1 && this.going) || (iRect <= rects - nonwagons - 1 && !this.going)) {
+        } else if ((iRect > nongoodscoaches - 1 && this.going) || (iRect <= rects - nongoodscoaches - 1 && !this.going)) {
           ctx.fillStyle = `rgba(8,23,11,${this.train.wagonloading + 0.2})`;
         } else {
           ctx.fillStyle = `rgba(255,0,0,${this.train.occupancy + 0.2})`;
@@ -581,8 +598,8 @@ class Path {
   }
 
   savePeriodDataToDB(gameperiodid) {
-    console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.num_wagon}, ${this.train.num_passenger_coaches}, ${this.train.num_wagons} saving to db.`)
-    let json = savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.num_passenger_coaches, this.train.num_wagon, this.train.num_wagons)
+    console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.num_wagon}, ${this.train.passengercoaches}, ${this.train.goodscoaches} saving to db.`)
+    let json = savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.num_wagon, this.train.goodscoaches)
     json.then(data => {
       let pathperiodid = data[0]
       console.log(`pathperiodid returned from db: ${pathperiodid}`)

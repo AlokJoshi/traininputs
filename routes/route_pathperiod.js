@@ -8,13 +8,13 @@ function addPathperiod(req,res){
   const numframes=req.body.numframes
   const going=req.body.going
   const passengercoaches=req.body.passengercoaches
-  const goodscoaches=req.body.goodscoaches
-  console.log(gameperiodid, typeof gameperiodid, pathid,typeof pathid,i,numframes,going,passengercoaches,goodscoaches)
+  const goodscoaches=req.body.goodscoaches||0
+  console.log(gameperiodid, pathid,i,numframes,going,passengercoaches,goodscoaches)
   knex('pathperiod')
   .insert({gameperiodid, pathid, i, numframes, going, passengercoaches, goodscoaches})
   .returning('id')
   .on(`query`,(q)=>{
-    console.log(`query for addPathperiod: ${q.sql}`)
+    //console.log(`query for addPathperiod: ${q.sql}`)
   })
   .then(data=>{
     res.json(data)

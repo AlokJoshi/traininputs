@@ -3,6 +3,7 @@ function getWaypointGivenPathid (req, res) {
   const pathid = req.params.pathid
   knex('waypoint')
   .where('pathid', pathid)
+  .orderBy('n')
   .then(data => {
     res.send(data)
   })
@@ -17,7 +18,7 @@ function addWaypoint (req, res) {
   const x = req.body.x
   const y = req.body.y
   const feature = req.body.feature
-  console.log(`app.post("/api/waypoint",pathid:${pathid},${n},${x},${y},${feature}`)
+  //console.log(`app.post("/api/waypoint",pathid:${pathid},${n},${x},${y},${feature}`)
   knex('waypoint')
   .insert({ pathid, n , x, y, feature })
   .returning('id')

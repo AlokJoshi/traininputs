@@ -51,7 +51,7 @@ function addUser(req, res) {
     })
   })
   .catch(err => {
-    console.log(`Error in addUser: ${err}`)
+    console.log(`Error in adding user: ${err}`)
     res.sendStatus(500)
   })
 }

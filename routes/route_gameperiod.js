@@ -16,7 +16,7 @@ function addGameperiod(req, res) {
   const profit = req.body.profit
   const cumcoachcost = req.body.cumcoachcost
   const cumenginecost = req.body.cumenginecost
-  console.log(`addGameperiod called with ${gameid},${period},${sales},${interest}`)
+  //console.log(`addGameperiod called with ${gameid},${period},${sales},${interest}`)
   knex('gameperiod')
     .insert({ gameid, period, openingcash, openingcumcapitalcost, 
               openingcumdepreciation, cumtrackcost, cumstationcost,
