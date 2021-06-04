@@ -79,6 +79,7 @@ async function saveTrainToDB(pathid, passengercoaches, goodscoaches) {
   }
   return response.json()
 }
+/* 
 async function savePassengersOnTrainToDB(pathperiodid, passengers) {
   if(!Object.hasOwnProperty(passengers)){
     console.log(`%cPassengers Object is empty and hence not saved`,'color:red')
@@ -100,7 +101,9 @@ async function savePassengersOnTrainToDB(pathperiodid, passengers) {
   let obj = await response.json()
   return obj[0]
 }
-async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, passengercoaches, goodscoaches) {
+ */
+/* 
+async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, passengercoaches, goodscoaches, passengers) {
   let data = {
     gameperiodid: gameperiodid,
     pathid: pathid,
@@ -108,7 +111,8 @@ async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, pass
     numframes: numframes,
     going: going,
     passengercoaches: passengercoaches,
-    goodscoaches: goodscoaches
+    goodscoaches: goodscoaches,
+    passengers: passengers
   }
   const response = await fetch(`/api/pathperiod`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
@@ -121,6 +125,7 @@ async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, pass
   let json = await response.json()
   return json
 }
+ */
 async function getGamePeriodId(gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost,
                                costs, sales, interest, tax, profit,cumcoachcost,cumenginecost) {
   let data = {
@@ -161,6 +166,28 @@ async function savePathToDB(gameid, routenumber, finalized, points) {
   const response = await fetch(`/api/path`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
     method: 'POST',
+    body: Qs.stringify(data)
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
+  return json
+}
+async function updatePathInDB(pathid, gameperiodid,  i, numframes,going, passengercoaches, goodscoaches, passengers) {
+  let data = {
+    pathid:pathid,
+    gameperiodid: gameperiodid,
+    i: i,
+    numframes:numframes,
+    going:going,
+    passengercoaches: passengercoaches,
+    goodscoaches: goodscoaches,
+    passengers:passengers
+  }
+  const response = await fetch(`/api/path`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'PUT',
     body: Qs.stringify(data)
   })
   if(!response.ok){
@@ -281,14 +308,21 @@ async function getStations(pathid) {
 }
 
 async function saveUpdatedTrainInfoToDB(pathid,passengercoaches,goodscoaches) {
+  let data = {
+    pathid: pathid,
+    passengercoaches: passengercoaches,
+    goodscoaches: goodscoaches
+  }
+  
   const response = await fetch(`/api/train`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
-    method: 'POST'
+    method: 'POST',
+    body: Qs.stringify(data)
   })
   if(!response.ok){
     throw new Error("Network response was not ok")
   }
   let json = await response.json()
-  console.log(json)
+  //console.log(json)
   return json
 }

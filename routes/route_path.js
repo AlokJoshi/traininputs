@@ -33,9 +33,7 @@ function addPath(req,res){
   pathpoints = pathpoints.replace(']','}')
   pathpoints = pathpoints.replace(/"/g,"'")
 
-  
-
-  console.log(`addPath called with ${gameid},${routenumber},${finalized},${pathpoints}`)
+  //console.log(`addPath called with ${gameid},${routenumber},${finalized},${pathpoints}`)
   knex('path')
   .insert({
     gameid, routenumber, finalized, pathpoints
@@ -45,12 +43,44 @@ function addPath(req,res){
     res.send(data)
   })
   .catch(err => {
-    console.log(`addPath err:${err}`)
+    console.log(`Error in addPath: ${err}`)
+    res.sendStatus(500)
+  })
+}
+function updatePath(req,res){
+  const pathid=req.body.pathid
+  const gameperiodid=req.body.gameperiodid
+  const i=req.body.i
+  const numframes=req.body.numframes
+  const going=req.body.going
+  const passengercoaches=req.body.passengercoaches
+  const goodscoaches=req.body.goodscoaches||0
+  let parray = req.body.passengers
+  if(parray){
+    parray = JSON.stringify(parray)
+    //console.log(parray)
+    parray = parray.replace('[','{')
+    parray = parray.replace(']','}')
+    parray = parray.replace(/"/g,"'")
+  }
+  //console.log(gameperiodid, pathid,i,numframes,going,passengercoaches,goodscoaches,parray)
+  knex('path')
+  .where('id',pathid)
+  .update({gameperiodid, i, numframes, going, passengercoaches, goodscoaches, parray})
+  // .on(`query`,(q)=>{
+  //   console.log(`query for updatePath: ${q.sql}`)
+  // })
+  .then(data=>{
+    res.json(data)
+  })
+  .catch(err => {
+    console.log(`Error in updatePath: ${err}`)
     res.sendStatus(500)
   })
 }
 module.exports = {
   getPath,
   getPathsGivenGameId,
-  addPath
+  addPath,
+  updatePath
 }

@@ -5,9 +5,9 @@ class Station{
     this.wpn = wpn
     this.x=x
     this.y=y
-    this.saveInDB()
+    //this.saveInDB()
   }
-  saveInDB(){
-    saveStationToDB(this.path.PathIdInDB,this.name,this.wpn,this.x,this.y)
+  async saveInDB(){
+    await saveStationToDB(this.path.PathIdInDB,this.name,this.wpn,this.x,this.y)
   }
 }

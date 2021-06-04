@@ -8,19 +8,19 @@ class Train {
   }
   async addPassengerCoach(){
     this.passengercoaches++  
-    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
+    await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
   async removePassengerCoach(){
     this.passengercoaches--  
-    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
+    await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
   async addGoodsCoach(){
     this.goodscoaches++  
-    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
+    await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
   async removeGoodsCoach(){
     this.goodscoaches-- 
-    await this.saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
+    await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
   // get capitalCost(){
   //   return Game.COST_ENGINE + Game.COST_GOODS_COACH*this.goodscoaches+Game.COST_PASSENGER_COACH*this.passengercoaches
@@ -67,7 +67,7 @@ class Train {
   }
   alightPassengersForCity(city){
     if(!(city in this.passengers)){
-      console.error(`Error in alightPassengersForCity`)
+      console.error(`Error in alightPassengersForCity where city = ${city}`)
     }
     let num = this.passengers[city]
     this.passengers[city]=0

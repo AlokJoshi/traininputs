@@ -116,9 +116,10 @@ class Paths {
   get atLeastOnePathFinalized(){
     return this._paths.some(p=>p.finalized)
   }
-  savePeriodDataToDB(periodid){
+
+  async savePeriodDataToDB(periodid){
     for (let i = 0; i < this.numPaths; i++) {
-      this._paths[i].savePeriodDataToDB(periodid)
+      await this._paths[i].savePeriodDataToDB(periodid)
     }  
   }
 }

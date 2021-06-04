@@ -45,7 +45,7 @@ app.get("/api/gameperiod/:gameid", gameperiod.getGamePeriodDataGivenGameid)
 app.post("/api/gameperiod", gameperiod.addGameperiod)
 
 //------------Pathperiod-----------------
-app.post("/api/pathperiod", pathperiod.addPathperiod)
+//app.post("/api/pathperiod", pathperiod.addPathperiod)
 
 //------------Station-----------------
 app.get("/api/station/pathid/:pathid", station.getStationsGivenPathid)
@@ -67,10 +67,11 @@ app.post("/api/train", train.updateTrainInfo)
 app.get("/api/path/id/:id", path.getPath)
 app.get("/api/path/gameid/:gameid", path.getPathsGivenGameId)
 app.post("/api/path", path.addPath)
+app.put("/api/path", path.updatePath)
 
 //------------Passenger-----------------
-app.get("/api/passenger/pathid/:pathid", passenger.getPassengersGivenPathid)
-app.post("/api/passenger", passenger.addPassengers)
+//app.get("/api/passenger/pathid/:pathid", passenger.getPassengersGivenPathid)
+//app.post("/api/passenger", passenger.addPassengers)
 
 
 const server = app.listen(port, () => console.log(`Listening on port ${port}!`))

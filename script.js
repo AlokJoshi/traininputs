@@ -52,47 +52,27 @@ const updateUI = async () => {
           localStorage.setItem('gameid',selectedgameid)
           localStorage.setItem('email',email)
           game = new Game(email,selectedgameid,games.filter(game=>game.id==selectedgameid).gamename)
-          game.loadFromDB() 
         }else{
-          game = new Game(email,games[0].id,games[0].gamename)
           localStorage.setItem('gameid',games[0].id)
           localStorage.setItem('email',email)
-          game.loadFromDB() 
+          game = new Game(email,games[0].id,games[0].gamename)
         }
+        game.loadFromDB() 
       } else {
         //since the user has been authenticated but does not exist in DB
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
         console.log(`Gameid returned by createUserAndDefaultGame: ${gameid}`)
-        game = new Game(email, gameid, Game.START_GAME_NAME)
         localStorage.setItem('email', email)
         localStorage.setItem('gameid', gameid)
+        game = new Game(email, gameid, Game.START_GAME_NAME)
       }
     } else {
-      //the user is not authenticated
-      //however the user may have got authenticated earlier
-      //this can be judged from the fact that the gameid is not null
-      let gameid = localStorage.getItem('gameid')
-      let email = localStorage.getItem('email')
-      if(!gameid && !email){
         document.getElementById("gated-content").classList.add("hidden")
         let email = 'anonymous-'+ Date.now()
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
-        game = new Game(email, gameid, Game.START_GAME_NAME)
         localStorage.setItem('email', email)
         localStorage.setItem('gameid', gameid)
-      }else{
-        let games = await getAllGamesForEmail(email)
-        if(games.length==0){
-          let email = 'anonymous-'+ Date.now()
-          let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
-          game = new Game(email, gameid, Game.START_GAME_NAME)
-          localStorage.setItem('email', email)
-          localStorage.setItem('gameid', gameid)
-        }else{
-          game = new Game(email, gameid, games.filter(game=>game.id==gameid).gamename)
-          game.loadFromDB()
-        }
-      }
+        game = new Game(email, gameid, Game.START_GAME_NAME)
     }
   } catch (err) {
     console.log(`Error in UpdateUI: ${err}`)
@@ -107,6 +87,8 @@ const login = async () => {
 }
 
 const logout = () => {
+  localStorage.removeItem('email')
+  localStorage.removeItem('gameid')
   auth0.logout({
     returnTo: window.location.origin
   })

@@ -64,18 +64,18 @@ class Path {
   }
   onFinalized = async ()=>{
     //console.log(`Route ${this.number} finalized and way points being created`)
+    this._train = new Train(this,3, 1)
     this.createSegments()
     this.createWayPoints()
     await this.savePathInDB()
     this.updateStations()
-    this._train = new Train(this,3, 1)
-    await this._train.saveInDB()
     this.game.cashflow.trackcost = this.pathLength * Game.TRACK_COST_PER_UNIT 
-                                   + this.getPathLengthInTunnel()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
-                                   + this.getPathLengthOverWater()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
+    + this.getPathLengthInTunnel()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
+    + this.getPathLengthOverWater()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
     this.game.cashflow.enginecost = Game.COST_ENGINE
     this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
     this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
+    await this._train.saveInDB()
   }
 
   savePathInDB = async ()=>{
@@ -159,8 +159,10 @@ class Path {
     if (this.wp.length > 0) {
       this.stations = []
       station = new Station(this, getClosestCity(this.game.cities, this.wp[0].x, this.wp[0].y), 0, this.wp[0].x, this.wp[0].y)
+      station.saveInDB()
       this.stations.push(station)
       station = new Station(this, getClosestCity(this.game.cities, this.wp[this.wp.length - 1].x, this.wp[this.wp.length - 1].y), this.wp[this.wp.length - 1].n, this.wp[this.wp.length - 1].x, this.wp[this.wp.length - 1].y)
+      station.saveInDB()
       this.stations.push(station)
       this.game.cashflow.stationcost = 2 * Game.COST_STATION
       //automatically add stations at all intermediate points that are in city limits
@@ -177,6 +179,7 @@ class Path {
     //that is closest to x,y
     let min = 100000
     let n = -1
+    let station
     for (let i = 0; i < this.wp.length; i++) {
       let l = Math.sqrt((this.wp[i].x - x) * (this.wp[i].x - x) + (this.wp[i].y - y) * (this.wp[i].y - y))
       if (l < min) {
@@ -185,7 +188,9 @@ class Path {
       }
     }
     if (n != -1 && !this.atStation(n)) {
-      this.stations.push(new Station(this,name, n, x, y))
+      station = new Station(this,name, n, x, y)
+      station.saveInDB()
+      this.stations.push(station)
       this.game.cashflow.stationcost = Game.COST_STATION
     }
   }
@@ -493,8 +498,8 @@ class Path {
           //already when the train was at this point coming into this station
         } else {
           let numAlighted = this.train.alightPassengersForCity(currCity)
+          console.log(`Alighted ${numAlighted} at ${currCity}`)
         }
-        //console.log(`Alighted ${numAlighted} at ${currCity}`)
         let numNoRoom = 0
         if (this.going) {
           //take in passengers for the cities on the way back to the final station
@@ -597,18 +602,10 @@ class Path {
     );
   }
 
-  savePeriodDataToDB(gameperiodid) {
-    console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.num_wagon}, ${this.train.passengercoaches}, ${this.train.goodscoaches} saving to db.`)
-    let json = savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.num_wagon, this.train.goodscoaches)
-    json.then(data => {
-      let pathperiodid = data[0]
-      console.log(`pathperiodid returned from db: ${pathperiodid}`)
-      savePassengersOnTrainToDB(pathperiodid, this.train.passengers)
-    }).catch(err => {
-      console.error(`Error in saving data in savePassengersOnTrainToDB`)
-    })
-    //we should get the pathperiodid since we have to use that to save the
-    //passenger data
+  async savePeriodDataToDB(gameperiodid) {
+    //console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.passengercoaches}, ${this.train.goodscoaches}, ${this.game.passengers.info} saving to db.`)
+    //let json = await savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches,this.game.passengers.info)
+    let json = await updatePathInDB(this.PathIdInDB,gameperiodid, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches,this.game.passengers.info)
   }
   prunePoints() {
     //sometimes a user creates a path that does not end in a city. prunePoints removes

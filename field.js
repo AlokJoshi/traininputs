@@ -9,10 +9,7 @@ class Field {
   static FALLOW_BLUE=83
   static FIELD_CROP_RED=100
   static FIELD_CROP_BLUE=100
-  static FALLOW_COLOR = `rgb(${Field.FALLOW_RED},${Field.FALLOW_GREEN},${Field.FALLOW_BLUE})`
-  static fallowColorNumber(){
-    return (Field.FALLOW_RED<<16) + (Field.FALLOW_GREEN<<8) + Field.FALLOW_BLUE
-  } 
+  static FALLOW_COLOR = `rgba(${Field.FALLOW_RED},${Field.FALLOW_GREEN},${Field.FALLOW_BLUE},0.3)`
   
   
   constructor(x, y, w, h, ctx_foreground, ctx_background) {
@@ -23,7 +20,7 @@ class Field {
     this.ctx_f = ctx_foreground
     this.ctx_b = ctx_background
     this.green = 150+Math.random()*100
-    this.color = `rgb(${Field.FIELD_CROP_RED},${this.green},${Field.FIELD_CROP_BLUE})`
+    this.color = `rgba(${Field.FIELD_CROP_RED},${this.green},${Field.FIELD_CROP_BLUE},0.1)`
     this.i = 0
     this.speed = 0.1
     this.harvestingcomplete = false

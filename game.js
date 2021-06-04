@@ -572,17 +572,18 @@ class Game {
         //first get the gameperiodid
         //Todo: we need to get the cashid and passengerid
         if(this.gameid){
-
-          let json = getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,
-            this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost,
-            this.cashflow._maintenancecost+this.cashflow._runningcost,this.cashflow._ticketsales,this.cashflow._interest,
-            this.cashflow._tax,this.cashflow.profit,this.cashflow._cumcoachcost,this.cashflow._cumenginecost)
-          json.then(data=>{
-            this.gameperiodid=data[0]
+          try{
+            let data = await getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,
+              this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost,
+              this.cashflow._maintenancecost+this.cashflow._runningcost,this.cashflow._ticketsales,this.cashflow._interest,
+              this.cashflow._tax,this.cashflow.profit,this.cashflow._cumcoachcost,this.cashflow._cumenginecost)
+            this.gameperiodid = data[0]
+            console.log(`Game period id returned by getGemePeriodId: ${this.gameperiodid}`)
             this.savePeriodDataToDB()
-          }).catch(err=>{
+            }
+            catch(err){
             console.error(`Error in getGamePeriodId`)
-          })
+          }
         }
         this.cashflow.initPeriodVariables()
         let milestone = getMilestone(this)
@@ -650,13 +651,12 @@ class Game {
     return this.paths.numPaths
   }
 
-  savePeriodDataToDB = () => {
+  savePeriodDataToDB = async () => {
     //if the save is being done for the first time, we do not have an gameid for the game
     //we do not save if this.email is 'anonymous'
     //if(this.email=='anonymous') return
     console.log(`Saving game to db for ${this.gameid}, ${this.period}`)
-    this.paths.savePeriodDataToDB(this.gameperiodid)
-    //this.passengers.savePeriodDataToDB(this.gameid,this.period)
+    await this.paths.savePeriodDataToDB(this.gameperiodid)
   }
 
   loadFromDB = async () => {
@@ -670,22 +670,24 @@ class Game {
     console.log(JSON.stringify(dataArray))
     for(let i=0;i<numPeriods;i++){
       //create a cashflow object 
-      let cashflow = new CashFlow()
-      cashflow.game=this
-      cashflow._openingcash=dataArray[i].openingcash
-      cashflow._openingcumcapitalcost=dataArray[i].openingcumcapitalcost
-      cashflow._openingcumdepreciation=dataArray[i].openingcumdepreciation
-      cashflow._interest=dataArray[i].interest
-      cashflow._ticketsales=dataArray[i].sales
-      cashflow._profit=dataArray[i].profit
-      cashflow._tax=dataArray[i].tax
-      cashflow._cumtrackcost=dataArray[i].cumtrackcost
-      cashflow._cumstationcost=dataArray[i].cumstationcost
-      cashflow._cumcoachcost=dataArray[i].cumcoachcost
-      cashflow._cumwagoncost=dataArray[i].cumwagoncost
-      cashflow._cumenginecost=dataArray[i].cumenginecost
-      this.cash.add(cashflow)
+      this.cashflow = new CashFlow()
+      this.cashflow.game=this
+      this.cashflow._openingcash=dataArray[i].openingcash
+      this.cashflow._openingcumcapitalcost=dataArray[i].openingcumcapitalcost
+      this.cashflow._openingcumdepreciation=dataArray[i].openingcumdepreciation
+      this.cashflow._interest=dataArray[i].interest
+      this.cashflow._ticketsales=dataArray[i].sales
+      this.cashflow._profit=dataArray[i].profit
+      this.cashflow._tax=dataArray[i].tax
+      this.cashflow._cumtrackcost=dataArray[i].cumtrackcost
+      this.cashflow._cumstationcost=dataArray[i].cumstationcost
+      this.cashflow._cumcoachcost=dataArray[i].cumcoachcost
+      this.cashflow._cumwagoncost=dataArray[i].cumwagoncost
+      this.cashflow._cumenginecost=dataArray[i].cumenginecost
+      this.cash.add(this.cashflow)
     }
+    this.cashflow.update()
+
     //fix the frames based on the number of periods
     this.frames = Game.FRAMES_PER_TIME_PERIOD*numPeriods
 
@@ -732,6 +734,7 @@ class Game {
       this.paths.addPath(path)
     }
     this.selectedPathNum=0
+    this.currentPath=this.paths._paths[this.selectedPathNum]
     console.log(`selectedPathNum value set to: ${this.selectedPathNum}`)
 
 
