@@ -26,17 +26,23 @@ function addPath(req,res){
   const gameid = req.body.gameid
   const routenumber = req.body.routenumber
   const finalized = req.body.finalized
-
+  
   let pathpoints = req.body.points
   pathpoints = JSON.stringify(pathpoints)
   pathpoints = pathpoints.replace('[','{')
   pathpoints = pathpoints.replace(']','}')
   pathpoints = pathpoints.replace(/"/g,"'")
 
+  let wparray = req.body.wparray
+  wparray = JSON.stringify(wparray)
+  wparray = wparray.replace('[','{')
+  wparray = wparray.replace(']','}')
+  wparray = wparray.replace(/"/g,"'")
+
   //console.log(`addPath called with ${gameid},${routenumber},${finalized},${pathpoints}`)
   knex('path')
   .insert({
-    gameid, routenumber, finalized, pathpoints
+    gameid, routenumber, finalized, pathpoints, wparray
   })
   .returning('id')
   .then(data=>{
@@ -63,10 +69,9 @@ function updatePath(req,res){
     parray = parray.replace(']','}')
     parray = parray.replace(/"/g,"'")
   }
-  //console.log(gameperiodid, pathid,i,numframes,going,passengercoaches,goodscoaches,parray)
   knex('path')
   .where('id',pathid)
-  .update({gameperiodid, i, numframes, going, passengercoaches, goodscoaches, parray})
+  .update({i, numframes, going, passengercoaches, goodscoaches, parray})
   // .on(`query`,(q)=>{
   //   console.log(`query for updatePath: ${q.sql}`)
   // })

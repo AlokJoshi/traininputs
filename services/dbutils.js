@@ -156,12 +156,13 @@ async function getGamePeriodId(gameid, period, passengerid, openingcash, opening
   const json = await response.json()
   return json
 }
-async function savePathToDB(gameid, routenumber, finalized, points) {
+async function savePathToDB(gameid, routenumber, finalized, points,wparray) {
   let data = {
     gameid: gameid,
     routenumber: routenumber,
     finalized: finalized,
-    points: points
+    points: points,
+    wparray: wparray
   }
   const response = await fetch(`/api/path`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
@@ -308,6 +309,10 @@ async function getStations(pathid) {
 }
 
 async function saveUpdatedTrainInfoToDB(pathid,passengercoaches,goodscoaches) {
+  if(!pathid){
+    console.log(`In saveUpdatedTrainInfoToDB pathid: ${pathid}`)
+    return
+  }
   let data = {
     pathid: pathid,
     passengercoaches: passengercoaches,

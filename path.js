@@ -60,48 +60,51 @@ class Path {
       //code moved to onFinalized async method since
       //set cannot be async
       this.onFinalized()
+      console.log(`On finalized completed`)
     }
   }
-  onFinalized = async ()=>{
+  onFinalized = async () => {
     //console.log(`Route ${this.number} finalized and way points being created`)
-    this._train = new Train(this,3, 1)
+    this._train = new Train(this, 3, 1)
     this.createSegments()
     this.createWayPoints()
-    await this.savePathInDB()
     this.updateStations()
-    this.game.cashflow.trackcost = this.pathLength * Game.TRACK_COST_PER_UNIT 
-    + this.getPathLengthInTunnel()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
-    + this.getPathLengthOverWater()*Game.TRACK_COST_PER_UNIT*Game.TUNNEL_COST_MULTIPLIER
+    this.game.cashflow.trackcost = this.pathLength * Game.TRACK_COST_PER_UNIT
+    + this.getPathLengthInTunnel() * Game.TRACK_COST_PER_UNIT * Game.TUNNEL_COST_MULTIPLIER
+    + this.getPathLengthOverWater() * Game.TRACK_COST_PER_UNIT * Game.TUNNEL_COST_MULTIPLIER
     this.game.cashflow.enginecost = Game.COST_ENGINE
     this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
     this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
+    await this.savePathInDB()
+    console.log(`path.savePathInDB completed`)
     await this._train.saveInDB()
+    console.log(`path._train.saveInDB completed`)
   }
 
-  savePathInDB = async ()=>{
-    if(this.game.gameid){
-      try{
+  savePathInDB = async () => {
+    if (this.game.gameid) {
+      try {
 
-        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points)
-          console.log(`%cPathIdInDB should be: ${json1[0]}`,'backgroundColor:red')
-          this.PathIdInDB = json1[0]
-          let json2
-          for (let iwp = 0; iwp < this.wp.length; iwp++) {
-            try{
-              json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
-              //console.log(`waypointid : ${json2[0]}`)
-              // json2.then(data => {
-                //console.log(`waypointid : ${data[0]}`)
-                // }).catch(err => {
-                  //   console.error(`Error in saveWayPointToDB: ${err}`)
-                  // })
-            }catch(err){
-              console.log(`Error in saveWayPointToDB: ${err}`)
-            }
+        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points,this.wp)
+        console.log(`%cPathIdInDB should be: ${json1[0]}`, 'backgroundColor:red')
+        this.PathIdInDB = json1[0]
+        let json2
+        for (let iwp = 0; iwp < this.wp.length; iwp++) {
+          try {
+            json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
+            //console.log(`waypointid : ${json2[0]}`)
+            // json2.then(data => {
+            //console.log(`waypointid : ${data[0]}`)
+            // }).catch(err => {
+            //   console.error(`Error in saveWayPointToDB: ${err}`)
+            // })
+          } catch (err) {
+            console.log(`Error in saveWayPointToDB: ${err}`)
           }
-        }catch(err){
-          console.log(`Error in savePathInDB: ${err}`)
         }
+      } catch (err) {
+        console.log(`Error in savePathInDB: ${err}`)
+      }
       // }).catch(err => {
       //   console.error(`Could not get pathIdInDB`)
       // })
@@ -188,7 +191,7 @@ class Path {
       }
     }
     if (n != -1 && !this.atStation(n)) {
-      station = new Station(this,name, n, x, y)
+      station = new Station(this, name, n, x, y)
       station.saveInDB()
       this.stations.push(station)
       this.game.cashflow.stationcost = Game.COST_STATION
@@ -312,10 +315,10 @@ class Path {
           }
           ctx.translate(0, 2)
           ctx.beginPath()
-          if(i%4==0 && this.wp[i].feature == Game.FEATURE_WATER){
-            ctx.moveTo(0,-2)
-            ctx.arc(0,-2,4,0,2*Math.PI)
-            ctx.fill()  
+          if (i % 4 == 0 && this.wp[i].feature == Game.FEATURE_WATER) {
+            ctx.moveTo(0, -2)
+            ctx.arc(0, -2, 4, 0, 2 * Math.PI)
+            ctx.fill()
           }
           ctx.moveTo(-2, 0)
           ctx.lineTo(2, 0)
@@ -424,11 +427,7 @@ class Path {
         ctx.fillRect(0, 0, w, h);
         if ((iRect === 0 && this.going) || (iRect == rects - 1 && !this.going)) {
           let smokestack
-          // if(iRect === 0){
-          //   smokestack=this.going?w-10:w-10
-          // }else{
-          //   smokestack=!this.going?w-2:w-2 
-          // }
+
           smokestack = iRect === 0 ? w / 2 : w / 2
           if (this.i % 2 == 0) {
 
@@ -441,12 +440,7 @@ class Path {
             this.storedTransform = ctx.getTransform()
           } else if (this.i % 2 == 1) {
 
-            //smoke
-            // ctx.beginPath()
-            // ctx.moveTo(smokestack,0)
-            // ctx.arc(smokestack,2,4,0,2*Math.PI)
-            // ctx.fillStyle='rgba(180,180,180,0.5)'
-            // ctx.fill()
+
             ctx.setTransform(this.storedTransform)
             ctx.beginPath()
             ctx.arc(smokestack, 2, 2, 0, 2 * Math.PI)
@@ -460,141 +454,139 @@ class Path {
       }
     }
 
-    //train not at station or atStation and time to move on
-    if (!this.atStation(this.i) || (this.atStation(this.i) && this.numFrames > Path.NUM_FRAMES_TO_SKIP)) {
-      //start movement .. this is accomplished by advancing this.i
-      this.i = this.going ? this.i + 1 : this.i - 1
-      if (this.i == this.wp.length) {
-        this.i = this.wp.length - 1
-        this.going = false
-      } else if (this.i == -1) {
-        this.i = 0
-        this.going = true
-      }
-      //reset timer
-      this.numFrames = 0
-      //train at station but not time to move on
-      //audiochugging=null
-    } else if ((this.atStation(this.i) && this.numFrames <= Path.NUM_FRAMES_TO_SKIP)) {
-      if (this.game.makeSound) {
-        if (this.numFrames == Path.NUM_FRAMES_TO_SKIP - 10) {
-          let currCity_wpn = this.getStation(this.i).wpn
-          if (currCity_wpn == 0 && this.going || currCity_wpn == this.wp.length - 1 && !this.going) {
-            this.game.audiowhistle.play()
-            play(this.game.audiochugging, 15000)
-          }
-        }
-      }
-      if (this.numFrames == 0) {
-        //console.log(`Train reached station at location: ${this.i}, ${this.going}`)
-
-        let currCity = this.getStation(this.i).name
-        let currCity_wpn = this.getStation(this.i).wpn
-        let totalfare = 0
-
-        //first alight the passengers for this city
-        if (currCity_wpn == 0 && this.going || currCity_wpn == this.wp.length - 1 && !this.going) {
-          //starting point on going or returning back. No one is alighted here as that was done
-          //already when the train was at this point coming into this station
-        } else {
-          let numAlighted = this.train.alightPassengersForCity(currCity)
-          console.log(`Alighted ${numAlighted} at ${currCity}`)
-        }
-        let numNoRoom = 0
-        if (this.going) {
-          //take in passengers for the cities on the way back to the final station
-
-          //other stations that are in the direction of the final
-          //destination all have their wpns that are greater than currCity_wpn
-          this.stations.forEach(station => {
-            if (station.wpn > currCity_wpn) {
-              let num = Math.floor(this.game.passengers.numAvailable(currCity, station.name))
-              //second check the room
-              let room = this.train.passenger_room_available
-              numNoRoom += (num >= room ? num - room : 0)
-              num = Math.min(num, room)
-              //collect fare
-              let fare = this.game.tickets.ticket(currCity, station.name)
-              if (this.game.makeSound && Math.floor(num * fare / 1000) >= Game.FARE_FOR_AUDIO) {
-                event = new CustomEvent("money", {
-                  detail: {
-                    train: this.name,
-                    fare: Math.floor(num * fare / 1000)
-                  }
-                });
-                document.dispatchEvent(event)
-              }
-              event = new CustomEvent("info", {
-                detail: {
-                  train: this.name,
-                  text: `${num} P, ${currCity.substring(0, 3)}-${station.name.substring(0, 3)} @ ${fare} = ${Math.ceil(num * fare / 1000)} K`
-                }
-              });
-              document.dispatchEvent(event);
-              this.game.cashflow.ticketsales = num * fare
-              totalfare += num * fare
-              //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
-              //third board the passengers
-              this.train.boardPassengersFor(station.name, num)
-              //reduce the number of passengers that have boarded
-              this.game.passengers.subtractPassengers(currCity, station.name, num)
-            }
-          })
-
-        } else {
-          //take in passengers for the cities on the way back to the originating station
-          this.stations.forEach(station => {
-            if (station.wpn < currCity_wpn) {
-              let num = Math.ceil(this.game.passengers.numAvailable(currCity, station.name))
-              //second check the room
-              let room = this.train.passenger_room_available
-              numNoRoom += (num >= room ? num - room : 0)
-              num = Math.min(num, room)
-              //collect fare
-              let fare = this.game.tickets.ticket(currCity, station.name)
-              if (this.game.makeSound && Math.floor(num * fare / 1000) >= Game.FARE_FOR_AUDIO) {
-                event = new CustomEvent("money", {
-                  detail: {
-                    train: this.name,
-                    fare: Math.floor(num * fare / 1000)
-                  }
-                });
-                document.dispatchEvent(event)
-              }
-              event = new CustomEvent("info", {
-                detail: {
-                  train: this.name,
-                  text: `${num} P, ${currCity.substring(0, 3)}-${station.name.substring(0, 3)} @ ${fare} = ${Math.floor(num * fare / 1000)} K`
-                }
-              });
-              document.dispatchEvent(event);
-              this.game.cashflow.ticketsales = num * fare
-              totalfare += num * fare
-              //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
-              //third board the passengers
-              this.train.boardPassengersFor(station.name, num)
-              //reduce the number of passengers that have boarded
-              this.game.passengers.subtractPassengers(currCity, station.name, num)
-            }
-          })
-          this.numFrames++
-        }
-
-        let popup = document.querySelector(`#${currCity}-popup`)
-        popup.classList.toggle('active');
-        popup.innerHTML = `$${Math.ceil(totalfare / 1000)} K`
-        let popup2 = document.querySelector(`#${currCity}-popup2`)
-        popup2.style.left = popup.style.left + 40
-        popup2.top = popup.top
-        popup2.innerHTML = `&#x2639 ${numNoRoom}`
-        popup2.classList.toggle('active2');
-      }
-      this.numFrames++
-      //audiochugging=null
+    if (this.numFrames++ < Path.NUM_FRAMES_TO_SKIP) {
+      return
     }
 
-  }
 
+
+    if (this.atStation(this.i)) {
+      //start movement .. this is accomplished by advancing this.i
+      //the train is at the station
+      this.numFrames = 0
+      if (this.game.makeSound) {
+        let currCity_wpn = this.getStation(this.i).wpn
+        if (currCity_wpn == 0 && this.going || currCity_wpn == this.wp.length - 1 && !this.going) {
+          this.game.audiowhistle.play()
+          play(this.game.audiochugging, 15000)
+        }
+      }
+      let currCity = this.getStation(this.i).name
+      let currCity_wpn = this.getStation(this.i).wpn
+      let totalfare = 0
+
+      //first alight the passengers for this city
+      if (currCity_wpn == 0 && this.going || currCity_wpn == this.wp.length - 1 && !this.going) {
+        //starting point on going or returning back. No one is alighted here as that was done
+        //already when the train was at this point coming into this station
+      } else {
+        let numAlighted = this.train.alightPassengersForCity(currCity)
+        console.log(`Alighted ${numAlighted} at ${currCity}`)
+      }
+      let numNoRoom = 0
+      if (this.going) {
+        //take in passengers for the cities on the way back to the final station
+
+        //other stations that are in the direction of the final
+        //destination all have their wpns that are greater than currCity_wpn
+        this.stations.forEach(station => {
+          if (station.wpn > currCity_wpn) {
+            let num = Math.floor(this.game.passengers.numAvailable(currCity, station.name))
+            //second check the room
+            let room = this.train.passenger_room_available
+            numNoRoom += (num >= room ? num - room : 0)
+            num = Math.min(num, room)
+            //collect fare
+            let fare = this.game.tickets.ticket(currCity, station.name)
+            if (this.game.makeSound && Math.floor(num * fare / 1000) >= Game.FARE_FOR_AUDIO) {
+              event = new CustomEvent("money", {
+                detail: {
+                  train: this.name,
+                  fare: Math.floor(num * fare / 1000)
+                }
+              });
+              document.dispatchEvent(event)
+            }
+            event = new CustomEvent("info", {
+              detail: {
+                train: this.name,
+                text: `${num} P, ${currCity.substring(0, 3)}-${station.name.substring(0, 3)} @ ${fare} = ${Math.ceil(num * fare / 1000)} K`
+              }
+            });
+            document.dispatchEvent(event);
+            this.game.cashflow.ticketsales = num * fare
+            totalfare += num * fare
+            //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
+            //third board the passengers
+            this.train.boardPassengersFor(station.name, num)
+            //reduce the number of passengers that have boarded
+            this.game.passengers.subtractPassengers(currCity, station.name, num)
+          }
+        })
+
+      } else {
+        //take in passengers for the cities on the way back to the originating station
+        this.stations.forEach(station => {
+          if (station.wpn < currCity_wpn) {
+            let num = Math.ceil(this.game.passengers.numAvailable(currCity, station.name))
+            //second check the room
+            let room = this.train.passenger_room_available
+            numNoRoom += (num >= room ? num - room : 0)
+            num = Math.min(num, room)
+            //collect fare
+            let fare = this.game.tickets.ticket(currCity, station.name)
+            if (this.game.makeSound && Math.floor(num * fare / 1000) >= Game.FARE_FOR_AUDIO) {
+              event = new CustomEvent("money", {
+                detail: {
+                  train: this.name,
+                  fare: Math.floor(num * fare / 1000)
+                }
+              });
+              document.dispatchEvent(event)
+            }
+            event = new CustomEvent("info", {
+              detail: {
+                train: this.name,
+                text: `${num} P, ${currCity.substring(0, 3)}-${station.name.substring(0, 3)} @ ${fare} = ${Math.floor(num * fare / 1000)} K`
+              }
+            });
+            document.dispatchEvent(event);
+            this.game.cashflow.ticketsales = num * fare
+            totalfare += num * fare
+            //console.log(`Ticket Sales after: ${this.game.cashflow.ticketsales}`)
+            //third board the passengers
+            this.train.boardPassengersFor(station.name, num)
+            //reduce the number of passengers that have boarded
+            this.game.passengers.subtractPassengers(currCity, station.name, num)
+          }
+        })
+        //this.numFrames++
+
+
+      }
+
+      let popup = document.querySelector(`#${currCity}-popup`)
+      popup.classList.toggle('active');
+      popup.innerHTML = `$${Math.ceil(totalfare / 1000)} K`
+      let popup2 = document.querySelector(`#${currCity}-popup2`)
+      popup2.style.left = popup.style.left + 40
+      popup2.top = popup.top
+      popup2.innerHTML = `&#x2639 ${numNoRoom}`
+      popup2.classList.toggle('active2');
+
+      
+    }
+
+    this.i = this.going ? this.i + 1 : this.i - 1
+    if (this.i == this.wp.length) {
+      this.i = this.wp.length - 1
+      this.going = false
+    } else if (this.i == -1) {
+      this.i = 0
+      this.going = true
+    }
+  }
+  
   alreadySelected(x, y) {
     return (
       //changed this to make explicit the logic by placing additional brackets
@@ -602,10 +594,13 @@ class Path {
     );
   }
 
-  async savePeriodDataToDB(gameperiodid) {
+  savePeriodDataToDB = async (gameperiodid) => {
     //console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.passengercoaches}, ${this.train.goodscoaches}, ${this.game.passengers.info} saving to db.`)
     //let json = await savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches,this.game.passengers.info)
-    let json = await updatePathInDB(this.PathIdInDB,gameperiodid, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches,this.game.passengers.info)
+    console.log(`In savePeriodDataToDB, ${this.PathIdInDB}`)
+    if(this.PathIdInDB){
+      await updatePathInDB(this.PathIdInDB, gameperiodid, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches, this.game.passengers.info)
+    }
   }
   prunePoints() {
     //sometimes a user creates a path that does not end in a city. prunePoints removes

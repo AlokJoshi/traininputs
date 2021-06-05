@@ -704,9 +704,10 @@ class Game {
       path.number = pathArray[iPath].routenumber
       path._finalized =pathArray[iPath].finalized
       path.points = pathArray[iPath].pathpoints
-
-      //we use this pathid to find out all the waypoints
+      path.wp = pathArray[iPath].wparray
       let pathid =pathArray[iPath].id 
+      /* 
+      //we use this pathid to find out all the waypoints
       let waypoint_data = await getWaypointData(pathid)
       let waypointCount = waypoint_data.length
       let waypointArray = waypoint_data
@@ -720,6 +721,7 @@ class Game {
           feature:waypointArray[iwp].feature,
         })
       } 
+      */
       //todo replace this with the train info from the DB
       path.PathIdInDB = pathid
       path._train = new Train(path,pathArray[iPath].passengercoaches,pathArray[iPath].goodscoaches)

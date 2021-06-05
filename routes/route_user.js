@@ -40,7 +40,7 @@ function addUser(req, res) {
     })
     .returning('id')
     .on('query',(q)=>{
-      console.log(q)
+      console.log(q.sql)
     })
     .then(data=>{
       res.send(data)

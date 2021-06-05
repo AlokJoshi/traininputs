@@ -6,19 +6,19 @@ class Train {
     this.passengers = {}
     this.goods = {}
   }
-  async addPassengerCoach(){
+  addPassengerCoach = async() => {
     this.passengercoaches++  
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
-  async removePassengerCoach(){
+  removePassengerCoach = async() => {
     this.passengercoaches--  
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
-  async addGoodsCoach(){
+  addGoodsCoach = async() => {
     this.goodscoaches++  
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
-  async removeGoodsCoach(){
+  removeGoodsCoach = async() => {
     this.goodscoaches-- 
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
@@ -80,7 +80,7 @@ class Train {
   get wagonloading(){
     return 1-this.passenger_room_available/this.wagon_capacity
   }
-  async saveInDB(){
+  saveInDB = async() => {
     console.log(`%cSaving train running on ${this.path.number}, 'background: #222; color: #bada55'`)
     saveTrainToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }

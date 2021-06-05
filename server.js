@@ -17,13 +17,13 @@ app.get("/auth_config.json", (req, res) => {
 const user = require('./routes/route_user')
 const game = require('./routes/route_game')
 const gameperiod = require('./routes/route_gameperiod')
-const pathperiod = require('./routes/route_pathperiod')
+//const pathperiod = require('./routes/route_pathperiod')
 const station = require('./routes/route_station')
 const pathpoint = require('./routes/route_pathpoint')
 const waypoint = require('./routes/route_waypoint')
 const train = require('./routes/route_train')
 const path = require('./routes/route_path')
-const passenger = require('./routes/route_passenger')
+//const passenger = require('./routes/route_passenger')
 
 //------------User-----------------
 
@@ -43,9 +43,6 @@ app.delete("/api/game/id/:id", game.deleteGame)
 app.get("/api/gameperiod/gameid/:gameid", gameperiod.getHighestPeriodGivenGameid)
 app.get("/api/gameperiod/:gameid", gameperiod.getGamePeriodDataGivenGameid)
 app.post("/api/gameperiod", gameperiod.addGameperiod)
-
-//------------Pathperiod-----------------
-//app.post("/api/pathperiod", pathperiod.addPathperiod)
 
 //------------Station-----------------
 app.get("/api/station/pathid/:pathid", station.getStationsGivenPathid)
@@ -68,10 +65,6 @@ app.get("/api/path/id/:id", path.getPath)
 app.get("/api/path/gameid/:gameid", path.getPathsGivenGameId)
 app.post("/api/path", path.addPath)
 app.put("/api/path", path.updatePath)
-
-//------------Passenger-----------------
-//app.get("/api/passenger/pathid/:pathid", passenger.getPassengersGivenPathid)
-//app.post("/api/passenger", passenger.addPassengers)
 
 
 const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
