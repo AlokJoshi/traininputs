@@ -3,7 +3,7 @@ class Popup {
     this.time = time;
     this.top = (window.innerHeight-200)/2
     this.left = (window.innerWidth-200)/2 
-    this.popupwidth = 200
+    this.popupwidth = 300
     this.popupheigth = 200
     this.soundon = soundon
     this.pop = pop

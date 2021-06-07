@@ -35,9 +35,9 @@ class Game {
 
   static WPL = 2
   static START_GAME_NAME = 'My first game'
-  
-  static HIGHWAY=1
-  static COUNTRYROAD=2
+
+  static HIGHWAY = 1
+  static COUNTRYROAD = 2
 
   static TREE_IMAGE = document.getElementById('treeimage')
   static PLANE_IMAGE = document.getElementById('airplaneimage')
@@ -65,9 +65,9 @@ class Game {
     y: null
   }
 
-  constructor(email,gameid,gamename) {
-    this.email = email 
-    this.gameid = gameid 
+  constructor(email, gameid, gamename) {
+    this.email = email
+    this.gameid = gameid
     this.gamename = gamename
     this.request = null
     this.canvases = document.getElementById('canvases')
@@ -89,22 +89,22 @@ class Game {
     this.hudElement = document.querySelector('#hud')
     this.cloudsElement = document.querySelector('#cloud')
     this.tooltipElement = document.querySelector('#tooltip')
-    
+
     this.background.width = Game.WIDTH//window.innerWidth
     this.background.height = Game.HEIGHT//window.innerHeight
-    
+
     this.foreground.width = Game.WIDTH//window.innerWidth
     this.foreground.height = Game.HEIGHT//window.innerHeight
-    
+
     this.routedesign.width = Game.WIDTH//window.innerWidth
     this.routedesign.height = Game.HEIGHT//window.innerHeight
 
     this.cloudsElement.width = Game.WIDTH//window.innerWidth
     this.cloudsElement.height = Game.HEIGHT//window.innerHeight
-    
+
     this.hudElement.width = Game.WIDTH//window.innerWidth
     this.hudElement.height = 40 //window.innerHeight
-    
+
     this.ctx_background = this.background.getContext('2d')
     this.ctx_foreground = this.foreground.getContext('2d')
     this.ctx_routedesign = this.routedesign.getContext('2d')
@@ -123,9 +123,9 @@ class Game {
     this.img.onload = () => {
       this.ctx_background.drawImage(this.img, 0, 0, this.background.width, this.background.height)
       this.cities.draw(this.ctx_background)
-      this.water = new Water(Game.WIDTH,Game.HEIGHT,this.ctx_background,this.ctx_foreground)
+      this.water = new Water(Game.WIDTH, Game.HEIGHT, this.ctx_background, this.ctx_foreground)
     }
-    this.cloud = new Cloud(this.cloudsElement.width,this.cloudsElement.height,this.cloudimage, this.ctx_clouds)
+    this.cloud = new Cloud(this.cloudsElement.width, this.cloudsElement.height, this.cloudimage, this.ctx_clouds)
 
     this.paths = new Paths(this)
     this.currentPath = null
@@ -146,65 +146,64 @@ class Game {
     //start in this state
     this.state = Game.ROUTE_EDITING_STATE
     this.updateHUD()
-    this.bezierPaths = new BezierPaths(this.ctx_background,this.ctx_foreground,'rgb(224,224,224)')
+    this.bezierPaths = new BezierPaths(this.ctx_background, this.ctx_foreground, 'rgb(224,224,224)')
 
-    this.vehicles = new Vehicles(this.ctx_foreground,this.ctx_background)
+    this.vehicles = new Vehicles(this.ctx_foreground, this.ctx_background)
 
     //mumba to haybad
     //this.bezierPaths.add(0.25,0.1,0.0,1.0,80,60,840,120)
-    let rd = this.bezierPaths.add(0,0,1,1.0,80,60,840,120,10,Game.HIGHWAY)
-    this.vehicles.add(rd,this.carimage,3)
-    this.vehicles.add(rd,this.truckimage,8)
-    
+    let rd = this.bezierPaths.add(0, 0, 1, 1.0, 80, 60, 840, 120, 10, Game.HIGHWAY)
+    this.vehicles.add(rd, this.carimage, 3)
+    this.vehicles.add(rd, this.truckimage, 8)
+
     //haybad to Bangro
-    rd = this.bezierPaths.add(0,0,1,1.0,840,120,940,410,5,Game.HIGHWAY)
-    this.vehicles.add(rd,this.carimage,1)
-    this.vehicles.add(rd,this.truckimage,5)
-    
+    rd = this.bezierPaths.add(0, 0, 1, 1.0, 840, 120, 940, 410, 5, Game.HIGHWAY)
+    this.vehicles.add(rd, this.carimage, 1)
+    this.vehicles.add(rd, this.truckimage, 5)
+
     //Kata to Lochin
-    this.bezierPaths.add(0,0,1,1.0,1090,560,750,590,10,Game.HIGHWAY)
-    
+    this.bezierPaths.add(0, 0, 1, 1.0, 1090, 560, 750, 590, 10, Game.HIGHWAY)
+
     //Oooby to Mannai
-    this.bezierPaths.add(0,0,1,1.0,580,300,440,610,3,Game.HIGHWAY)
-    
+    this.bezierPaths.add(0, 0, 1, 1.0, 580, 300, 440, 610, 3, Game.HIGHWAY)
+
     //Mumba to Mannai
-    this.bezierPaths.add(0,0,1,1.0,80,60,440,610,10,Game.HIGHWAY)
-    
+    this.bezierPaths.add(0, 0, 1, 1.0, 80, 60, 440, 610, 10, Game.HIGHWAY)
+
     //road from Haybad to the fields
-    rd = this.bezierPaths.add(0,0,1,1,840,120,1100,120,1,Game.COUNTRYROAD)
-    this.vehicles.add(rd,cartimage,1)
+    rd = this.bezierPaths.add(0, 0, 1, 1, 840, 120, 1100, 120, 1, Game.COUNTRYROAD)
+    this.vehicles.add(rd, cartimage, 1)
 
     //road from Poa to the fields
-    rd = this.bezierPaths.add(0.8,0,1,1,1020,290,1150,170,1,Game.COUNTRYROAD)
-    this.vehicles.add(rd,cartimage,1)
+    rd = this.bezierPaths.add(0.8, 0, 1, 1, 1020, 290, 1150, 170, 1, Game.COUNTRYROAD)
+    this.vehicles.add(rd, cartimage, 1)
 
     this.bezierPaths.drawRoads()
 
-    
+
     //todo: later I should convert it into a Fields class
     this.fields = []
-    for(let j = 0;j<4;j++){
-      let numcols = j<2?7:j<3?6:5
-      for(let i=0;i<numcols;i++){
-        this.fields.push(new Field(900+(i*40+i*1),120+j*30+j*1,40,30,this.ctx_foreground,this.ctx_background))
+    for (let j = 0; j < 4; j++) {
+      let numcols = j < 2 ? 7 : j < 3 ? 6 : 5
+      for (let i = 0; i < numcols; i++) {
+        this.fields.push(new Field(900 + (i * 40 + i * 1), 120 + j * 30 + j * 1, 40, 30, this.ctx_foreground, this.ctx_background))
       }
     }
 
     //factories
-    this.factories=[]
-    for(let i = 0;i<3;i++){
-      this.factories.push(new TimberMill(40+i*30,450+i*50,20,8,60-i*30,this.ctx_foreground))
+    this.factories = []
+    for (let i = 0; i < 3; i++) {
+      this.factories.push(new TimberMill(40 + i * 30, 450 + i * 50, 20, 8, 60 - i * 30, this.ctx_foreground))
     }
 
-    this.villages=new Villages()
-    this.plane=new Plane([
-      {x1:0,y1:0.8,x2:1,y2:1,fromx:-100,fromy:700,tox:1340,toy:120,d:5},
-      {x1:0.5,y1:0.8,x2:1,y2:0.6,fromx:1340,fromy:120,tox:-100,toy:200,d:5},
-      {x1:0.5,y1:0.8,x2:1,y2:1,fromx:400,fromy:-120,tox:1400,toy:800,d:5}
+    this.villages = new Villages()
+    this.plane = new Plane([
+      { x1: 0, y1: 0.8, x2: 1, y2: 1, fromx: -100, fromy: 700, tox: 1340, toy: 120, d: 5 },
+      { x1: 0.5, y1: 0.8, x2: 1, y2: 0.6, fromx: 1340, fromy: 120, tox: -100, toy: 200, d: 5 },
+      { x1: 0.5, y1: 0.8, x2: 1, y2: 1, fromx: 400, fromy: -120, tox: 1400, toy: 800, d: 5 }
     ], this.ctx_foreground)
 
     document.addEventListener("info", e => {
-      //console.log(`Event received: ${e.detail.text}` )
       this.hud.info = e.detail
     })
     document.addEventListener("money", e => {
@@ -242,10 +241,10 @@ class Game {
         }
       }
     })
-    document.getElementById('p').addEventListener('click',e=>{
-      this.state = Game.PAUSED_STATE  
+    document.getElementById('p').addEventListener('click', e => {
+      this.state = Game.PAUSED_STATE
       this.updateHUD()
-      return  
+      return
     })
   }
 
@@ -255,7 +254,7 @@ class Game {
   }
 
   addMouseListener() {
-    let prevcityname=''
+    let prevcityname = ''
     document.onmousemove = (event) => {
 
       if (this.canvases.style.visibility == 'collapse') {
@@ -270,18 +269,18 @@ class Game {
           this.drawRoutes()
 
           //if (this.lastClick.x != null) {
-            
-            //testing 01/14/21
-            let lastTwoPoints = this.currentPath.lastTwoPoints
-            let bOK = ((this.currentPath.length == 1) || ((this.currentPath.length > 1) && 
-                (lineLength(this.lastClick.x, this.lastClick.y, this.currentMousePosition.x, this.currentMousePosition.y) > 2 * Game.MIN_LENGTH) &&
-                (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y,
-                  this.currentMousePosition.x, this.currentMousePosition.y, this.MIN_ANGLE)))) 
-            document.body.style.cursor = bOK ? 'crosshair' : 'not-allowed'
-            this.ctx_routedesign.beginPath()
-            this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
-            this.ctx_routedesign.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
-            this.ctx_routedesign.stroke()
+
+          //testing 01/14/21
+          let lastTwoPoints = this.currentPath.lastTwoPoints
+          let bOK = ((this.currentPath.length == 1) || ((this.currentPath.length > 1) &&
+            (lineLength(this.lastClick.x, this.lastClick.y, this.currentMousePosition.x, this.currentMousePosition.y) > 2 * Game.MIN_LENGTH) &&
+            (angleBetweenLinesIsOK(lastTwoPoints[0].x, lastTwoPoints[0].y, lastTwoPoints[1].x, lastTwoPoints[1].y,
+              this.currentMousePosition.x, this.currentMousePosition.y, this.MIN_ANGLE))))
+          document.body.style.cursor = bOK ? 'crosshair' : 'not-allowed'
+          this.ctx_routedesign.beginPath()
+          this.ctx_routedesign.moveTo(this.lastClick.x, this.lastClick.y)
+          this.ctx_routedesign.lineTo(this.currentMousePosition.x, this.currentMousePosition.y)
+          this.ctx_routedesign.stroke()
           //}
         }
       } else if (this.state == Game.RUNNING_STATE) {
@@ -289,14 +288,14 @@ class Game {
         //close to a city?
         let city = this.cities.getClosestCity(event.offsetX, event.offsetY)
         if (city != null) {
-          if(city.name != prevcityname){
+          if (city.name != prevcityname) {
             let waiting = this.passengers.numWaitingForCities(city.name)
             this.tooltip.display(city, waiting)
             prevcityname = city.name
           }
         } else {
           this.tooltip.clearDisplay()
-          prevcityname=''
+          prevcityname = ''
         }
       }
     }
@@ -307,7 +306,7 @@ class Game {
     document.onkeyup = (event) => {
 
       if (event.code === 'Space') {
-        console.log(`Space key pressed`)
+        //console.log(`Space key pressed`)
         noncanvases.style.visibility = noncanvases.style.visibility === 'collapse' ? 'visible' : 'collapse'
         canvases.style.visibility = canvases.style.visibility === 'collapse' ? 'visible' : 'collapse'
         displayPassengersTable(this.passengers.passengers)
@@ -322,7 +321,7 @@ class Game {
         this.tooltip.clearDisplay()
         return
       }
-      
+
       if (this.state == Game.ROUTE_EDITING_STATE) {
         if (event.key == 'd') {
           if (!this.currentPath.finalized) {
@@ -346,8 +345,8 @@ class Game {
           this.selectedPathNum = this.numPaths
           this.state = Game.TRAIN_EDITING_STATE
           this.updateHUD()
-        }else if (event.key == 'g') {
-          if(this.currentPath){
+        } else if (event.key == 'g') {
+          if (this.currentPath) {
             //sometimes a user may not complete a path and press g
             if (!this.currentPath.isValid) {
               //delete this path and set the current path to null
@@ -365,13 +364,13 @@ class Game {
             this.paths.drawStations(this.ctx_background)
             this.bezierPaths.drawRoads()
             if (this.makeSound) this.audiochugging.play()
-            this.ctx_routedesign.clearRect(0,0,this.routedesign.width,this.routedesign.height)
+            this.ctx_routedesign.clearRect(0, 0, this.routedesign.width, this.routedesign.height)
             this.state = Game.RUNNING_STATE
             this.animate();
           } else {
             console.log(`No path finalized yet`)
           }
-        }else if(event.key == 'a' || event.key == 'Escape'){
+        } else if (event.key == 'a' || event.key == 'Escape') {
           if (this.currentPath != null) {
             if (!this.currentPath.isValid) {
               //delete this path and set the current path to null
@@ -385,12 +384,13 @@ class Game {
           this.lastClick.x = null
           this.lastClick.y = null
           this.selectedPathNum = this.numPaths
-          
-        }else{
+        } else if (event.key == 'x') {
+          this.exit()
+        } else {
           console.log(`${event.key} pressed`)
         }
       }
-      
+
       if (this.state == Game.TRAIN_EDITING_STATE) {
         if (!this.currentPath.isValid) {
           //delete this path and set the current path to null
@@ -433,13 +433,16 @@ class Game {
             this.paths.drawStations(this.ctx_background)
             this.bezierPaths.drawRoads()
             if (this.makeSound) this.audiochugging.play()
-            this.ctx_routedesign.clearRect(0,0,this.routedesign.width,this.routedesign.height)
+            this.ctx_routedesign.clearRect(0, 0, this.routedesign.width, this.routedesign.height)
             this.state = Game.RUNNING_STATE
             this.updateHUD()
             this.animate();
           } else {
             console.log(`No path finalized yet`)
           }
+        }
+        if (event.key == 'x') {
+          this.exit()
         }
       }
 
@@ -448,22 +451,39 @@ class Game {
           this.state == Game.RUNNING_STATE
           return
         }
-        if (event.key == 'x' || event.key == 'X') {
-          alert('Game Over')
+        if (event.key == 'r' || event.key == 'R') {
+          let inputbox = new GameName (this.gamename)
+          inputbox.show()
+          return
         }
-        
+        if (event.key == 'y' || event.key == 'Y') {
+          let pu = new Popup(
+            4000,
+            true,
+            this.pop
+          )
+          pu.show("Thanks for playing Train Tycoon. Come back again and play some more games.")
+          let event1 = new KeyboardEvent("keyup", { "code": "p" })
+          document.dispatchEvent(event1)
+          let event2 = new KeyboardEvent("keyup", { "code": "Space" });
+          document.dispatchEvent(event2)
+        }
+
       }
 
       if (this.state == Game.RUNNING_STATE) {
+        if (event.key == 'x') {
+          this.exit()
+        }
         if (event.key == 'r' || event.key == 't') {
           return
         }
         if (event.key == '+') {
-          this.ms -= (this.ms>=0?10:0)
+          this.ms -= (this.ms >= 0 ? 10 : 0)
           return
         }
         if (event.key == '-') {
-          this.ms += (this.ms<=500?10:0)
+          this.ms += (this.ms <= 500 ? 10 : 0)
           return
         }
         if (event.key == 'n') {
@@ -478,11 +498,11 @@ class Game {
           return
         }
         if (event.key == 'p' || event.key == 'P') {
-          this.state = Game.PAUSED_STATE  
+          this.state = Game.PAUSED_STATE
           this.updateHUD()
           return
         }
-        if(this.currentPath){
+        if (this.currentPath) {
           if (!this.currentPath.isValid) {
             //delete this path and set the current path to null
             this.paths.deletePath(this.currentPath)
@@ -498,14 +518,14 @@ class Game {
         this.paths.draw()
         //this.keyBufffer.addKey(event.key)
         this.updateHUD()
-      } 
-      
+      }
+
       if (this.state == Game.PAUSED_STATE) {
         if (event.key == 'g' || event.key == 'G') {
           this.state = Game.RUNNING_STATE
           this.animate()
           return
-        } else if (event.key == 'r' || event.key == 'R'){
+        } else if (event.key == 'r' || event.key == 'R') {
           this.state = Game.ROUTE_EDITING_STATE
           this.updateHUD()
           return
@@ -513,14 +533,17 @@ class Game {
           return
         } else if (event.key == 'leftArrow') {
           return
-        } else if (event.key=='t'||event.key=='T'){
-          this.state = Game.TRAIN_EDITING_STATE  
+        } else if (event.key == 't' || event.key == 'T') {
+          this.state = Game.TRAIN_EDITING_STATE
           this.updateHUD()
           return
-        }else if (event.key=='x'||event.key=='X'){
-          this.state = Game.READY_TO_EXIT_STATE  
+        } else if (event.key == 'x' || event.key == 'X') {
+          this.state = Game.READY_TO_EXIT_STATE
           this.updateHUD()
           return
+        }
+        if (event.key == 'x') {
+          this.exit()
         }
       }
 
@@ -532,12 +555,12 @@ class Game {
   }
 
 
-  animate = async() => {
+  animate = async () => {
     //animation did not work when I had this as a normal method syntax
     //but worked with the arrow function method syntax.
-    
+
     if (this.state == Game.RUNNING_STATE) {
-      if(this.day_and_night){
+      if (this.day_and_night) {
         this.background.style.filter = `brightness(${getBrightness(this.frames)})`
       }
       if (this.frames % Game.FRAMES_PER_TIME_PERIOD == 0) {
@@ -571,27 +594,27 @@ class Game {
         //save the game to db
         //first get the gameperiodid
         //Todo: we need to get the cashid and passengerid
-        if(this.gameid){
-          try{
-            let data = await getGamePeriodId(this.gameid,this.period,0,this.cashflow._openingcash,this.cashflow._openingcumcapitalcost,
-              this.cashflow._openingcumdepreciation,this.cashflow._cumtrackcost,this.cashflow._cumstationcost,
-              this.cashflow._maintenancecost+this.cashflow._runningcost,this.cashflow._ticketsales,this.cashflow._interest,
-              this.cashflow._tax,this.cashflow.profit,this.cashflow._cumcoachcost,this.cashflow._cumenginecost)
+        if (this.gameid) {
+          try {
+            let data = await getGamePeriodId(this.gameid, this.period, 0, this.cashflow._openingcash, this.cashflow._openingcumcapitalcost,
+              this.cashflow._openingcumdepreciation, this.cashflow._cumtrackcost, this.cashflow._cumstationcost,
+              this.cashflow._maintenancecost + this.cashflow._runningcost, this.cashflow._ticketsales, this.cashflow._interest,
+              this.cashflow._tax, this.cashflow.profit, this.cashflow._cumcoachcost, this.cashflow._cumenginecost)
             this.gameperiodid = data[0]
             console.log(`Game period id returned by getGemePeriodId: ${this.gameperiodid}`)
             this.savePeriodDataToDB()
-            }
-            catch(err){
+          }
+          catch (err) {
             console.error(`Error in getGamePeriodId`)
           }
         }
         this.cashflow.initPeriodVariables()
         let milestone = getMilestone(this)
-        if(milestone!=null){
+        if (milestone != null) {
           let pu = new Popup(
-          10000,
-          this.makeSound,
-          this.pop
+            10000,
+            this.makeSound,
+            this.pop
           )
           pu.show(milestone)
         }
@@ -599,9 +622,9 @@ class Game {
       this.ctx_foreground.clearRect(0, 0, this.foreground.width, this.foreground.height)
       this.bezierPaths.animate()
       this.vehicles.animate()
-      this.factories.forEach(f=>f.animate())
-      this.fields.forEach(f=>f.animate())
-      this.villages.animate(this.period,this.ctx_foreground)
+      this.factories.forEach(f => f.animate())
+      this.fields.forEach(f => f.animate())
+      this.villages.animate(this.period, this.ctx_foreground)
       //this.field.animate()
       this.paths.animate(this.background, this.ctx_foreground)
       this.water.animate()
@@ -638,16 +661,16 @@ class Game {
         txt += `Paused: r(Route Editing), t(Train Editing), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.READY_TO_EXIT_STATE:
-        txt += `Ready to exit: g(resume game), n(new game), s(switch to another game) space(docs and back), x(exit) `
+        txt += `Ready to exit: g(resume game), n(new game), r(rename game), s(switch to another game) space(docs and back), y(yes I want to exit) `
         break;
 
       default:
         break;
     }
-    this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum-1].name)
+    this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum - 1].name)
   }
 
-  get numPaths(){
+  get numPaths() {
     return this.paths.numPaths
   }
 
@@ -668,28 +691,28 @@ class Game {
     let dataArray = gameperiod_data.rows
     console.log(numPeriods)
     console.log(JSON.stringify(dataArray))
-    for(let i=0;i<numPeriods;i++){
+    for (let i = 0; i < numPeriods; i++) {
       //create a cashflow object 
       this.cashflow = new CashFlow()
-      this.cashflow.game=this
-      this.cashflow._openingcash=dataArray[i].openingcash
-      this.cashflow._openingcumcapitalcost=dataArray[i].openingcumcapitalcost
-      this.cashflow._openingcumdepreciation=dataArray[i].openingcumdepreciation
-      this.cashflow._interest=dataArray[i].interest
-      this.cashflow._ticketsales=dataArray[i].sales
-      this.cashflow._profit=dataArray[i].profit
-      this.cashflow._tax=dataArray[i].tax
-      this.cashflow._cumtrackcost=dataArray[i].cumtrackcost
-      this.cashflow._cumstationcost=dataArray[i].cumstationcost
-      this.cashflow._cumcoachcost=dataArray[i].cumcoachcost
-      this.cashflow._cumwagoncost=dataArray[i].cumwagoncost
-      this.cashflow._cumenginecost=dataArray[i].cumenginecost
+      this.cashflow.game = this
+      this.cashflow._openingcash = dataArray[i].openingcash
+      this.cashflow._openingcumcapitalcost = dataArray[i].openingcumcapitalcost
+      this.cashflow._openingcumdepreciation = dataArray[i].openingcumdepreciation
+      this.cashflow._interest = dataArray[i].interest
+      this.cashflow._ticketsales = dataArray[i].sales
+      this.cashflow._profit = dataArray[i].profit
+      this.cashflow._tax = dataArray[i].tax
+      this.cashflow._cumtrackcost = dataArray[i].cumtrackcost
+      this.cashflow._cumstationcost = dataArray[i].cumstationcost
+      this.cashflow._cumcoachcost = dataArray[i].cumcoachcost
+      this.cashflow._cumwagoncost = dataArray[i].cumwagoncost
+      this.cashflow._cumenginecost = dataArray[i].cumenginecost
       this.cash.add(this.cashflow)
     }
     this.cashflow.update()
 
     //fix the frames based on the number of periods
-    this.frames = Game.FRAMES_PER_TIME_PERIOD*numPeriods
+    this.frames = Game.FRAMES_PER_TIME_PERIOD * numPeriods
 
     //now create all the paths for the game
     let path_data = await getPathData(this.gameid)
@@ -698,14 +721,14 @@ class Game {
     console.log(numPaths)
     console.log(JSON.stringify(pathArray[0]))
     this.paths = new Paths(this)
-    for(let iPath=0;iPath<numPaths;iPath++){
-      let path = new Path(this,this.ctx_foreground, this.ctx_routedesign)
-      path.game=this
+    for (let iPath = 0; iPath < numPaths; iPath++) {
+      let path = new Path(this, this.ctx_foreground, this.ctx_routedesign)
+      path.game = this
       path.number = pathArray[iPath].routenumber
-      path._finalized =pathArray[iPath].finalized
+      path._finalized = pathArray[iPath].finalized
       path.points = pathArray[iPath].pathpoints
       path.wp = pathArray[iPath].wparray
-      let pathid =pathArray[iPath].id 
+      let pathid = pathArray[iPath].id
       /* 
       //we use this pathid to find out all the waypoints
       let waypoint_data = await getWaypointData(pathid)
@@ -724,29 +747,32 @@ class Game {
       */
       //todo replace this with the train info from the DB
       path.PathIdInDB = pathid
-      path._train = new Train(path,pathArray[iPath].passengercoaches,pathArray[iPath].goodscoaches)
+      path._train = new Train(path, pathArray[iPath].passengercoaches, pathArray[iPath].goodscoaches)
 
       //add all the stations in that paths
       path.stations = []
       let stations = await getStations(pathid)
-      for(let i=0;i<stations.length;i++){
-        let station = new Station(path,stations[i].name,stations[i].wpn,stations[i].x,stations[i].y)
+      for (let i = 0; i < stations.length; i++) {
+        let station = new Station(path, stations[i].name, stations[i].wpn, stations[i].x, stations[i].y)
         path.stations.push(station)
       }
       this.paths.addPath(path)
     }
-    this.selectedPathNum=0
-    this.currentPath=this.paths._paths[this.selectedPathNum]
+    this.selectedPathNum = 0
+    this.currentPath = this.paths._paths[this.selectedPathNum]
     console.log(`selectedPathNum value set to: ${this.selectedPathNum}`)
 
 
   }
 
-  async createGameInDB(){
-     this.gameid = await createUserAndDefaultGame(this.email,this.gamename)
-     console.log(`Game created with a gameid of ${gameid}`)
+  async createGameInDB() {
+    this.gameid = await createUserAndDefaultGame(this.email, this.gamename)
+    console.log(`Game created with a gameid of ${gameid}`)
   }
-  
+
+  exit() {
+    this.state = Game.READY_TO_EXIT_STATE
+  }
 }
 
 

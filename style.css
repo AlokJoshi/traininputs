@@ -227,26 +227,32 @@ keytype {
   background-color: lightgray;
 }
 
-#popup {
+#popup , #inputpopup{
   position: absolute;
   z-index: 100;
   background-color: rgb(255, 182, 193,0.7);
   border: black 1px solid;
-  border-radius: 50px;
+  border-radius: 20px;
   display: none;
   pointer-events:none;
 }
+#inputpopup{
+  pointer-events:unset; 
+  top:50%;
+  transform: translateY(-50%); 
+}
+
 .hidden{
   display:none;
 }
-.popupheader{
+.popupheader , .inputheader{
   padding: 10px 5px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   border-bottom: 1px solid black;
 }
-.popupbody{
+.popupbody , .inputbody{
   padding: 10px 15px;
 }
 
@@ -288,4 +294,14 @@ keytype {
 }
 #noncanvases{
   width:100%;
+}
+
+#inputok , #inputcancel , #inputtext{
+  height: 30px;
+  margin: 10px;
+}
+#inputokcancelbuttons{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:20px;
 }

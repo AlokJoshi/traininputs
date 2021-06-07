@@ -8,7 +8,7 @@ function getWaypointGivenPathid (req, res) {
     res.send(data)
   })
   .catch(err => {
-    console.log(err)
+    console.log(`Error in getWaypointGivenPathid: ${err}`)
     res.sendStatus(500)
   })
 }

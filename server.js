@@ -37,6 +37,7 @@ app.get("/api/game", game.getAll)
 app.get("/api/game/id/:id", game.getGameWithId)
 app.get("/api/game/email/:email", game.getGameForUserGivenEmail)
 app.post("/api/game", game.addGame)
+app.put('/api/game', game.updateName)
 app.delete("/api/game/id/:id", game.deleteGame)
 
 //------------Gameperiod-----------------
@@ -53,8 +54,8 @@ app.get("/api/pathpoint/pathid/:pathid",pathpoint.getPathpointGivenPathid)
 app.post("/api/pathpoint", pathpoint.addPathpoint)
 
 //------------Waypoint-----------------
-app.get("/api/waypoint/pathid/:pathid", waypoint.getWaypointGivenPathid)
-app.post("/api/waypoint", waypoint.addWaypoint)
+// app.get("/api/waypoint/pathid/:pathid", waypoint.getWaypointGivenPathid)
+// app.post("/api/waypoint", waypoint.addWaypoint)
 
 //------------Train-----------------
 app.get("/api/train/pathid/:pathid", train.getTrainGivenPathid)

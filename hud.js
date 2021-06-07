@@ -11,12 +11,10 @@ class Hud{
     }
   }
   display(text,state,train){
-    this.canvasElement.height = state==Game.RUNNING_STATE?1000:50
+    this.canvasElement.height = state==Game.RUNNING_STATE?1000:40
     this.ctx.fillStyle='rgba(256,256,256,.7)'
     this.ctx.fillRect(0,0,this.canvasElement.width,this.canvasElement.height)
     this.ctx.clearRect(0,30,this.canvasElement.width,this.canvasElement.height)
-    // this.ctx.fillStyle='rgba(100,100,100,.2)'
-    // this.ctx.fillRect(0,0,this.canvasElement.width,60)
     this.ctx.strokeStyle='rgba(256,256,256,0.1)'
     this.ctx.font = "15px Comic Sans MS"
     this.ctx.fillStyle='rgba(0,0,0,1)'

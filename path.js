@@ -88,26 +88,17 @@ class Path {
         let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points,this.wp)
         console.log(`%cPathIdInDB should be: ${json1[0]}`, 'backgroundColor:red')
         this.PathIdInDB = json1[0]
-        let json2
-        for (let iwp = 0; iwp < this.wp.length; iwp++) {
-          try {
-            json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
-            //console.log(`waypointid : ${json2[0]}`)
-            // json2.then(data => {
-            //console.log(`waypointid : ${data[0]}`)
-            // }).catch(err => {
-            //   console.error(`Error in saveWayPointToDB: ${err}`)
-            // })
-          } catch (err) {
-            console.log(`Error in saveWayPointToDB: ${err}`)
-          }
-        }
+        // let json2
+        // for (let iwp = 0; iwp < this.wp.length; iwp++) {
+        //   try {
+        //     json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
+        //   } catch (err) {
+        //     console.log(`Error in saveWayPointToDB: ${err}`)
+        //   }
+        // }
       } catch (err) {
         console.log(`Error in savePathInDB: ${err}`)
       }
-      // }).catch(err => {
-      //   console.error(`Could not get pathIdInDB`)
-      // })
     }
   }
   get isValid() {

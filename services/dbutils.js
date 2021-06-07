@@ -156,7 +156,13 @@ async function getGamePeriodId(gameid, period, passengerid, openingcash, opening
   const json = await response.json()
   return json
 }
-async function savePathToDB(gameid, routenumber, finalized, points,wparray) {
+async function savePathToDB(gameid, routenumber, finalized, points, wparray) {
+  wparray.forEach(element => {
+    element.x = Math.round(element.x*1000)/1000
+    element.y = Math.round(element.y*1000)/1000
+  });
+  console.log(`wparray after rounding to 3 decimal places`)
+  console.log(JSON.stringify(wparray))
   let data = {
     gameid: gameid,
     routenumber: routenumber,
@@ -326,6 +332,28 @@ async function saveUpdatedTrainInfoToDB(pathid,passengercoaches,goodscoaches) {
   })
   if(!response.ok){
     throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
+  //console.log(json)
+  return json
+}
+
+async function updateGameNameInDB(id,name) {
+  if(!id){
+    console.log(`In updateGameNameInDB id: ${id}`)
+    return
+  }
+  let data = {
+    id: id,
+    name: name
+  }
+  const response = await fetch(`/api/train`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'PUT',
+    body: Qs.stringify(data)
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok in updateGameNameInDB")
   }
   let json = await response.json()
   //console.log(json)

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrainInputs</title>
+  <title>Train Tycoon</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -305,9 +305,23 @@
         </div>
       </div>
       <div class="popupbody">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate ad, eaque aperiam, sit debitis possimus
-        veritatis beatae, similique eum maiores placeat non corporis rerum! Provident voluptatem accusamus quidem
-        deleniti error?
+        Lorem ipsum ...
+      </div>
+    </div>
+    <div id="inputpopup">
+      <!-- svg for a steam engine -->
+      <div class="inputheader">
+        <div class="inputimage">
+          <img src="toytrain.png" />
+        </div>
+        <div class="inputtitle">
+          Change Game Name
+        </div>
+      </div>
+      <input id="inputtext" type="text" placeholder="Enter the new name for the game" />
+      <div id="inputokcancelbuttons">
+        <button id="inputok">OK</button>
+        <button id="inputcancel">Cancel</button>
       </div>
     </div>
     <div class="citypopup" id="Mumba-popup" title="Ticket sales for the train that left most recently."></div>
@@ -324,8 +338,7 @@
     <div class="citypopup2 tooltip" id="Kata-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Haybad-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Dore-popup2" title="Number of passengers that could not be accomodated"></div>
-    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated">
-    </div>
+    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Ooby-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Poa-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Mannai-popup2" title="Number of passengers that could not be accomodated"></div>
@@ -345,6 +358,7 @@
     </div>
   </div>
 
+  <script src="gamename.js"></script>
   <script src="cloud.js"></script>
   <script src="location.js"></script>
   <script src="village.js"></script>

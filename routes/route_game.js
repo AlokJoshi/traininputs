@@ -59,10 +59,27 @@ function getGameWithId(req, res) {
         res.sendStatus(500)
       })
   }
+  function updateName(req, res) {
+    const id = req.body.id
+    const name = req.body.name
+    console.log(`app.put("/api/game", id:${id}, name:${name}`)
+    knex('game')
+      .where('id',id)
+      .update(name)
+      .then(data => {
+        console.log(`game renamed`)
+        res.send(data)
+      })
+      .catch(err => {
+        console.log(`Error in updateName: ${err}`)
+        res.sendStatus(500)
+      })
+  }
 module.exports = {
     getAll,
     getGameWithId,
     getGameForUserGivenEmail,
     addGame,
-    deleteGame
+    deleteGame,
+    updateName
 }
