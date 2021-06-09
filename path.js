@@ -83,21 +83,18 @@ class Path {
 
   savePathInDB = async () => {
     if (this.game.gameid) {
+      //create an array of stations
+      let starray = []
+      this.stations.forEach(st =>{
+        starray.push({name:st.name,wpn:st.wpn,x:st.x,y:st.y})
+      })
+      console.log(`starray: ${starray}`)
       try {
-
-        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points,this.wp)
-        console.log(`%cPathIdInDB should be: ${json1[0]}`, 'backgroundColor:red')
+        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points,this.wp, starray)
         this.PathIdInDB = json1[0]
-        // let json2
-        // for (let iwp = 0; iwp < this.wp.length; iwp++) {
-        //   try {
-        //     json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
-        //   } catch (err) {
-        //     console.log(`Error in saveWayPointToDB: ${err}`)
-        //   }
-        // }
+        console.log(`After posting the path to DB, the pathid returned is: ${this.PathIdInDB}`)
       } catch (err) {
-        console.log(`Error in savePathInDB: ${err}`)
+        console.log(`Error in savePathToDB: ${err}`)
       }
     }
   }

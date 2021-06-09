@@ -65,10 +65,10 @@ function getGameWithId(req, res) {
     console.log(`app.put("/api/game", id:${id}, name:${name}`)
     knex('game')
       .where('id',id)
-      .update(name)
+      .update({gamename:name})
       .then(data => {
         console.log(`game renamed`)
-        res.send(data)
+        res.sendStatus(200)
       })
       .catch(err => {
         console.log(`Error in updateName: ${err}`)

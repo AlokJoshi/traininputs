@@ -31,6 +31,21 @@ async function createUserAndDefaultGame(email, gamename) {
   return newGameId[0]
 }
 
+async function createNewGame(email, gamename) {
+  let newGameId
+  const data = { email, gamename }
+  const response = await fetch('/api/user', {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'POST',
+    body: Qs.stringify(data)
+  })
+  if (!response.ok) {
+    throw new Error('Network response was not ok')
+  }
+  newGameId = await response.json()
+  return newGameId[0]
+}
+
 async function getAllGamesForEmail(email) {
   const response = await fetch(`/api/game/email/${email}`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
@@ -156,19 +171,18 @@ async function getGamePeriodId(gameid, period, passengerid, openingcash, opening
   const json = await response.json()
   return json
 }
-async function savePathToDB(gameid, routenumber, finalized, points, wparray) {
+async function savePathToDB(gameid, routenumber, finalized, points, wparray, starray) {
   wparray.forEach(element => {
     element.x = Math.round(element.x*1000)/1000
     element.y = Math.round(element.y*1000)/1000
   });
-  console.log(`wparray after rounding to 3 decimal places`)
-  console.log(JSON.stringify(wparray))
   let data = {
     gameid: gameid,
     routenumber: routenumber,
     finalized: finalized,
     points: points,
-    wparray: wparray
+    wparray: wparray,
+    starray: starray
   }
   const response = await fetch(`/api/path`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
@@ -347,7 +361,7 @@ async function updateGameNameInDB(id,name) {
     id: id,
     name: name
   }
-  const response = await fetch(`/api/train`, {
+  const response = await fetch(`/api/game`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
     method: 'PUT',
     body: Qs.stringify(data)
@@ -355,7 +369,4 @@ async function updateGameNameInDB(id,name) {
   if(!response.ok){
     throw new Error("Network response was not ok in updateGameNameInDB")
   }
-  let json = await response.json()
-  //console.log(json)
-  return json
 }
