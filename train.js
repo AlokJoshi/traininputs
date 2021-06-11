@@ -22,12 +22,6 @@ class Train {
     this.goodscoaches-- 
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
-  // get capitalCost(){
-  //   return Game.COST_ENGINE + Game.COST_GOODS_COACH*this.goodscoaches+Game.COST_PASSENGER_COACH*this.passengercoaches
-  // }
-  // get runningCostPerTimePeriod(){
-  //   return Math.floor(this.capitalCost*0.5)+this.passengercoaches*5000+this.goodscoaches*2000
-  // }
   get passenger_capacity(){
     return this.passengercoaches*Game.PASSENGER_COACH_CAPACITY
   }
@@ -81,7 +75,7 @@ class Train {
     return 1-this.passenger_room_available/this.wagon_capacity
   }
   saveInDB = async() => {
-    console.log(`%cSaving train running on ${this.path.number}, 'background: #222; color: #bada55'`)
+    console.log(`%cSaving train running on ${this.path.number}`, 'background: #222; color: #bada55')
     saveTrainToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
 }

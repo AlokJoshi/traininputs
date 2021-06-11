@@ -1,7 +1,7 @@
 const express = require('express')
 const { join } = require('path')
 const app = express()
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '50mb', parameterLimit: 1000000}));
 const port = process.env.PORT || 3000
 
 let types = require('pg').types
@@ -20,7 +20,7 @@ const gameperiod = require('./routes/route_gameperiod')
 //const pathperiod = require('./routes/route_pathperiod')
 const station = require('./routes/route_station')
 const pathpoint = require('./routes/route_pathpoint')
-const waypoint = require('./routes/route_waypoint')
+//const waypoint = require('./routes/route_waypoint')
 const train = require('./routes/route_train')
 const path = require('./routes/route_path')
 //const passenger = require('./routes/route_passenger')

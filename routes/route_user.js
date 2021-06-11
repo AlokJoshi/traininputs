@@ -29,7 +29,7 @@ function getUserWithEmail(req, res) {
 function addUser(req, res) {
   const email = req.body.email
   const gamename = req.body.gamename
-  console.log(`app.post("/api/user",email:${email}`)
+  //console.log(`app.post("/api/user",email:${email}`)
   knex('user')
   .insert({ email })
   .then(data => {
@@ -39,9 +39,9 @@ function addUser(req, res) {
       gamename
     })
     .returning('id')
-    .on('query',(q)=>{
-      console.log(q.sql)
-    })
+    // .on('query',(q)=>{
+    //   console.log(q.sql)
+    // })
     .then(data=>{
       res.send(data)
     })

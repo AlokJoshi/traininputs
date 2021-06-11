@@ -6,7 +6,7 @@ class Hud{
   }
   set info(value){
     this._info.push(value)
-    if(this._info.length>=200){
+    if(this._info.length>=200){  
       this._info.shift()
     }
   }
@@ -16,10 +16,10 @@ class Hud{
     this.ctx.fillRect(0,0,this.canvasElement.width,this.canvasElement.height)
     this.ctx.clearRect(0,30,this.canvasElement.width,this.canvasElement.height)
     this.ctx.strokeStyle='rgba(256,256,256,0.1)'
-    this.ctx.font = "15px Comic Sans MS"
+    this.ctx.font = "13px Comic Sans MS"
     this.ctx.fillStyle='rgba(0,0,0,1)'
-    for(let i=0;i<Math.ceil(text.length/150);i++){
-      this.ctx.fillText(text.substr(i*150,150),0,(i+1)*20,1500)
+    for(let i=0;i<Math.ceil(text.length/190);i++){
+      this.ctx.fillText(text.substr(i*190,190),0,(i+1)*15,1500)
     }
     let newInfo = this._info.filter(item=>item.train==train)
     newInfo = newInfo.slice().reverse()

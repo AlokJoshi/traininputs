@@ -39,21 +39,36 @@ class CashFlow {
     this._trackcost += value
     this._cumtrackcost += value
   }
+  get trackcost(){
+    return this._trackcost
+  }
   set stationcost(value) {
     this._stationcost += value
     this._cumstationcost += value
+  }
+  get stationcost(){
+    return this._stationcost
   }
   set coachcost(value) {
     this._coachcost += value
     this._cumcoachcost += value
   }
+  get coachcost(){
+    return this._coachcost
+  }
   set wagoncost(value) {
     this._wagoncost += value
     this._cumwagoncost += value
   }
+  get wagoncost(){
+    return this._wagoncost
+  }
   set enginecost(value) {
     this._enginecost += value
     this._cumenginecost += value
+  }
+  get enginecost(){
+    return this._enginecost
   }
   get runningcost() {
     return this._runningcost

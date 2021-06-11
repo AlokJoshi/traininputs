@@ -25,12 +25,12 @@ const updateUI = async () => {
     //logic to show or hide the gated content after authentication
     if (isAuthenticated) {
 
-      document.getElementById("gated-content").classList.remove("hidden")
-      document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently()
+      //document.getElementById("gated-content").classList.remove("hidden")
+      //document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently()
       loggedInUser = await auth0.getUser()
       const email = loggedInUser.email
       document.querySelector(".user").innerHTML = email
-      document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(loggedInUser)
+      //document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(loggedInUser)
       const userInDB = await getUser(email)
       console.log(`User in DB with an email of ${email}: ${JSON.stringify(userInDB)}`)
       let userExistsInDB = userInDB !== undefined
@@ -67,7 +67,7 @@ const updateUI = async () => {
         game = new Game(email, gameid, Game.START_GAME_NAME)
       }
     } else {
-        document.getElementById("gated-content").classList.add("hidden")
+        // document.getElementById("gated-content").classList.add("hidden")
         let email = 'anonymous-'+ Date.now()
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
         localStorage.setItem('email', email)

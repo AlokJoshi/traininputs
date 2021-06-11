@@ -76,6 +76,10 @@ table, th, td {
     top: 0;
     left: 0;
 }
+#background{
+  width:1200;
+  height:675;
+}
 #tooltip{
   position:absolute;
   padding: 5;

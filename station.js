@@ -2,9 +2,9 @@ class Station{
   constructor(path,name,wpn,x,y){
     this.path=path
     this.name=name
-    this.wpn = wpn
-    this.x=x
-    this.y=y
+    this.wpn = 1*wpn
+    this.x= 1*x
+    this.y= 1*y
     //this.saveInDB()
   }
   async saveInDB(){

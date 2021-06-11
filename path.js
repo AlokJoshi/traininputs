@@ -74,7 +74,7 @@ class Path {
     + this.getPathLengthOverWater() * Game.TRACK_COST_PER_UNIT * Game.TUNNEL_COST_MULTIPLIER
     this.game.cashflow.enginecost = Game.COST_ENGINE
     this.game.cashflow.coachcost = 3 * Game.COST_PASSENGER_COACH
-    this.game.cashflow.wagoncost = 3 * Game.COST_GOODS_COACH
+    this.game.cashflow.wagoncost = 1 * Game.COST_GOODS_COACH
     await this.savePathInDB()
     console.log(`path.savePathInDB completed`)
     await this._train.saveInDB()
@@ -83,21 +83,18 @@ class Path {
 
   savePathInDB = async () => {
     if (this.game.gameid) {
+      //create an array of stations
+      let starray = []
+      this.stations.forEach(st =>{
+        starray.push({name:st.name,wpn:st.wpn,x:st.x,y:st.y})
+      })
+      console.log(`starray: ${starray}`)
       try {
-
-        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points,this.wp)
-        console.log(`%cPathIdInDB should be: ${json1[0]}`, 'backgroundColor:red')
+        let json1 = await savePathToDB(this.game.gameid, this.number, this._finalized, this.points,this.wp, starray)
         this.PathIdInDB = json1[0]
-        // let json2
-        // for (let iwp = 0; iwp < this.wp.length; iwp++) {
-        //   try {
-        //     json2 = await saveWayPointToDB(this.PathIdInDB, this.wp[iwp].n, this.wp[iwp].x, this.wp[iwp].y, this.wp[iwp].feature)
-        //   } catch (err) {
-        //     console.log(`Error in saveWayPointToDB: ${err}`)
-        //   }
-        // }
+        console.log(`After posting the path to DB, the pathid returned is: ${this.PathIdInDB}`)
       } catch (err) {
-        console.log(`Error in savePathInDB: ${err}`)
+        console.log(`Error in savePathToDB: ${err}`)
       }
     }
   }
@@ -379,7 +376,8 @@ class Path {
 
         let finalpoints = pointsAlongArcNew(x, y, radius, p2.x, p2.y, p3.x, p3.y, this.ctx)
         for (let i = 0; i < finalpoints.length; i++) {
-          let feature = getFeature(this.game.ctx_background, x, y)
+          //let feature = getFeature(this.game.ctx_background, x, y)
+          let feature = getFeature(this.game.ctx_background, finalpoints[i].x, finalpoints[i].y)
           this.wp.push({ n: n++, x: finalpoints[i].x, y: finalpoints[i].y, feature: feature })
           //console.log(`Along Curve:${n}, ${finalpoints[i].x},${finalpoints[i].y}`)
         }
@@ -472,7 +470,7 @@ class Path {
         //already when the train was at this point coming into this station
       } else {
         let numAlighted = this.train.alightPassengersForCity(currCity)
-        console.log(`Alighted ${numAlighted} at ${currCity}`)
+        //console.log(`Alighted ${numAlighted} at ${currCity}`)
       }
       let numNoRoom = 0
       if (this.going) {
@@ -588,7 +586,7 @@ class Path {
   savePeriodDataToDB = async (gameperiodid) => {
     //console.log(`gameperiod id:${gameperiodid},path id:${this.PathIdInDB},number:${this.number} ,numFrames:${this.numFrames}, going:${this.going}, ${this.train.passengercoaches}, ${this.train.goodscoaches}, ${this.game.passengers.info} saving to db.`)
     //let json = await savePeriodPathToDB(gameperiodid, this.PathIdInDB, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches,this.game.passengers.info)
-    console.log(`In savePeriodDataToDB, ${this.PathIdInDB}`)
+    //console.log(`In savePeriodDataToDB, ${this.PathIdInDB}`)
     if(this.PathIdInDB){
       await updatePathInDB(this.PathIdInDB, gameperiodid, this.i, this.numFrames, this.going, this.train.passengercoaches, this.train.goodscoaches, this.game.passengers.info)
     }

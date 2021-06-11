@@ -10,7 +10,6 @@ class Game {
   static TRACK_COST_PER_UNIT = 1000
   static COST_STATION = 200000
   static COST_ENGINE = 500000
-  static COST_GOODS_COACH = 50000
   static COST_PASSENGER_COACH = 100000
   static COST_GOODS_COACH = 50000
   static INTEREST_EARNED_PER_PERIOD = 0.0005
@@ -45,6 +44,8 @@ class Game {
   static TUNNEL_COST_MULTIPLIER = 20
   static BRIDGE_COST_MULTIPLIER = 20
 
+  static PERIODS_TO_SUMMARIZE = 10
+
   //following variables are referenced with this.xx in Game methods
   ms = 50
   period = 0
@@ -52,6 +53,7 @@ class Game {
   MIN_ANGLE = 90
   makeSound = false
   state = Game.ROUTE_EDITING_STATE
+  previousstate = null
   menu = false
   stationEditMode = false
   selectedPathNum = 0
@@ -90,20 +92,20 @@ class Game {
     this.cloudsElement = document.querySelector('#cloud')
     this.tooltipElement = document.querySelector('#tooltip')
 
-    this.background.width = Game.WIDTH//window.innerWidth
-    this.background.height = Game.HEIGHT//window.innerHeight
+    this.background.width = Game.WIDTH
+    this.background.height = Game.HEIGHT
 
-    this.foreground.width = Game.WIDTH//window.innerWidth
-    this.foreground.height = Game.HEIGHT//window.innerHeight
+    this.foreground.width = Game.WIDTH
+    this.foreground.height = Game.HEIGHT
 
-    this.routedesign.width = Game.WIDTH//window.innerWidth
-    this.routedesign.height = Game.HEIGHT//window.innerHeight
+    this.routedesign.width = Game.WIDTH
+    this.routedesign.height = Game.HEIGHT
 
-    this.cloudsElement.width = Game.WIDTH//window.innerWidth
-    this.cloudsElement.height = Game.HEIGHT//window.innerHeight
+    this.cloudsElement.width = Game.WIDTH
+    this.cloudsElement.height = Game.HEIGHT
 
-    this.hudElement.width = Game.WIDTH//window.innerWidth
-    this.hudElement.height = 40 //window.innerHeight
+    this.hudElement.width = Game.WIDTH
+    this.hudElement.height = 40 
 
     this.ctx_background = this.background.getContext('2d')
     this.ctx_foreground = this.foreground.getContext('2d')
@@ -324,12 +326,16 @@ class Game {
 
       if (this.state == Game.ROUTE_EDITING_STATE) {
         if (event.key == 'd') {
-          if (!this.currentPath.finalized) {
+          if (!this.currentPath?.finalized) {
             let deletedPoint = this.currentPath.popPoint()
-            this.currentMousePosition = { ...deletedPoint }
+            //this.currentMousePosition = { ...deletedPoint }
             if (this.currentPath.length == 0) {
               this.lastClick.x = null
               this.lastClick.y = null
+            }else{
+              //this.lastClick = this.currentPath.points[this.currentPath.length-1]
+              this.lastClick.x = this.currentPath.points[this.currentPath.length-1].x
+              this.lastClick.y = this.currentPath.points[this.currentPath.length-1].y
             }
           }
         } else if (event.key == 't') {
@@ -369,6 +375,8 @@ class Game {
             this.animate();
           } else {
             console.log(`No path finalized yet`)
+            let pu = new Popup(5000,false)
+            pu.show(`Create a route(s) and then the train(s) will start on those route(s)`)
           }
         } else if (event.key == 'a' || event.key == 'Escape') {
           if (this.currentPath != null) {
@@ -418,12 +426,12 @@ class Game {
           this.updateHUD()
         }
         if (event.key == '>') {
-          this.cashflow.coachcost = Game.COST_GOODS_COACH
+          this.cashflow.wagoncost = Game.COST_GOODS_COACH
           this.paths.getPath(this.selectedPathNum).train.addGoodsCoach()
           this.updateHUD()
         }
         if (event.key == '<') {
-          this.cashflow.coachcost = -1 * Game.COST_GOODS_COACH
+          this.cashflow.wagoncost = -1 * Game.COST_GOODS_COACH
           this.paths.getPath(this.selectedPathNum).train.removeGoodsCoach()
           this.updateHUD()
         }
@@ -448,12 +456,19 @@ class Game {
 
       if (this.state == Game.READY_TO_EXIT_STATE) {
         if (event.key == 'g' || event.key == 'G') {
-          this.state == Game.RUNNING_STATE
+          this.state = Game.RUNNING_STATE
+          this.animate()
           return
         }
         if (event.key == 'r' || event.key == 'R') {
-          let inputbox = new GameName (this.gamename)
+          this.state = Game.PAUSED_STATE
+          let inputbox = new Gamename (this,this.gamename)
           inputbox.show()
+          return
+        }
+        if (event.key == 'n' || event.key == 'N') {
+          this.state = Game.PAUSED_STATE
+          this.createNewGameInDB()
           return
         }
         if (event.key == 'y' || event.key == 'Y') {
@@ -579,6 +594,7 @@ class Game {
             stationcost: this.cashflow._stationcost,
             enginecost: this.cashflow._enginecost,
             coachcost: this.cashflow._coachcost,
+            wagoncost: this.cashflow._wagoncost,
             runningcost: this.cashflow._runningcost,
             maintenancecost: this.cashflow._maintenancecost,
             profit: this.cashflow._profit,
@@ -601,7 +617,7 @@ class Game {
               this.cashflow._maintenancecost + this.cashflow._runningcost, this.cashflow._ticketsales, this.cashflow._interest,
               this.cashflow._tax, this.cashflow.profit, this.cashflow._cumcoachcost, this.cashflow._cumenginecost)
             this.gameperiodid = data[0]
-            console.log(`Game period id returned by getGemePeriodId: ${this.gameperiodid}`)
+            //console.log(`Game period id returned by getGamePeriodId: ${this.gameperiodid}`)
             this.savePeriodDataToDB()
           }
           catch (err) {
@@ -652,7 +668,7 @@ class Game {
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1
         let train = this.paths.getPath(this.selectedPathNum).train
-        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, Coaches:${train.passengercoaches}, goodscoaches:${train.goodscoaches}): +(add coach), -(remove coach), >(add wagon), <(remove wagon),n(next route), g(resume game), space(docs and back), x(exit)`
+        txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, coaches:${train.passengercoaches}, wagons:${train.goodscoaches}): +(add coach), -(remove coach), >(add wagon), <(remove wagon), n(next route), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.RUNNING_STATE:
         txt += `Running: p(pause), +(speed up), -(slow down), w(${this.makeSound == true ? 'whistle off' : 'whistle on'}), n(next train info), space(docs and back), x(exit)`
@@ -675,10 +691,7 @@ class Game {
   }
 
   savePeriodDataToDB = async () => {
-    //if the save is being done for the first time, we do not have an gameid for the game
-    //we do not save if this.email is 'anonymous'
-    //if(this.email=='anonymous') return
-    console.log(`Saving game to db for ${this.gameid}, ${this.period}`)
+    //console.log(`Saving game to db for ${this.gameid}, ${this.period}`)
     await this.paths.savePeriodDataToDB(this.gameperiodid)
   }
 
@@ -729,33 +742,25 @@ class Game {
       path.points = pathArray[iPath].pathpoints
       path.wp = pathArray[iPath].wparray
       let pathid = pathArray[iPath].id
-      /* 
-      //we use this pathid to find out all the waypoints
-      let waypoint_data = await getWaypointData(pathid)
-      let waypointCount = waypoint_data.length
-      let waypointArray = waypoint_data
-      console.log(waypointCount)
-      console.log(JSON.stringify(waypointArray[0]))
-      for(let iwp=0;iwp<waypointCount;iwp++){
-        path.wp.push({
-          n:waypointArray[iwp].n,
-          x:waypointArray[iwp].x,
-          y:waypointArray[iwp].y,
-          feature:waypointArray[iwp].feature,
-        })
-      } 
-      */
-      //todo replace this with the train info from the DB
       path.PathIdInDB = pathid
       path._train = new Train(path, pathArray[iPath].passengercoaches, pathArray[iPath].goodscoaches)
 
       //add all the stations in that paths
-      path.stations = []
-      let stations = await getStations(pathid)
-      for (let i = 0; i < stations.length; i++) {
-        let station = new Station(path, stations[i].name, stations[i].wpn, stations[i].x, stations[i].y)
+      // path.stations = []
+      // let stations = await getStations(pathid)
+      // for (let i = 0; i < stations.length; i++) {
+      //   let station = new Station(path, stations[i].name, stations[i].wpn, stations[i].x, stations[i].y)
+      //   path.stations.push(station)
+      // }
+      let stations = pathArray[iPath].starray
+      //in the station object returned all the values are string values
+      //we might need to convert them into numeric by multiplying them by 1
+      //either here or in the constructor?
+      stations.forEach(st =>{
+        let station = new Station(path,st.name,st.wpn,st.x,st.y)
         path.stations.push(station)
-      }
+      })
+
       this.paths.addPath(path)
     }
     this.selectedPathNum = 0
@@ -770,7 +775,14 @@ class Game {
     console.log(`Game created with a gameid of ${gameid}`)
   }
 
+  async createNewGameInDB(){
+    let promise = await addGameForEmail(this.email, 'New Game #1')  
+    let gameid = promise[0]
+    game = new Game(this.email,gameid,'New Game #1')
+  }
+
   exit() {
+    this.previousstate = this.state
     this.state = Game.READY_TO_EXIT_STATE
   }
 }

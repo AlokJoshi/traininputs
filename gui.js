@@ -11,8 +11,9 @@ var tblPerformance = document.getElementById("performancetable");
 function displayPerformanceTable(cash){
    removeAllTableRows(tblPerformance)
    //cash is an array of objects
+   //let firstPd = lastPd>=100?lastPd-100:0
+   let firstPd = 0
    let lastPd = cash.periods.length
-   let firstPd = lastPd>=100?lastPd-100:0
    let caption = tblPerformance.createCaption();
    caption.innerHTML="Financial Performance (1000 G$)"
    let row=tblPerformance.insertRow()
@@ -23,7 +24,7 @@ function displayPerformanceTable(cash){
    cell = row.insertCell()
    cell.innerHTML = "Ticket Sales"
    cell = row.insertCell()
-   cell.innerHTML = "Track/Coach/Station"
+   cell.innerHTML = "Trk/Eng/Cch/Wgn/Stn"
    cell = row.insertCell()
    cell.innerHTML = "Interest"
    cell = row.insertCell()
@@ -32,28 +33,60 @@ function displayPerformanceTable(cash){
    cell.innerHTML = "Other Expenses"
    cell = row.insertCell()
    cell.innerHTML = "Profit After Tx & Dep"
-   for(let i = firstPd; i < lastPd; i++){
+   let steps = Math.floor((lastPd+1)/Game.PERIODS_TO_SUMMARIZE)
+   for(let i=1; i <= steps; i++){
+      let openingcash=0
+      let ticketsales=0
+      let tecs = 0
+      let interest = 0
+      let depreciation = 0
+      let mr = 0
+      let patd = 0
+      let tc = 0
+      let ec = 0
+      let cc = 0
+      let wc = 0
+      let sc = 0
+      let si = (i-1)*Game.PERIODS_TO_SUMMARIZE
+      openingcash=cash.periods[si].openingcash
+      for(j=0;j<=Game.PERIODS_TO_SUMMARIZE-1;j++){
+         ticketsales+=cash.periods[si+j].ticketsales
+         // tecs+=(cash.periods[si+j].trackcost
+         //    +cash.periods[si+j].enginecost
+         //    +cash.periods[si+j].coachcost
+         //    +cash.periods[si+j].wagoncost
+         //    +cash.periods[si+j].stationcost)
+
+         tc+=cash.periods[si+j].trackcost
+         ec+=cash.periods[si+j].enginecost
+         cc+=cash.periods[si+j].coachcost
+         wc+=cash.periods[si+j].wagoncost
+         sc+=cash.periods[si+j].stationcost
+
+         interest+=cash.periods[si+j].interest
+         depreciation+=cash.periods[si+j].depreciation
+         mr+=cash.periods[si+j].maintenancecost
+         +cash.periods[si+j].runningcost
+         patd+=cash.periods[si+j].patd
+      }
+      
       row = tblPerformance.insertRow();
       cell = row.insertCell()
-      cell.innerHTML = i
+      cell.innerHTML = si
       cell = row.insertCell()
-      cell.innerHTML=Math.floor(cash.periods[i].openingcash/1000)
+      cell.innerHTML=Math.floor(openingcash/1000)
       cell = row.insertCell()
-      cell.innerHTML=Math.floor(cash.periods[i].ticketsales/1000)
+      cell.innerHTML=Math.floor(ticketsales/1000)
       cell = row.insertCell()
-      cell.innerHTML=Math.floor((cash.periods[i].trackcost
-                                 +cash.periods[i].enginecost
-                                 +cash.periods[i].coachcost
-                                 +cash.periods[i].stationcost)/1000)
+      cell.innerHTML=`${Math.floor(tc/1000)}+${Math.floor(ec/1000)}+${Math.floor(cc/1000)}+${Math.floor(wc/1000)}+${Math.floor(sc/1000)}`
       cell = row.insertCell()
-      cell.innerHTML=Math.floor(cash.periods[i].interest/1000)
+      cell.innerHTML=Math.floor(interest/1000)
       cell = row.insertCell()
-      cell.innerHTML=Math.floor(cash.periods[i].depreciation/1000)
+      cell.innerHTML=Math.floor(depreciation/1000)
       cell = row.insertCell()
-      cell.innerHTML=Math.floor((cash.periods[i].maintenancecost
-                                +cash.periods[i].runningcost)/1000)
+      cell.innerHTML=Math.floor(mr/1000)
       cell = row.insertCell()
-      cell.innerHTML=Math.floor(cash.periods[i].patd/1000)
+      cell.innerHTML=Math.floor(patd/1000)
    }
 }
 function displayPassengersTable(rows){
