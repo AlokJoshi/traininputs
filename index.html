@@ -24,6 +24,7 @@
               <li><a href="#info">Info</a></li>
               <li><a href="#objective">Objective</a></li>
               <li><a href="#performance">Performance</a></li>
+              <li><a href="#leaderboard">Leaderboard</a></li>
               <li><a href="#contact">Contact</a></li>
               <li id="btn-login" onclick="login()"><a href=#>Log in</a></li>
               <li id="btn-logout" onclick="logout()"><a href=#>Log out</a></li>
@@ -46,7 +47,8 @@
             bank/financiers</p>
           <p>You earn a little interest (5%) on the money you have in the bank</p>
           <p>You can review Passenger Demand and Ticket Prices in the Info menu item.</p>
-          <p>Your performance in terms of the G$ is shown on the top left of your game screen along with the current period
+          <p>Your performance in terms of the G$ is shown on the top left of your game screen along with the current
+            period
             you are in. This also shows the State you are in and your options. State will be explained later.</p>
           <img src="menu_on_game_screen.PNG" />
           <p>You can review your detailed performance in the Performance menu item.</p>
@@ -88,10 +90,306 @@
         <h3>Info</h3>
         <div class="explanation">
           <p>Passenger Estimates</p>
-          <table id="passengers">
+          <table id="passengers" class="content-table">
+            <caption>Passengers</caption>
+            <thead>
+              <tr>
+                <td>From-To</td>
+                <td>Bangro</td>
+                <td>Dore</td>
+                <td>Haybad</td>
+                <td>Kata</td>
+                <td>Lochin</td>
+                <td>Mannai</td>
+                <td>Mumba</td>
+                <td>Ooby</td>
+                <td>Poa</td>
+                <td>Purnapur</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bangro</td>
+                <td>x</td>
+                <td>1</td>
+                <td>1</td>
+                <td>3</td>
+                <td>1</td>
+                <td>3</td>
+                <td>3</td>
+                <td>1</td>
+                <td>3</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>Dore</td>
+                <td>1</td>
+                <td>x</td>
+                <td>1</td>
+                <td>3</td>
+                <td>1</td>
+                <td>1</td>
+                <td>3</td>
+                <td>1</td>
+                <td>3</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Haybad</td>
+                <td>3</td>
+                <td>3</td>
+                <td>x</td>
+                <td>5</td>
+                <td>1</td>
+                <td>3</td>
+                <td>3</td>
+                <td>1</td>
+                <td>3</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>Kata</td>
+                <td>13</td>
+                <td>13</td>
+                <td>13</td>
+                <td>x</td>
+                <td>13</td>
+                <td>13</td>
+                <td>15</td>
+                <td>13</td>
+                <td>15</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <td>Lochin</td>
+                <td>18</td>
+                <td>18</td>
+                <td>18</td>
+                <td>37</td>
+                <td>x</td>
+                <td>18</td>
+                <td>35</td>
+                <td>18</td>
+                <td>35</td>
+                <td>18</td>
+              </tr>
+              <tr>
+                <td>Mannai</td>
+                <td>11</td>
+                <td>11</td>
+                <td>11</td>
+                <td>13</td>
+                <td>11</td>
+                <td>x</td>
+                <td>11</td>
+                <td>11</td>
+                <td>11</td>
+                <td>11</td>
+              </tr>
+              <tr>
+                <td>Mumba</td>
+                <td>28</td>
+                <td>0</td>
+                <td>28</td>
+                <td>47</td>
+                <td>28</td>
+                <td>28</td>
+                <td>x</td>
+                <td>0</td>
+                <td>47</td>
+                <td>28</td>
+              </tr>
+              <tr>
+                <td>Ooby</td>
+                <td>18</td>
+                <td>18</td>
+                <td>18</td>
+                <td>37</td>
+                <td>18</td>
+                <td>18</td>
+                <td>35</td>
+                <td>x</td>
+                <td>35</td>
+                <td>18</td>
+              </tr>
+              <tr>
+                <td>Poa</td>
+                <td>28</td>
+                <td>28</td>
+                <td>28</td>
+                <td>47</td>
+                <td>28</td>
+                <td>28</td>
+                <td>47</td>
+                <td>28</td>
+                <td>x</td>
+                <td>28</td>
+              </tr>
+              <tr>
+                <td>Purnapur</td>
+                <td>3</td>
+                <td>3</td>
+                <td>3</td>
+                <td>5</td>
+                <td>3</td>
+                <td>3</td>
+                <td>3</td>
+                <td>1</td>
+                <td>3</td>
+                <td>x</td>
+              </tr>
+            </tbody>
           </table>
           <p>Ticket Prices</p>
-          <table id="ticketprices">
+          <table id="ticketprices" class="content-table">
+            <caption>Ticket Prices in G$</caption>
+            <thead>
+              <tr>
+                <td>From-To</td>
+                <td>Bangro</td>
+                <td>Dore</td>
+                <td>Haybad</td>
+                <td>Kata</td>
+                <td>Lochin</td>
+                <td>Mannai</td>
+                <td>Mumba</td>
+                <td>Ooby</td>
+                <td>Poa</td>
+                <td>Purnapur</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bangro</td>
+                <td>x</td>
+                <td>1700</td>
+                <td>820</td>
+                <td>550</td>
+                <td>690</td>
+                <td>1470</td>
+                <td>2610</td>
+                <td>1010</td>
+                <td>370</td>
+                <td>1970</td>
+              </tr>
+              <tr>
+                <td>Dore</td>
+                <td>1700</td>
+                <td>x</td>
+                <td>1250</td>
+                <td>2290</td>
+                <td>1580</td>
+                <td>1260</td>
+                <td>830</td>
+                <td>660</td>
+                <td>1810</td>
+                <td>520</td>
+              </tr>
+              <tr>
+                <td>Haybad</td>
+                <td>820</td>
+                <td>1250</td>
+                <td>x</td>
+                <td>1380</td>
+                <td>1300</td>
+                <td>1750</td>
+                <td>2120</td>
+                <td>840</td>
+                <td>650</td>
+                <td>1720</td>
+              </tr>
+              <tr>
+                <td>Kata</td>
+                <td>550</td>
+                <td>2290</td>
+                <td>1380</td>
+                <td>x</td>
+                <td>910</td>
+                <td>1800</td>
+                <td>3200</td>
+                <td>1570</td>
+                <td>740</td>
+                <td>2510</td>
+              </tr>
+              <tr>
+                <td>Lochin</td>
+                <td>690</td>
+                <td>1580</td>
+                <td>1300</td>
+                <td>910</td>
+                <td>x</td>
+                <td>830</td>
+                <td>2390</td>
+                <td>900</td>
+                <td>1090</td>
+                <td>1630</td>
+              </tr>
+              <tr>
+                <td>Mannai</td>
+                <td>1470</td>
+                <td>1260</td>
+                <td>1750</td>
+                <td>1800</td>
+                <td>830</td>
+                <td>x</td>
+                <td>1820</td>
+                <td>910</td>
+                <td>1830</td>
+                <td>1020</td>
+              </tr>
+              <tr>
+                <td>Mumba</td>
+                <td>2610</td>
+                <td>830</td>
+                <td>2120</td>
+                <td>3200</td>
+                <td>2390</td>
+                <td>1820</td>
+                <td>x</td>
+                <td>1520</td>
+                <td>2730</td>
+                <td>740</td>
+              </tr>
+              <tr>
+                <td>Ooby</td>
+                <td>1010</td>
+                <td>660</td>
+                <td>840</td>
+                <td>1570</td>
+                <td>900</td>
+                <td>910</td>
+                <td>1520</td>
+                <td>x</td>
+                <td>1190</td>
+                <td>910</td>
+              </tr>
+              <tr>
+                <td>Poa</td>
+                <td>370</td>
+                <td>1810</td>
+                <td>650</td>
+                <td>740</td>
+                <td>1090</td>
+                <td>1830</td>
+                <td>2730</td>
+                <td>1190</td>
+                <td>x</td>
+                <td>2180</td>
+              </tr>
+              <tr>
+                <td>Purnapur</td>
+                <td>1970</td>
+                <td>520</td>
+                <td>1720</td>
+                <td>2510</td>
+                <td>1630</td>
+                <td>1020</td>
+                <td>740</td>
+                <td>910</td>
+                <td>2180</td>
+                <td>x</td>
+              </tr>
+            </tbody>
           </table>
           <h4>Costs in G$(Game Dollars)</h4>
           <p><b>Track:</b> Depends on the distance. It is about G$ 1000
@@ -267,16 +565,55 @@
 
       <div id='performance'>
         <h3>Performance</h3>
-        <div class="explanation">
-          <table id="performancetable"></table>
-        </div>
+          <table id="performancetable" class='content-table'>
+            <thead>
+              <tr>
+                <td>Period</td>
+                <td>Opening Cash</td>
+                <td>Ticket Sales</td>
+                <td>Trk/Eng/Cch/Wgn/Stn</td>
+                <td>Interest</td>
+                <td>Depreciation</td>
+                <td>Other Expenses</td>
+                <td>Profit After Tx & Dep</td>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+      </div>
+      <div id='leaderboard'>
+        <h3>Leaderboard</h3>
+          <table id="leaderboardtable" class='content-table'>
+            <thead>
+              <tr>
+                <th colspan="9">Leaderboard by Period (Opening Cash in G$K)</th>
+              </tr>
+              <tr>
+                <td rowspan=2>Period</td>
+                <td colspan=2>First</td>
+                <td colspan=2>Second</td>
+                <td colspan=2>Third</td>
+                <td colspan=2>You</td>
+              </tr>
+              <tr>
+                <td>Cash</td>
+                <td>Player</td>
+                <td>Cash</td>
+                <td>Player</td>
+                <td>Cash</td>
+                <td>Player</td>
+                <td>Cash</td>
+                <td>Position</td>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
       </div>
       <div id="video">
         <video controls width="500">
-  
-          <source src="iittrain.wmv"
-                  type="video/wmv">
-      
+
+          <source src="iittrain.wmv" type="video/wmv">
+
           Sorry, your browser doesn't support embedded videos.
         </video>
       </div>
@@ -347,7 +684,8 @@
     <div class="citypopup2 tooltip" id="Kata-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Haybad-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Dore-popup2" title="Number of passengers that could not be accomodated"></div>
-    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated"></div>
+    <div class="citypopup2 tooltip" id="Purnapur-popup2" title="Number of passengers that could not be accomodated">
+    </div>
     <div class="citypopup2 tooltip" id="Ooby-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Poa-popup2" title="Number of passengers that could not be accomodated"></div>
     <div class="citypopup2 tooltip" id="Mannai-popup2" title="Number of passengers that could not be accomodated"></div>

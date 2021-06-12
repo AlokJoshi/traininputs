@@ -314,6 +314,7 @@ class Game {
         displayPassengersTable(this.passengers.passengers)
         displayTicketPricesTable(this.tickets.tickets)
         displayPerformanceTable(this.cash)
+        displayLeaderboardTable()
         setTimeout(() => {
           window.scrollTo(0, -30);
         }, 50)

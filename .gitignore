@@ -1,7 +1,6 @@
 .DS_Store
 node_modules
 private_scripts
-Recording (6-9-2021 10-17-24 PM)
 videos
 
 # local env files
@@ -28,9 +27,6 @@ yarn-error.log*
 
 # Gimp files
 *.xcf
-
-# Screen recording
-*.screenrec
 
 #keys
 rootkey.csv

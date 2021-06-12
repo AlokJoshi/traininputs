@@ -260,8 +260,8 @@ async function getGamePeriodData(gameid) {
     throw new Error("Network response was not ok")
   }
   let json = await response.json()
-  console.log(`getGamePeriodData should return some data:`)
-  console.log(json)
+  //console.log(`getGamePeriodData should return some data:`)
+  //console.log(json)
   return json
 }
 
@@ -274,8 +274,8 @@ async function getPathData(gameid) {
     throw new Error("Network response was not ok")
   }
   let json = await response.json()
-  console.log(`getPathData should return some data:`)
-  console.log(json)
+  //console.log(`getPathData should return some data:`)
+  //console.log(json)
   return json
 }
 
@@ -288,8 +288,8 @@ async function getWaypointData(pathid) {
     throw new Error("Network response was not ok")
   }
   let json = await response.json()
-  console.log(`getWaypointData should return some data:`)
-  console.log(json)
+  //console.log(`getWaypointData should return some data:`)
+  //console.log(json)
   return json
 }
 async function saveStationToDB(pathid, name, wpn, x, y) {
@@ -323,8 +323,8 @@ async function getStations(pathid) {
     throw new Error("Network response was not ok")
   }
   let json = await response.json()
-  console.log(`getStations should return some data:`)
-  console.log(json)
+  //console.log(`getStations should return some data:`)
+  //console.log(json)
   return json
 }
 
@@ -369,4 +369,18 @@ async function updateGameNameInDB(id,name) {
   if(!response.ok){
     throw new Error("Network response was not ok in updateGameNameInDB")
   }
+}
+
+async function getLeaderboard(periodlist) {
+  const response = await fetch(`/api/leaderboard/periods/${periodlist}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'GET'
+  })
+  if(!response.ok){
+    throw new Error("Network response was not ok")
+  }
+  let json = await response.json()
+  //console.log(`getLeaderboard should return some data:`)
+  //console.log(JSON.stringify(json))
+  return json.rows
 }

@@ -8,32 +8,33 @@ canvases.style.visibility='collapse'
 let sb = document.getElementById('railwaytracks')
 var tbl = document.getElementById("passengers");
 var tblPerformance = document.getElementById("performancetable");
+var tblLeaderboard = document.getElementById("leaderboardtable");
 function displayPerformanceTable(cash){
-   removeAllTableRows(tblPerformance)
+   removeAllTableRows(tblPerformance,0)
    //cash is an array of objects
-   //let firstPd = lastPd>=100?lastPd-100:0
-   let firstPd = 0
    let lastPd = cash.periods.length
    let caption = tblPerformance.createCaption();
    caption.innerHTML="Financial Performance (1000 G$)"
-   let row=tblPerformance.insertRow()
-   let cell = row.insertCell()
-   cell.innerHTML = "Period"
-   cell = row.insertCell()
-   cell.innerHTML = "Opening Cash"
-   cell = row.insertCell()
-   cell.innerHTML = "Ticket Sales"
-   cell = row.insertCell()
-   cell.innerHTML = "Trk/Eng/Cch/Wgn/Stn"
-   cell = row.insertCell()
-   cell.innerHTML = "Interest"
-   cell = row.insertCell()
-   cell.innerHTML = "Depreciation"
-   cell = row.insertCell()
-   cell.innerHTML = "Other Expenses"
-   cell = row.insertCell()
-   cell.innerHTML = "Profit After Tx & Dep"
+   // let thead = document.querySelector("#performancetable thead")
+   // let row=thead.insertRow()
+   // let cell = row.insertCell()
+   // cell.innerHTML = "Period"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Opening Cash"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Ticket Sales"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Trk/Eng/Cch/Wgn/Stn"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Interest"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Depreciation"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Other Expenses"
+   // cell = row.insertCell()
+   // cell.innerHTML = "Profit After Tx & Dep"
    let steps = Math.floor((lastPd+1)/Game.PERIODS_TO_SUMMARIZE)
+   let tbody = document.querySelector("#performancetable tbody")
    for(let i=1; i <= steps; i++){
       let openingcash=0
       let ticketsales=0
@@ -51,11 +52,6 @@ function displayPerformanceTable(cash){
       openingcash=cash.periods[si].openingcash
       for(j=0;j<=Game.PERIODS_TO_SUMMARIZE-1;j++){
          ticketsales+=cash.periods[si+j].ticketsales
-         // tecs+=(cash.periods[si+j].trackcost
-         //    +cash.periods[si+j].enginecost
-         //    +cash.periods[si+j].coachcost
-         //    +cash.periods[si+j].wagoncost
-         //    +cash.periods[si+j].stationcost)
 
          tc+=cash.periods[si+j].trackcost
          ec+=cash.periods[si+j].enginecost
@@ -70,7 +66,7 @@ function displayPerformanceTable(cash){
          patd+=cash.periods[si+j].patd
       }
       
-      row = tblPerformance.insertRow();
+      row = tbody.insertRow();
       cell = row.insertCell()
       cell.innerHTML = si
       cell = row.insertCell()
@@ -89,8 +85,46 @@ function displayPerformanceTable(cash){
       cell.innerHTML=Math.floor(patd/1000)
    }
 }
+async function displayLeaderboardTable(){
+
+   const leaderboardPeriods = [50,100,200,300,400,500]
+   let rows = await getLeaderboard(leaderboardPeriods.join(','))
+   console.log(JSON.stringify(rows))
+   removeAllTableRows(tblLeaderboard,3)  
+
+   let newobj = {}
+   for(let i = 0;i<leaderboardPeriods.length;i++){
+      newobj[`P${leaderboardPeriods[i]}`]=[]
+   }
+   for(let i=0;i<rows.length-1;i++){
+      newobj[`P${rows[i].period}`].push(rows[i])
+   }
+   
+   const tbody = document.querySelector("#leaderboardtable tbody")
+   for(let r=0; r<leaderboardPeriods.length; r++){
+      row = tbody.insertRow();
+      cell = row.insertCell()
+      cell.innerHTML = leaderboardPeriods[r]
+      let arr = newobj[`P${leaderboardPeriods[r]}`]
+      for(let pos=0;pos<3;pos++){
+         if(pos<arr.length){
+            cell = row.insertCell()
+            cell.innerHTML=Math.floor(arr[pos].openingcash/1000)
+            cell = row.insertCell()
+            cell.innerHTML=arr[pos].email
+         }else{
+            cell = row.insertCell()
+            //cell.innerHTML=Math.floor(newobj[`P${rows[i].period}`][pos].openingcash/1000000)
+            cell = row.insertCell()
+            //cell.innerHTML=newobj[`P${rows[i].period}`][pos].email
+         }
+      }
+   }
+   
+}
+
 function displayPassengersTable(rows){
-   removeAllTableRows(tbl)
+   removeAllTableRows(tbl,0)
    //get set of from cities
    let from_cities = new Set(rows.map(item=>item.from))
    let from_array = [...from_cities].sort()
@@ -101,15 +135,18 @@ function displayPassengersTable(rows){
    let caption = tbl.createCaption();
    caption.innerHTML="Passengers"
 
-   let row = tbl.insertRow();
+   let thead = document.querySelector('#passengers thead');
+   let row = thead.insertRow();
    let cell = row.insertCell()
    cell.innerHTML='From-To'
    to_array.forEach(t=>{
       cell = row.insertCell()
       cell.innerHTML=t
    })
+   //tbl.appendChild(thead)
+   let tbody = document.querySelector('#passengers tbody');
    from_array.forEach(f=>{
-      row = tbl.insertRow();
+      row = tbody.insertRow();
       cell = row.insertCell()
       cell.innerHTML = f
       to_array.forEach(t=>{
@@ -123,12 +160,14 @@ function displayPassengersTable(rows){
          }
       })   
    })
+   //tbl.appendChild(tbody)
 }
-function removeAllTableRows(tbl){
-   while(tbl.rows.length>0){
+function removeAllTableRows(tbl,numheaderrows){
+   while(tbl.rows.length>numheaderrows){
       tbl.deleteRow(0)
    }   
 }
+
 function updatePassengers(period,cities,passengers){
    for(let iFrom=0;iFrom<cities.cities.length;iFrom++){
      let cityFrom = cities.cities[iFrom].name
@@ -155,7 +194,8 @@ function updateGoods(period,cities,goods){
  }
 
 function displayTicketPricesTable(rows){
-   let tbl = document.getElementById('ticketprices')
+
+   /* let tbl = document.getElementById('ticketprices')
    removeAllTableRows(tbl)
    //get set of from cities
    let from_cities = new Set(rows.map(item=>item.from))
@@ -189,4 +229,5 @@ function displayTicketPricesTable(rows){
          }
       })   
    })
+    */
 }

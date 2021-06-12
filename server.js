@@ -17,7 +17,7 @@ app.get("/auth_config.json", (req, res) => {
 const user = require('./routes/route_user')
 const game = require('./routes/route_game')
 const gameperiod = require('./routes/route_gameperiod')
-//const pathperiod = require('./routes/route_pathperiod')
+const leaderboard = require('./routes/route_leaderboard')
 const station = require('./routes/route_station')
 const pathpoint = require('./routes/route_pathpoint')
 //const waypoint = require('./routes/route_waypoint')
@@ -67,5 +67,7 @@ app.get("/api/path/gameid/:gameid", path.getPathsGivenGameId)
 app.post("/api/path", path.addPath)
 app.put("/api/path", path.updatePath)
 
+//------------Leaderboard-----------------
+app.get("/api/leaderboard/periods/:periods",leaderboard.getleaderboard)
 
 const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
