@@ -1,5 +1,3 @@
-
-
 let auth0 = null
 let loggedInUser = null
 let game = null
@@ -13,7 +11,7 @@ const conifigureClient = async () => {
     client_id: config.clientId
   })
 }
-
+displayLeaderboardTable()
 const updateUI = async () => {
 
   try {

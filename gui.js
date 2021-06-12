@@ -10,7 +10,7 @@ var tbl = document.getElementById("passengers");
 var tblPerformance = document.getElementById("performancetable");
 var tblLeaderboard = document.getElementById("leaderboardtable");
 function displayPerformanceTable(cash){
-   removeAllTableRows(tblPerformance,0)
+   removeAllTableRows(tblPerformance,1)
    //cash is an array of objects
    let lastPd = cash.periods.length
    let caption = tblPerformance.createCaption();
@@ -89,7 +89,7 @@ async function displayLeaderboardTable(){
 
    const leaderboardPeriods = [50,100,200,300,400,500]
    let rows = await getLeaderboard(leaderboardPeriods.join(','))
-   console.log(JSON.stringify(rows))
+   //console.log(JSON.stringify(rows))
    removeAllTableRows(tblLeaderboard,3)  
 
    let newobj = {}
