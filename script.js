@@ -11,7 +11,6 @@ const conifigureClient = async () => {
     client_id: config.clientId
   })
 }
-displayLeaderboardTable()
 const updateUI = async () => {
 
   try {
@@ -72,6 +71,8 @@ const updateUI = async () => {
         localStorage.setItem('gameid', gameid)
         game = new Game(email, gameid, Game.START_GAME_NAME)
     }
+    displayLeaderboardTable(localStorage.getItem('email'),Game.LEADERBOARDPERIODS)
+
   } catch (err) {
     console.log(`Error in UpdateUI: ${err}`)
   } //end of try catch block

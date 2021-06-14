@@ -7,32 +7,15 @@ canvases.style.visibility='collapse'
 
 let sb = document.getElementById('railwaytracks')
 var tbl = document.getElementById("passengers");
-var tblPerformance = document.getElementById("performancetable");
-var tblLeaderboard = document.getElementById("leaderboardtable");
+var performancetable = document.getElementById("performancetable");
+var leaderboardtable = document.getElementById("leaderboardtable");
 function displayPerformanceTable(cash){
-   removeAllTableRows(tblPerformance,1)
+   removeAllTableRows(performancetable,1)
    //cash is an array of objects
    let lastPd = cash.periods.length
-   let caption = tblPerformance.createCaption();
-   caption.innerHTML="Financial Performance (1000 G$)"
-   // let thead = document.querySelector("#performancetable thead")
-   // let row=thead.insertRow()
-   // let cell = row.insertCell()
-   // cell.innerHTML = "Period"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Opening Cash"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Ticket Sales"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Trk/Eng/Cch/Wgn/Stn"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Interest"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Depreciation"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Other Expenses"
-   // cell = row.insertCell()
-   // cell.innerHTML = "Profit After Tx & Dep"
+   // let caption = performancetable.createCaption();
+   // caption.innerHTML="Financial Performance (1000 G$)"
+   
    let steps = Math.floor((lastPd+1)/Game.PERIODS_TO_SUMMARIZE)
    let tbody = document.querySelector("#performancetable tbody")
    for(let i=1; i <= steps; i++){
@@ -51,19 +34,19 @@ function displayPerformanceTable(cash){
       let si = (i-1)*Game.PERIODS_TO_SUMMARIZE
       openingcash=cash.periods[si].openingcash
       for(j=0;j<=Game.PERIODS_TO_SUMMARIZE-1;j++){
-         ticketsales+=cash.periods[si+j].ticketsales
 
-         tc+=cash.periods[si+j].trackcost
-         ec+=cash.periods[si+j].enginecost
-         cc+=cash.periods[si+j].coachcost
-         wc+=cash.periods[si+j].wagoncost
-         sc+=cash.periods[si+j].stationcost
+         ticketsales+=cash.periods[si+j]?.ticketsales
+         tc+=cash.periods[si+j]?.trackcost
+         ec+=cash.periods[si+j]?.enginecost
+         cc+=cash.periods[si+j]?.coachcost
+         wc+=cash.periods[si+j]?.wagoncost
+         sc+=cash.periods[si+j]?.stationcost
 
-         interest+=cash.periods[si+j].interest
-         depreciation+=cash.periods[si+j].depreciation
-         mr+=cash.periods[si+j].maintenancecost
-         +cash.periods[si+j].runningcost
-         patd+=cash.periods[si+j].patd
+         interest+=cash.periods[si+j]?.interest
+         depreciation+=cash.periods[si+j]?.depreciation
+         mr+=(cash.periods[si+j]?.maintenancecost
+         +cash.periods[si+j]?.runningcost)
+         patd+=cash.periods[si+j]?.patd
       }
       
       row = tbody.insertRow();
@@ -85,33 +68,45 @@ function displayPerformanceTable(cash){
       cell.innerHTML=Math.floor(patd/1000)
    }
 }
-async function displayLeaderboardTable(){
 
-   const leaderboardPeriods = [50,100,200,300,400,500]
-   let rows = await getLeaderboard(leaderboardPeriods.join(','))
+async function displayLeaderboardTable(email,leaderboardPeriods){
+   let periodlist = leaderboardPeriods.join(',')
+   let rows = await getLeaderboard(email,periodlist)
    //console.log(JSON.stringify(rows))
-   removeAllTableRows(tblLeaderboard,3)  
+   removeAllTableRows(leaderboardtable,3)  
 
+   //create new objects
    let newobj = {}
    for(let i = 0;i<leaderboardPeriods.length;i++){
-      newobj[`P${leaderboardPeriods[i]}`]=[]
+      let pd = leaderboardPeriods[i]
+      newobj[`P${pd}`]=[]
    }
    for(let i=0;i<rows.length-1;i++){
-      newobj[`P${rows[i].period}`].push(rows[i])
+      let pd = rows[i].period
+      newobj[`P${pd}`].push(rows[i])
    }
+   //create new objects
    
+   //sort each object by rank_number
+   for(let i=0;i<rows.length-1;i++){
+      let pd = rows[i].period
+      let pdobj = newobj[`P${pd}`]
+      pdobj.sort((a,b)=>a.rank_number-b.rank_number)
+   }
+   //sort each object by rank_number
+
    const tbody = document.querySelector("#leaderboardtable tbody")
    for(let r=0; r<leaderboardPeriods.length; r++){
       row = tbody.insertRow();
       cell = row.insertCell()
       cell.innerHTML = leaderboardPeriods[r]
       let arr = newobj[`P${leaderboardPeriods[r]}`]
-      for(let pos=0;pos<3;pos++){
+      for(let pos=0;pos<4;pos++){
          if(pos<arr.length){
             cell = row.insertCell()
             cell.innerHTML=Math.floor(arr[pos].openingcash/1000)
             cell = row.insertCell()
-            cell.innerHTML=arr[pos].email
+            cell.innerHTML=(pos==3)?arr[pos].rank_number:arr[pos].email
          }else{
             cell = row.insertCell()
             //cell.innerHTML=Math.floor(newobj[`P${rows[i].period}`][pos].openingcash/1000000)
@@ -124,25 +119,21 @@ async function displayLeaderboardTable(){
 }
 
 function displayPassengersTable(rows){
-   removeAllTableRows(tbl,0)
+   removeAllTableRows(tbl,1)
    //get set of from cities
    let from_cities = new Set(rows.map(item=>item.from))
    let from_array = [...from_cities].sort()
    let to_cities = new Set(rows.map(item=>item.to))
    let to_array = [...to_cities].sort()
 
-   //caption
-   let caption = tbl.createCaption();
-   caption.innerHTML="Passengers"
-
    let thead = document.querySelector('#passengers thead');
-   let row = thead.insertRow();
-   let cell = row.insertCell()
-   cell.innerHTML='From-To'
-   to_array.forEach(t=>{
-      cell = row.insertCell()
-      cell.innerHTML=t
-   })
+   // let row = thead.insertRow();
+   // let cell = row.insertCell()
+   // cell.innerHTML='From-To'
+   // to_array.forEach(t=>{
+   //    cell = row.insertCell()
+   //    cell.innerHTML=t
+   // })
    //tbl.appendChild(thead)
    let tbody = document.querySelector('#passengers tbody');
    from_array.forEach(f=>{
@@ -164,7 +155,7 @@ function displayPassengersTable(rows){
 }
 function removeAllTableRows(tbl,numheaderrows){
    while(tbl.rows.length>numheaderrows){
-      tbl.deleteRow(0)
+      tbl.deleteRow(tbl.rows.length-1)
    }   
 }
 

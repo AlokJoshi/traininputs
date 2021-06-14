@@ -3,6 +3,7 @@ const knex = require('../services/dbservice')
 
 function getleaderboard(req,res){
   let periods=req.params.periods
+  let email=req.params.email
   console.log(periods)
   periods=periods.split(',')
   let query=''
@@ -10,10 +11,12 @@ function getleaderboard(req,res){
     if(query){
       query += ' union '
     }
-    query += `(select period,openingcash,email from gameperiod gp inner join game g on g.id = gp.gameid where gp.period = ${periods[pd]} order by openingcash desc limit 3) `
+    query += `(select period,openingcash,email,rank () over (order by openingcash desc) rank_number from gameperiod gp inner join game g on g.id = gp.gameid where gp.period = ${periods[pd]} ) `
   }
-  query += ' order by period asc, openingcash desc'
-  knex.raw(query)
+  query = "(" + query + ") as mytable "
+
+  let finalQuery = `Select period,openingcash,email,rank_number from ${query} where rank_number<4 or email='${email}'`
+  knex.raw(finalQuery)
   .then(data=>{
     res.json(data)
   })

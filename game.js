@@ -46,6 +46,8 @@ class Game {
 
   static PERIODS_TO_SUMMARIZE = 10
 
+  static LEADERBOARDPERIODS = [50,100,200,300,400,500]
+
   //following variables are referenced with this.xx in Game methods
   ms = 50
   period = 0
@@ -314,7 +316,7 @@ class Game {
         displayPassengersTable(this.passengers.passengers)
         displayTicketPricesTable(this.tickets.tickets)
         displayPerformanceTable(this.cash)
-        displayLeaderboardTable()
+        displayLeaderboardTable(this.email,Game.LEADERBOARDPERIODS)
         setTimeout(() => {
           window.scrollTo(0, -30);
         }, 50)
@@ -703,8 +705,8 @@ class Game {
     //console.log(JSON.stringify(gameperiod_data))
     let numPeriods = gameperiod_data.rowCount
     let dataArray = gameperiod_data.rows
-    console.log(numPeriods)
-    console.log(JSON.stringify(dataArray))
+    // console.log(numPeriods)
+    // console.log(JSON.stringify(dataArray))
     for (let i = 0; i < numPeriods; i++) {
       //create a cashflow object 
       this.cashflow = new CashFlow()

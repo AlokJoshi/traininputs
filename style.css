@@ -319,7 +319,7 @@ keytype {
   overflow: hidden;
 }
 .content-table thead tr{
-  background-color: #009879;
+  background-color: #6269e4;
   color:#fff;
   text-align: left;
   font-weight: bold;
@@ -332,5 +332,5 @@ keytype {
   border: 1px solid #dddddd;
 }
 .content-table tbody tr:nth-of-type(even){
-  background-color: #f3f3f3;
+  background-color: #e3e3e3;
 }

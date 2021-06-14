@@ -371,8 +371,8 @@ async function updateGameNameInDB(id,name) {
   }
 }
 
-async function getLeaderboard(periodlist) {
-  const response = await fetch(`/api/leaderboard/periods/${periodlist}`, {
+async function getLeaderboard(email,periodlist) {
+  const response = await fetch(`/api/leaderboard/email/${email}/periods/${periodlist}`, {
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
     method: 'GET'
   })
