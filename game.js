@@ -330,13 +330,12 @@ class Game {
       if (this.state == Game.ROUTE_EDITING_STATE) {
         if (event.key == 'd') {
           if (!this.currentPath?.finalized) {
-            let deletedPoint = this.currentPath.popPoint()
-            //this.currentMousePosition = { ...deletedPoint }
+            this.currentPath.popPoint()
             if (this.currentPath.length == 0) {
               this.lastClick.x = null
               this.lastClick.y = null
+              this.currentPath = null
             }else{
-              //this.lastClick = this.currentPath.points[this.currentPath.length-1]
               this.lastClick.x = this.currentPath.points[this.currentPath.length-1].x
               this.lastClick.y = this.currentPath.points[this.currentPath.length-1].y
             }
@@ -391,7 +390,7 @@ class Game {
               this.currentPath.finalized = true
             }
           }
-          console.log("escape key pressed")
+          //console.log("escape key pressed")
           this.lastClick.x = null
           this.lastClick.y = null
           this.selectedPathNum = this.numPaths
@@ -666,7 +665,7 @@ class Game {
     let txt = `Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash / 1000)} K State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
-        txt = `Route Editing: click-click, a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
+        txt = `Route Editing: click-click, d(delete last click), a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
         break;
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1

@@ -72,7 +72,7 @@ const updateUI = async () => {
         game = new Game(email, gameid, Game.START_GAME_NAME)
     }
     displayLeaderboardTable(localStorage.getItem('email'),Game.LEADERBOARDPERIODS)
-
+    document.title=`Train Tycoon-${game.gamename}`
   } catch (err) {
     console.log(`Error in UpdateUI: ${err}`)
   } //end of try catch block

@@ -20,11 +20,12 @@
         <div class="linksandbuttons">
           <div class="navbar-links">
             <ul>
+              <li><a href="#objective">Objective</a></li>
               <li><a href="#how">How</a></li>
               <li><a href="#info">Info</a></li>
-              <li><a href="#objective">Objective</a></li>
               <li><a href="#performance">Performance</a></li>
               <li><a href="#leaderboard">Leaderboard</a></li>
+              <li><a href="#video">Video</a></li>
               <li><a href="#contact">Contact</a></li>
               <li id="btn-login" onclick="login()"><a href=#>Log in</a></li>
               <li id="btn-logout" onclick="logout()"><a href=#>Log out</a></li>
@@ -37,52 +38,20 @@
         <h3>Objective</h3>
         <div class="explanation">
 
-          <p>The objective of the game is to become a Train Tycoon - by amassing a lot of money.</p>
-          <p>You start with G$ 1,000,000</p>
-          <p>You decide on the number of trains to start</p>
-          <p>You decide on the route you want your train to take and the stations it must stop and the number of
-            passenger
-            coaches it must have</p>
-          <p>If you spend too much money (beyond what you have) you will be charged a steep interst rate (10%) by your
-            bank/financiers</p>
-          <p>You earn a little interest (5%) on the money you have in the bank</p>
-          <p>You can review Passenger Demand and Ticket Prices in the Info menu item.</p>
-          <p>Your performance in terms of the G$ is shown on the top left of your game screen along with the current
-            period
-            you are in. This also shows the State you are in and your options. State will be explained later.</p>
-          <img src="menu_on_game_screen.PNG" />
-          <p>You can review your detailed performance in the Performance menu item.</p>
-          Also note that the color of the coaches varies from light red to dark red based on the occupancy of the
-          train. Higher the occupancy, darker the color.
-          <p>You train-wise performance can be seen on the left of your game screen (most recent on top). You can
-            switch
-            between the trains by pressing the <keytype>n</keytype> (next train info> key in the Running state.
+          <p>The objective of the game is to become a Train Tycoon - by amassing a lot of money. You start with G$ 1,000,000. You decide on the trains you to want to start and the routes you want them to run on. You also decide on the number of passenger coaches and goods wagons each train must have. If you spend too much money (beyond what you have) you will be charged an interst rate (10% per period) by your bank. On the other hand you earn a little interest (5% per period) on the money you have in the bank</p>
+          <p>You can review Passenger Demand and Ticket Prices in the Info menu item. Ticket prices do not change throughout the game and Passenger Demand is the current demand. Every period more passengers want to travel but if their travel demand is not met, some of them continue to wait but others are lost to alternative means of travel. Your detailed performance in G$(game money) can be viewed in the Performance menu item. How you are doing compared to other players can be viewed in the Leaderboard menu item. Your performance in terms of the G$ for the current period only is shown on the top left of your game screen along with the current period you are in. This also shows the State you are in and your options. State will be explained later.</p>
+          <img src="menu_on_game_screen.PNG" title="Top part of the game screen"/>
+          <p>On the game screen there are other indicators of performance as well. For instance the color of the coaches varies from light red to dark red based on the occupancy of the train. Higher the occupancy, darker the color. Also once the train takes off from a city, there is a green tag which displays the G$ earnings from tickets sold at that city for the train that most recently departed from that city. Same information, though more detailed, is also available for each train along the left edge of your game screen. This is shown only once you have started one or more trains. To display this info for other trains you press the <keytype>n</keytype> (next train info) key in the Running state.</p>
+          <p>Note that if you log in before starting your game (or even while you are playing your game) your game data 
+            will be saved and you will be able to resume playing any of your games. If you are not logged in, you can 
+            still play the game but your game will be lost once you log out or exit the Train Tycoon web site.
           </p>
-          <p>Note that the data is not saved anywhere. Hence you will need to start again once you close the Game
-            browser
-            window
-            or the computer.
+          <p>Try and become a <img src='toytrain.png'>Train Tycoon<img src='toytrain.png'> by Pd 500.</p>
+          <p>If you are the impatient type you can speed up the game by clicking on the <keytype>+</keytype> key once or repeatedly in the Running state. This makes the time fly past faster. Similarly the game slows down with the <keytype>-</keytype> key. You can even make the time come to a full stop by pressing the  <keytype>p</keytype> key. It is for
+            pausing the game so that you can take actions to achieve your goals without worrying about what might happen while you are at it. For instance once you are in the paused state you can press the <keytype>r</keytype> key to get into the route
+            editing or the <keytype>t</keytype> key for getting in to the Train Editing state. 
           </p>
-          <p>Try and become a Train Tycoon by Pd 500.</p>
-          <p>You can speed up the game by clicking on the <keytype>+</keytype> key once or repeatedly in the Running
-            state.
-            This makes the time
-            pass fast.
-            Similarly the game slows down with the <keytype>-</keytype> key. <keytype>p</keytype> key is ofcourse for
-            pausing the game. Once you are in the Paused
-            state you can add another route, by first pressing the <keytype>r</keytype> key to get into the route
-            editing
-            state and then by pressing the
-            <keytype>a</keytype> key to add a route and then clicking on the starting station and so forth. Similarly
-            from
-            the paused state you can add or remove coaches
-            in any of the existing trains. You do this by first pressing the <keytype>t</keytype> for getting in to
-            the
-            Train Editing state and then selecting the right
-            train by pressing the <keytype>n</keytype> key and once the correct train is selected, pressing the
-            <keytype>+
-            </keytype> to add a coach and <keytype>-</keytype> to
-            remove a coach.
+          <p>I am sure you are thinking that the game would be worth trying if you did not have to remember all these keys. Well infact you do not have to remember these keys. In the game screen, the top portion of the screen always shows your various states and what key presses do what!! Now you are thinking <img src='toytrain.png'>Train Tycoon<img src='toytrain.png'> is awesome!! If that thought is still eluding you, my hope is that you change your opinion once you play the game and the money starts rolling in!!!
           </p>
         </div>
       </div>
@@ -94,41 +63,29 @@
           <h4>Route Editing State</h4>
           <div class="explanation">
 
-            <p>Here the idea is to identify the route that your train should take between two or more cities. So you
-              will
-              click on one city and then on another city or a point between those cities and so on tracing the route
-              from
-              one
-              city to 2 or more
-              cities. As you continue to click, you will see lines between those points. While you will be clicking to
-              draw
-              straight
-              lines, the game will automatically create curved lines between each pair of straight lines that meet an an
-              angle.
-              Note that since the train cannot take sharp turns, the angle beween 2 lines cannot be less than 90
-              degrees.
-              Similarly each line
-              has to be a reasonable size. These two are incorporated in the user interface by ensuring that the click
-              results
-              in a line only
-              if both these conditions are true.
-              If you to delete the last point you clicked, you can press the <keytype>d</keytype> key. If you have
-              completed
-              one route
-              and want to create another route, you will press the <keytype>a</keytype> key. This will start the process
-              of
-              adding another
-              route. Any number of routes can start at a city or end at a city or transit through a city.
-              Once you have created the routes, they cannot be edited or deleted.
-              When you have created one or more routes, you can press the <keytype>g</keytype> key to get into the game
-              mode.
-              However by
-              default a train will get only one coach. If you want to add a additional coach you should press the
-              <keytype>t
-              </keytype> key for Train Editing
-              and add a coach by pressing the <keytype>+</keytype> key.
-              A separate train will run on each of the routes.
-              Cost of the track is proportional to the distance of the route.
+            <p>Here the idea is to identify the route that your train should take between two or more cities. So you will click on one city and then on another city or a point between those cities and so on tracing the route from one city to 2 or more cities.</p>
+            <p>As you continue to click, you will see lines between those points. While you will be clicking to draw straight
+            lines, the game will automatically create curved lines between each pair of straight lines that meet an an angle.
+            Note that since the train cannot take sharp turns, the angle beween 2 lines cannot be less than 90 degrees. Similarly each line
+            has to be a reasonable size. These two are incorporated in the user interface by ensuring that the click
+            results
+            in a line only
+            if both these conditions are true.
+            If you want to delete the last point you clicked, you can press the <keytype>d</keytype> key. If you have completed one route
+            and want to create another route, you will press the <keytype>a</keytype> or the <keytype>Escape</keytype> key. This will start the process
+            of
+            adding another
+            route. Any number of routes can start at a city or end at a city or transit through a city.
+            Once you have created the routes, they cannot be edited or deleted.
+            When you have created one or more routes, you can press the <keytype>g</keytype> key to get into the game
+            mode.
+            However by
+            default a train will get only three passenger coaches and one goods wagon. If you want to add a additional coach you should press the
+            <keytype>t
+            </keytype> key for Train Editing
+            and add a coach by pressing the <keytype>+</keytype> key.
+            A separate train will run on each of the routes.
+            Cost of the track is proportional to the distance of the route.
             </p>
           </div>
           <h4>Train Editing State</h4>
@@ -599,9 +556,11 @@
           </table>
         </div>
       </div>
-
-      <video controls width="500" src="iittrain.mp4" type="video/mp4">
-      </video>
+      <div id='video'>
+        <h3>Video - Intro to Basics</h3>
+        <video controls width="800" src="iittrain.mp4" type="video/mp4">
+        </video>
+      </div>
 
 
       <div id='contact'>
