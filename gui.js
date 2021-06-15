@@ -72,8 +72,21 @@ function displayPerformanceTable(cash){
 async function displayLeaderboardTable(email,leaderboardPeriods){
    let periodlist = leaderboardPeriods.join(',')
    let rows = await getLeaderboard(email,periodlist)
+   let playeremail = localStorage.getItem(`email`)
+
+   if(playeremail.startsWith(`anonymous-`)){
+      playeremail = `Anon(${playeremail.slice(-6)})`
+   }
    //console.log(JSON.stringify(rows))
    removeAllTableRows(leaderboardtable,3)  
+
+   //for anonymous players - shorten their email
+   rows.forEach(item=>{
+      if(item.email.startsWith(`anonymous-`)){
+         item.email = `Anon(${item.email.slice(-6)})`
+      }
+   })
+   //for anonymous players - shorten their email
 
    //create new objects
    let newobj = {}
@@ -94,6 +107,20 @@ async function displayLeaderboardTable(email,leaderboardPeriods){
       pdobj.sort((a,b)=>a.rank_number-b.rank_number)
    }
    //sort each object by rank_number
+
+   //for each pdobj if player email appears in any of the first 3 positions, show it in the 4th position
+   for(let i=0;i<rows.length-1;i++){
+      let pd = rows[i].period
+      let pdobj = newobj[`P${pd}`]
+      let playerobj = pdobj.find(item=>item.email==playeremail)
+      if(!pdobj[3])pdobj[3]={email:'',openingcash:0}
+      if(playerobj){
+         pdobj[3].email=playerobj.rank_number
+         pdobj[3].cash =playerobj.openingcash
+      }
+   }
+   //for each pdobj if player email appears in any of the first 3 positions, show it in the 4th position
+
 
    const tbody = document.querySelector("#leaderboardtable tbody")
    for(let r=0; r<leaderboardPeriods.length; r++){
@@ -155,7 +182,8 @@ function displayPassengersTable(rows){
 }
 function removeAllTableRows(tbl,numheaderrows){
    while(tbl.rows.length>numheaderrows){
-      tbl.deleteRow(tbl.rows.length-1)
+      //deletes the last row
+      tbl.deleteRow(-1)
    }   
 }
 

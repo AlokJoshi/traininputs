@@ -733,8 +733,8 @@ class Game {
     let path_data = await getPathData(this.gameid)
     let numPaths = path_data.length
     let pathArray = path_data
-    console.log(numPaths)
-    console.log(JSON.stringify(pathArray[0]))
+    // console.log(numPaths)
+    // console.log(JSON.stringify(pathArray[0]))
     this.paths = new Paths(this)
     for (let iPath = 0; iPath < numPaths; iPath++) {
       let path = new Path(this, this.ctx_foreground, this.ctx_routedesign)
