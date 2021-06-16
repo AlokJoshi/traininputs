@@ -96,10 +96,10 @@ class Paths {
       }
     }
   }
-  animate(canvas, ctx_background) {
+  animate(ctx_background,frame) {
     for (let i = 0; i < this.numPaths; i++) {
       if(this._paths[i].wp.length>0){
-        this._paths[i].animate(canvas, ctx_background)
+        this._paths[i].animate(ctx_background,frame)
       }
     }
   }

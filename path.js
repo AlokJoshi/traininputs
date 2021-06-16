@@ -384,7 +384,7 @@ class Path {
       }
     }
   }
-  animate(canvas, ctx) {
+  animate(ctx,frame) {
     let p1, p3
     let event
     let ptgap = 6 - Game.WPL
@@ -565,14 +565,15 @@ class Path {
 
       
     }
-
-    this.i = this.going ? this.i + 1 : this.i - 1
-    if (this.i == this.wp.length) {
-      this.i = this.wp.length - 1
-      this.going = false
-    } else if (this.i == -1) {
-      this.i = 0
-      this.going = true
+    if(rects<=11 || (rects>11 && (frame%4!=0))){
+      this.i = this.going ? this.i + 1 : this.i - 1
+      if (this.i == this.wp.length) {
+        this.i = this.wp.length - 1
+        this.going = false
+      } else if (this.i == -1) {
+        this.i = 0
+        this.going = true
+      }
     }
   }
   

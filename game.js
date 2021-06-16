@@ -644,7 +644,7 @@ class Game {
       this.fields.forEach(f => f.animate())
       this.villages.animate(this.period, this.ctx_foreground)
       //this.field.animate()
-      this.paths.animate(this.background, this.ctx_foreground)
+      this.paths.animate(this.ctx_foreground,this.frames)
       this.water.animate()
       this.plane.animate()
       this.cloud.animate()

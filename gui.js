@@ -116,6 +116,7 @@ async function displayLeaderboardTable(email,leaderboardPeriods){
       if(!pdobj[0])pdobj[0]={email:'',openingcash:null,rank_number:1}
       if(!pdobj[1])pdobj[1]={email:'',openingcash:null,rank_number:2}
       if(!pdobj[2])pdobj[2]={email:'',openingcash:null,rank_number:3}
+      if(!pdobj[3])pdobj[3]={email:'',openingcash:null,rank_number:3}
       if(playerobj){
          pdobj[3].email=playerobj.rank_number
          pdobj[3].cash =playerobj.openingcash
