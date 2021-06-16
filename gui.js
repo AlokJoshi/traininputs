@@ -113,7 +113,9 @@ async function displayLeaderboardTable(email,leaderboardPeriods){
       let pd = rows[i].period
       let pdobj = newobj[`P${pd}`]
       let playerobj = pdobj.find(item=>item.email==playeremail)
-      if(!pdobj[3])pdobj[3]={email:'',openingcash:0}
+      if(!pdobj[0])pdobj[0]={email:'',openingcash:null,rank_number:1}
+      if(!pdobj[1])pdobj[1]={email:'',openingcash:null,rank_number:2}
+      if(!pdobj[2])pdobj[2]={email:'',openingcash:null,rank_number:3}
       if(playerobj){
          pdobj[3].email=playerobj.rank_number
          pdobj[3].cash =playerobj.openingcash
