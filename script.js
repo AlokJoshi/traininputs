@@ -125,4 +125,5 @@ window.onload = async () => {
   }
 
 
+  //socket.emit('chat','I am in')
 }

@@ -184,6 +184,7 @@ class Game {
 
     this.bezierPaths.drawRoads()
 
+    this.chat = new Chat()
 
     //todo: later I should convert it into a Fields class
     this.fields = []
@@ -213,6 +214,7 @@ class Game {
     document.addEventListener("money", e => {
       this.money.play()
     })
+
   }
 
 

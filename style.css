@@ -332,8 +332,37 @@ keytype {
   padding: 12px 15px;
 }
 .content-table tbody tr{
-  border: 1px solid #dddddd;
+  border: 1px solid #6269e4;
 }
 .content-table tbody tr:nth-of-type(even){
   background-color: #e3e3e3;
+}
+
+#messages{
+  height:500px;
+  border:2px solid #6269e4;
+  border-radius: 2px;
+  margin:2px 0px;
+  overflow: auto;
+}
+
+#messages > p{
+  border-bottom: 1px solid #e3e3e3;
+  text-indent: 0px;
+}
+
+#inputline{
+  display:grid;
+  grid-template-columns: 1fr 60px;
+  margin:2px 0px;
+}
+
+#time{
+  background-color:  #efd2d2;
+  border-radius: 5px;
+}
+
+#email{
+  background-color:  #d2dfef;
+  border-radius: 5px;
 }

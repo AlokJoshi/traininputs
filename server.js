@@ -1,3 +1,6 @@
+const { Server } = require("socket.io")
+const Filter = require("bad-words")
+const filter = new Filter()
 const express = require('express')
 const { join } = require('path')
 const app = express()
@@ -71,3 +74,14 @@ app.put("/api/path", path.updatePath)
 app.get("/api/leaderboard/email/:email/periods/:periods",leaderboard.getleaderboard)
 
 const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
+
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log(`a user connected with a socket.id of ${socket.id}`);
+  socket.on('chat',function(msg){
+    //console.log(`message received from: ${msg.email}, message:${filter.clean(msg.message)}`)
+    //this emits the message to all connected clients
+    msg.message = filter.clean(msg.message)
+    io.emit('chat',msg)
+  })
+});
