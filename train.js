@@ -8,6 +8,7 @@ class Train {
   }
   addPassengerCoach = async() => {
     this.passengercoaches++  
+    this.path.game.milestone.send(`Train:${this.path.name} passenger coaches increased to ${this.passengercoaches}`)
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB,this.passengercoaches,this.goodscoaches)
   }
   removePassengerCoach = async() => {
