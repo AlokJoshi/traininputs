@@ -77,9 +77,9 @@ const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
 
 const io = new Server(server);
 io.on('connection', (socket) => {
-  console.log(`a user connected with a socket.id of ${socket.id}`);
+  //console.log(`a user connected with a socket.id of ${socket.id}`);
   socket.on('chat',function(msg){
-    //console.log(`message received from: ${msg.email}, message:${filter.clean(msg.message)}`)
+    console.log(`message received from: ${msg.email}, message:${filter.clean(msg.message)}`)
     //this emits the message to all connected clients
     msg.message = filter.clean(msg.message)
     io.emit('chat',msg)

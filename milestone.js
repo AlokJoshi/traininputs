@@ -1,29 +1,29 @@
 class Milestone{
-  constructor(socket){
+  constructor(socket,email){
     this.milestones = document.getElementById('milestones')
     this.socket = socket
+    this.email = email
     this.socket.on('milestone',(msg)=>{
       this.display(msg)
     })
   }
-  send = (email,milestone)=>{
+  send = (milestone)=>{
     let d=new Date()
     this.socket.emit('milestone',{
-      email:email,
+      email:this.email,
       time:`${d.getUTCHours()}:${d.getUTCMinutes()} GMT`,
       milestone:milestone
     })
   }
   display = (msg)=>{
     console.log(JSON.stringify(msg)) 
-    let myemail = localStorage.getItem('email')
-    if(myemail!=msg.email){
+    //if(this.email=msg.email){
       this.milestones.innerHTML += `<p>
       <span id="email"> 
       <span class="iconify" data-icon="carbon:email" data-inline="true"></span>
       ${msg.email} </span>
       <span id="time">${msg.time}</span> ${msg.milestone}
       </p>` 
-    }
+    //}
   }
 }
