@@ -61,6 +61,7 @@ class Path {
       //set cannot be async
       this.onFinalized()
       console.log(`On finalized completed`)
+      this.game.milestone.send(`Launched train: ${this.name}`)
     }
   }
   onFinalized = async () => {
