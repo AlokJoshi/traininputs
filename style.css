@@ -15,9 +15,7 @@ body{
 .explanation{
   margin:10px;
 }
-.explanation > p:nth-child(2n){
-  /* color: #6a83f1; */
-}
+
 .navbar{
   width:100%;
   display:grid;
@@ -365,4 +363,17 @@ keytype {
 #email{
   background-color:  #d2dfef;
   border-radius: 5px;
+}
+
+#milestone{
+  height:500px;
+  border:2px solid #6269e4;
+  border-radius: 2px;
+  margin:2px 0px;
+  overflow: auto;
+}
+
+#milestones > p{
+  border-bottom: 1px solid #e3e3e3;
+  text-indent: 0px;
 }

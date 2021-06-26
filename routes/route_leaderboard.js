@@ -4,7 +4,7 @@ const knex = require('../services/dbservice')
 function getleaderboard(req,res){
   let periods=req.params.periods
   let email=req.params.email
-  console.log(periods)
+  //console.log(periods)
   periods=periods.split(',')
   let query=''
   for(let pd=0;pd<periods.length;pd++){

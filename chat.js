@@ -1,5 +1,6 @@
 class Chat{
-  constructor(){
+  constructor(socket){
+    this.socket = socket
     this.message = document.getElementById('message')
     this.btnmessage = document.getElementById('btnmessage')
     this.btnmessage.addEventListener('click', ()=>{
@@ -20,7 +21,6 @@ class Chat{
       e.stopPropagation()
     })
     this.messages = document.getElementById('messages')
-    this.socket = io()
     this.socket.on('chat',(msg)=>{
       this.display(msg)
     })
@@ -34,9 +34,9 @@ class Chat{
     })
   }
   display = (msg)=>{
-    console.log(JSON.stringify(msg)) 
+    //console.log(JSON.stringify(msg)) 
     let myemail = localStorage.getItem('email')
-    console.log(myemail,msg.email)
+    //console.log(myemail,msg.email)
     this.messages.innerHTML += `<p>
                                 <span id="email"> 
                                 <span class="iconify" data-icon="carbon:email" data-inline="true"></span>

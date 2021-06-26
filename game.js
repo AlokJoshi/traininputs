@@ -184,7 +184,10 @@ class Game {
 
     this.bezierPaths.drawRoads()
 
-    this.chat = new Chat()
+    this.socket = io()
+    this.chat = new Chat(this.socket)
+    this.milestone = new Milestone(this.socket)
+    this.milestone.send(this.email,`Game started`)
 
     //todo: later I should convert it into a Fields class
     this.fields = []
@@ -247,11 +250,11 @@ class Game {
         }
       }
     })
-    document.getElementById('p').addEventListener('click', e => {
-      this.state = Game.PAUSED_STATE
-      this.updateHUD()
-      return
-    })
+    // document.getElementById('p').addEventListener('click', e => {
+    //   this.state = Game.PAUSED_STATE
+    //   this.updateHUD()
+    //   return
+    // })
   }
 
   drawRoutes() {
