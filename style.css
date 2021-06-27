@@ -82,6 +82,9 @@ table, th, td {
   width:1200;
   height:675;
 }
+#buttonmenu{
+  width:1200px;
+}
 #tooltip{
   position:absolute;
   padding: 5;
@@ -377,4 +380,16 @@ keytype {
 #milestones > p{
   border-bottom: 1px solid #e3e3e3;
   text-indent: 0px;
+}
+
+#buttonmenu > button{
+  width:50px
+}
+
+#buttonmenu > div{
+  display:grid
+}
+
+#routeeditstate{
+  grid-template-columns: repeat(6,1fr);
 }

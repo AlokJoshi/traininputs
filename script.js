@@ -93,9 +93,10 @@ const logout = () => {
   })
 }
 
-const start = () => {
-  let event = new KeyboardEvent("keyup", { "code": "Space" });
-  document.dispatchEvent(event)
+const presskey = (key) => {
+  let event = new KeyboardEvent("keyup", { "key": key });
+  document.dispatchEvent(event) 
+  console.log(`dispatched keyup event for ${key} to document`) 
 }
 
 window.onload = async () => {

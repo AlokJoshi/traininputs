@@ -93,9 +93,11 @@ class Game {
     this.hudElement = document.querySelector('#hud')
     this.cloudsElement = document.querySelector('#cloud')
     this.tooltipElement = document.querySelector('#tooltip')
-
+    this.buttonmenu = document.querySelector('#buttonmenu')
+    
     this.background.width = Game.WIDTH
     this.background.height = Game.HEIGHT
+    this.buttonmenu.width = Game.WIDTH
 
     this.foreground.width = Game.WIDTH
     this.foreground.height = Game.HEIGHT
@@ -314,7 +316,7 @@ class Game {
     //document.onkeypress = (event) => {
     document.onkeyup = (event) => {
 
-      if (event.code === 'Space') {
+      if (event.key === ' ') {
         //console.log(`Space key pressed`)
         noncanvases.style.visibility = noncanvases.style.visibility === 'collapse' ? 'visible' : 'collapse'
         canvases.style.visibility = canvases.style.visibility === 'collapse' ? 'visible' : 'collapse'

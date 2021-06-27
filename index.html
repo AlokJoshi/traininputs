@@ -31,7 +31,7 @@
               <li><a href="#contact">Contact</a></li>
               <li id="btn-login" onclick="login()"><a href=#>Log in</a></li>
               <li id="btn-logout" onclick="logout()"><a href=#>Log out</a></li>
-              <li id="btn-start" onclick="start()"><a href=#>Start</a></li>
+              <li id="btn-start" onclick="presskey(' ')"><a href=#>Start</a></li>
             </ul>
           </div>
         </div>
@@ -734,13 +734,51 @@
     <canvas id="cloud"></canvas>
     <canvas id="routedesign"></canvas>
     <canvas id="hud"></canvas>
-    <!-- <div id="buttonmenu">
-      <button id="p">P</button>
-      <button id="r">R</button>
-      <button id="t">T</button>
-      <button id="+">+</button>
-      <button id="-">-</button>
-    </div> -->
+    <div id="buttonmenu">
+      <div id="routeeditstate">
+        <button onclick="presskey('d')">d</button>
+        <button onclick="presskey('a')">a</button>
+        <button onclick="presskey('t')">t</button>
+        <button onclick="presskey('g')">g</button>
+        <button onclick="presskey(' ')">space</button>
+        <button onclick="presskey('x')">x</button>
+      </div>
+      <div id="traineditstate" style="visibility:collapse">
+        <button onclick="presskey('+')">+</button>
+        <button onclick="presskey('-')">-</button>        
+        <button onclick="presskey('greaterthan')">&gt;</button>        
+        <button onclick="presskey('lessthan')">&lt;</button>        
+        <button onclick="presskey('n')">n</button>
+        <button onclick="presskey('g')">g</button>
+        <button onclick="presskey(' ')">space</button>
+        <button onclick="presskey('x')">x</button>
+      </div>
+      <div id="runningstate" style="visibility:collapse">
+        <button onclick="presskey('p')">p</button>
+        <button onclick="presskey('+')">+</button>
+        <button onclick="presskey('-')">-</button>        
+        <button onclick="presskey('w')">w</button>        
+        <button onclick="presskey('n')">n</button>
+        <button onclick="presskey(' ')">space</button>
+        <button onclick="presskey('x')">x</button>
+      </div>
+      <div id="pausedstate" style="visibility:collapse">
+        <button onclick="presskey('r')">r</button>
+        <button onclick="presskey('t')">t</button>
+        <button onclick="presskey('g')">g</button>
+        <button onclick="presskey(' ')">space</button>
+        <button onclick="presskey('x')">x</button>
+      </div>
+      <div id="abouttoexitstate" style="visibility:collapse">
+        <button onclick="presskey('g')">g</button>
+        <button onclick="presskey('n')">n</button>
+        <button onclick="presskey('r')">r</button>
+        <button onclick="presskey('s')">s</button>
+        <button onclick="presskey(' ')">space</button>
+        <button onclick="presskey('y')">y</button>
+      </div>
+      
+    </div>
   </div>
 
   <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
