@@ -93,6 +93,11 @@ const logout = () => {
   })
 }
 
+const start = () => {
+  let event = new KeyboardEvent("keyup", { "code": "Space" });
+  document.dispatchEvent(event)
+}
+
 window.onload = async () => {
   await conifigureClient()
   updateUI()
