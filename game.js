@@ -187,7 +187,7 @@ class Game {
     this.socket = io()
     this.chat = new Chat(this.socket)
     this.milestone = new Milestone(this.socket,this.email)
-    this.milestone.send(`Game started`)
+    this.milestone.send(0,`Game started`)
 
     //todo: later I should convert it into a Fields class
     this.fields = []

@@ -7,12 +7,12 @@ class Milestone{
       this.display(msg)
     })
   }
-  send = (milestone)=>{
+  send = (period,milestone)=>{
     let d=new Date()
     this.socket.emit('milestone',{
       email:this.email,
       time:`${d.getUTCHours()}:${d.getUTCMinutes()} GMT`,
-      milestone:milestone
+      milestone:`Pd:${period}:${milestone}`
     })
   }
   display = (msg)=>{

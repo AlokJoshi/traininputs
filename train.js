@@ -8,25 +8,25 @@ class Train {
   }
   addPassengerCoach = async () => {
     this.passengercoaches++
-    this.path.game.milestone.send(`Train:${this.path.name} passenger coaches increased to ${this.passengercoaches}`)
+    this.path.game.milestone.send(this.path.game.period,`Train:${this.path.name} passenger coaches increased to ${this.passengercoaches}`)
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB, this.passengercoaches, this.goodscoaches)
   }
   removePassengerCoach = async () => {
     if (this.passengercoaches > 0) {
       this.passengercoaches--
-      this.path.game.milestone.send(`Train:${this.path.name} passenger coaches decreased to ${this.passengercoaches}`)
+      this.path.game.milestone.send(this.path.game.period,`Train:${this.path.name} passenger coaches decreased to ${this.passengercoaches}`)
       await saveUpdatedTrainInfoToDB(this.path.PathIdInDB, this.passengercoaches, this.goodscoaches)
     }
   }
   addGoodsCoach = async () => {
     this.goodscoaches++
-    this.path.game.milestone.send(`Train:${this.path.name} wagons increased to ${this.goodscoaches}`)
+    this.path.game.milestone.send(this.path.game.period,`Train:${this.path.name} wagons increased to ${this.goodscoaches}`)
     await saveUpdatedTrainInfoToDB(this.path.PathIdInDB, this.passengercoaches, this.goodscoaches)
   }
   removeGoodsCoach = async () => {
     if (this.goodscoaches > 0) {
       this.goodscoaches--
-      this.path.game.milestone.send(`Train:${this.path.name} wagons decreased to ${this.goodscoaches}`)
+      this.path.game.milestone.send(this.path.game.period,`Train:${this.path.name} wagons decreased to ${this.goodscoaches}`)
       await saveUpdatedTrainInfoToDB(this.path.PathIdInDB, this.passengercoaches, this.goodscoaches)
     }
   }
