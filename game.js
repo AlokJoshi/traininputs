@@ -46,7 +46,7 @@ class Game {
 
   static PERIODS_TO_SUMMARIZE = 10
 
-  static LEADERBOARDPERIODS = [50,100,200,300,400,500]
+  static LEADERBOARDPERIODS = [50, 100, 200, 300, 400, 500]
 
   //following variables are referenced with this.xx in Game methods
   ms = 50
@@ -94,10 +94,12 @@ class Game {
     this.cloudsElement = document.querySelector('#cloud')
     this.tooltipElement = document.querySelector('#tooltip')
     this.buttonmenu = document.querySelector('#buttonmenu')
-    
+
     this.background.width = Game.WIDTH
     this.background.height = Game.HEIGHT
-    this.buttonmenu.width = Game.WIDTH
+    this.buttonmenu.width = 50
+    this.buttonmenu.top = 0
+    this.buttonmenu.left = 1150
 
     this.foreground.width = Game.WIDTH
     this.foreground.height = Game.HEIGHT
@@ -109,7 +111,7 @@ class Game {
     this.cloudsElement.height = Game.HEIGHT
 
     this.hudElement.width = Game.WIDTH
-    this.hudElement.height = 40 
+    this.hudElement.height = 40
 
     this.ctx_background = this.background.getContext('2d')
     this.ctx_foreground = this.foreground.getContext('2d')
@@ -188,8 +190,8 @@ class Game {
 
     this.socket = io()
     this.chat = new Chat(this.socket)
-    this.milestone = new Milestone(this.socket,this.email)
-    this.milestone.send(0,`Game started`)
+    this.milestone = new Milestone(this.socket, this.email)
+    this.milestone.send(0, `Game started`)
 
     //todo: later I should convert it into a Fields class
     this.fields = []
@@ -323,7 +325,7 @@ class Game {
         displayPassengersTable(this.passengers.passengers)
         displayTicketPricesTable(this.tickets.tickets)
         displayPerformanceTable(this.cash)
-        displayLeaderboardTable(this.email,Game.LEADERBOARDPERIODS)
+        displayLeaderboardTable(this.email, Game.LEADERBOARDPERIODS)
         setTimeout(() => {
           window.scrollTo(0, -30);
         }, 50)
@@ -342,9 +344,9 @@ class Game {
               this.lastClick.x = null
               this.lastClick.y = null
               this.currentPath = null
-            }else{
-              this.lastClick.x = this.currentPath.points[this.currentPath.length-1].x
-              this.lastClick.y = this.currentPath.points[this.currentPath.length-1].y
+            } else {
+              this.lastClick.x = this.currentPath.points[this.currentPath.length - 1].x
+              this.lastClick.y = this.currentPath.points[this.currentPath.length - 1].y
             }
           }
         } else if (event.key == 't') {
@@ -384,7 +386,7 @@ class Game {
             this.animate();
           } else {
             console.log(`No path finalized yet`)
-            let pu = new Popup(5000,false)
+            let pu = new Popup(5000, false)
             pu.show(`Create a route(s) and then the train(s) will start on those route(s)`)
           }
         } else if (event.key == 'a' || event.key == 'Escape') {
@@ -471,7 +473,7 @@ class Game {
         }
         if (event.key == 'r' || event.key == 'R') {
           this.state = Game.PAUSED_STATE
-          let inputbox = new Gamename (this,this.gamename)
+          let inputbox = new Gamename(this, this.gamename)
           inputbox.show()
           return
         }
@@ -651,7 +653,7 @@ class Game {
       this.fields.forEach(f => f.animate())
       this.villages.animate(this.period, this.ctx_foreground)
       //this.field.animate()
-      this.paths.animate(this.ctx_foreground,this.frames)
+      this.paths.animate(this.ctx_foreground, this.frames)
       this.water.animate()
       this.plane.animate()
       this.cloud.animate()
@@ -669,30 +671,44 @@ class Game {
   }
 
   updateHUD = () => {
+    //remove active from all divs that re children of buttonmenu
+    let arr = [...this.buttonmenu.querySelectorAll('div')]
+    arr.forEach(element => element.classList.remove('active'))
+    let id = null //the id of the div within the buttonmenu element that has to have the active class
+
     let txt = `Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash / 1000)} K State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
         txt = `Route Editing: click-click, d(delete last click), a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
+        id = "#routeeditstate"
         break;
       case Game.TRAIN_EDITING_STATE:
         if (this.selectedPathNum == 0) this.selectedPathNum = 1
         let train = this.paths.getPath(this.selectedPathNum).train
         txt += `Train Editing (${this.paths.getPath(this.selectedPathNum).name}, coaches:${train.passengercoaches}, wagons:${train.goodscoaches}): +(add coach), -(remove coach), >(add wagon), <(remove wagon), n(next route), g(resume game), space(docs and back), x(exit)`
+        id = "#traineditstate"
         break;
       case Game.RUNNING_STATE:
         txt += `Running: p(pause), +(speed up), -(slow down), w(${this.makeSound == true ? 'whistle off' : 'whistle on'}), n(next train info), space(docs and back), x(exit)`
+        id = "#runningstate"
         break;
       case Game.PAUSED_STATE:
         txt += `Paused: r(Route Editing), t(Train Editing), g(resume game), space(docs and back), x(exit)`
+        id = "#pausedstate"
         break;
       case Game.READY_TO_EXIT_STATE:
         txt += `Ready to exit: g(resume game), n(new game), r(rename game), s(switch to another game) space(docs and back), y(yes I want to exit) `
+        id = "#readytoexitstate"
         break;
 
       default:
         break;
     }
     this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum - 1].name)
+    if(id){
+      let selecteddiv = this.buttonmenu.querySelector(id)
+      selecteddiv.classList.add('active')
+    }
   }
 
   get numPaths() {
@@ -765,8 +781,8 @@ class Game {
       //in the station object returned all the values are string values
       //we might need to convert them into numeric by multiplying them by 1
       //either here or in the constructor?
-      stations.forEach(st =>{
-        let station = new Station(path,st.name,st.wpn,st.x,st.y)
+      stations.forEach(st => {
+        let station = new Station(path, st.name, st.wpn, st.x, st.y)
         path.stations.push(station)
       })
 
@@ -784,16 +800,17 @@ class Game {
     console.log(`Game created with a gameid of ${gameid}`)
   }
 
-  async createNewGameInDB(){
-    let promise = await addGameForEmail(this.email, 'New Game #1')  
+  async createNewGameInDB() {
+    let promise = await addGameForEmail(this.email, 'New Game #1')
     let gameid = promise[0]
-    game = new Game(this.email,gameid,'New Game #1')
+    game = new Game(this.email, gameid, 'New Game #1')
   }
 
   exit() {
     this.previousstate = this.state
     this.state = Game.READY_TO_EXIT_STATE
   }
+
 }
 
 

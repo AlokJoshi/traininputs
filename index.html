@@ -735,7 +735,7 @@
     <canvas id="routedesign"></canvas>
     <canvas id="hud"></canvas>
     <div id="buttonmenu">
-      <div id="routeeditstate">
+      <div id="routeeditstate" class="active">
         <button onclick="presskey('d')">d</button>
         <button onclick="presskey('a')">a</button>
         <button onclick="presskey('t')">t</button>
@@ -743,7 +743,7 @@
         <button onclick="presskey(' ')">space</button>
         <button onclick="presskey('x')">x</button>
       </div>
-      <div id="traineditstate" style="visibility:collapse">
+      <div id="traineditstate">
         <button onclick="presskey('+')">+</button>
         <button onclick="presskey('-')">-</button>        
         <button onclick="presskey('greaterthan')">&gt;</button>        
@@ -753,7 +753,7 @@
         <button onclick="presskey(' ')">space</button>
         <button onclick="presskey('x')">x</button>
       </div>
-      <div id="runningstate" style="visibility:collapse">
+      <div id="runningstate">
         <button onclick="presskey('p')">p</button>
         <button onclick="presskey('+')">+</button>
         <button onclick="presskey('-')">-</button>        
@@ -762,14 +762,14 @@
         <button onclick="presskey(' ')">space</button>
         <button onclick="presskey('x')">x</button>
       </div>
-      <div id="pausedstate" style="visibility:collapse">
+      <div id="pausedstate">
         <button onclick="presskey('r')">r</button>
         <button onclick="presskey('t')">t</button>
         <button onclick="presskey('g')">g</button>
         <button onclick="presskey(' ')">space</button>
         <button onclick="presskey('x')">x</button>
       </div>
-      <div id="abouttoexitstate" style="visibility:collapse">
+      <div id="abouttoexitstate">
         <button onclick="presskey('g')">g</button>
         <button onclick="presskey('n')">n</button>
         <button onclick="presskey('r')">r</button>

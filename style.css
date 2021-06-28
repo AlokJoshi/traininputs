@@ -79,12 +79,10 @@ table, th, td {
     left: 0;
 }
 #background{
-  width:1200;
-  height:675;
-}
-#buttonmenu{
   width:1200px;
+  height:675px;
 }
+
 #tooltip{
   position:absolute;
   padding: 5;
@@ -290,8 +288,9 @@ keytype {
 */
 #buttonmenu{
   position:fixed;
-  top:650px;
-  left:0px;
+  top:0px;
+  left:1150px;
+  width:50px;
   padding: 5;
   color:rgba(0,0,0,.8);
   font-size:small;
@@ -383,13 +382,16 @@ keytype {
 }
 
 #buttonmenu > button{
-  width:50px
+  width:50px;
 }
 
-#buttonmenu > div{
+/* #buttonmenu > div{
   display:grid
-}
+} */
 
-#routeeditstate{
-  grid-template-columns: repeat(6,1fr);
+#routeeditstate,#traineditstate,#runningstate,#pausedstate,#abouttoexitstate{
+  display: none;
+}
+#routeeditstate.active,#traineditstate.active,#runningstate.active,#pausedstate.active,#abouttoexitstate.active{
+  display: grid;
 }
