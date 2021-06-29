@@ -254,11 +254,6 @@ class Game {
         }
       }
     })
-    // document.getElementById('p').addEventListener('click', e => {
-    //   this.state = Game.PAUSED_STATE
-    //   this.updateHUD()
-    //   return
-    // })
   }
 
   drawRoutes() {
@@ -679,7 +674,7 @@ class Game {
     let txt = `Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash / 1000)} K State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
-        txt = `Route Editing: click-click, d(delete last click), a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
+        txt += `Route Editing: click-click, d(delete last click), a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
         id = "#routeeditstate"
         break;
       case Game.TRAIN_EDITING_STATE:

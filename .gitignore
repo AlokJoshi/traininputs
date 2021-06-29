@@ -24,6 +24,7 @@ yarn-error.log*
 
 # Video files
 *.wmv
+*.mp4
 
 # Gimp files
 *.xcf

@@ -14,7 +14,7 @@ function updateTrainInfo (req, res) {
   const pathid = req.body.pathid
   const passengercoaches = req.body.passengercoaches
   const goodscoaches = req.body.goodscoaches
-  console.log(`app.post("/api/train",pathid:${pathid},${passengercoaches},${goodscoaches}`)
+  //console.log(`app.post("/api/train",pathid:${pathid},${passengercoaches},${goodscoaches}`)
   knex('path')
     .where('id',pathid)
     .update({ passengercoaches:passengercoaches, 
