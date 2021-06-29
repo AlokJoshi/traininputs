@@ -26,7 +26,14 @@ const updateUI = async () => {
       //document.getElementById("ipt-access-token").innerHTML = await auth0.getTokenSilently()
       loggedInUser = await auth0.getUser()
       const email = loggedInUser.email
-      document.querySelector(".user").innerHTML = email
+      localStorage.setItem('email', email)
+      localStorage.setItem('picture', loggedInUser.picture)
+      localStorage.setItem('nickname', loggedInUser.nickname)
+
+      document.querySelector("#usernickname").innerHTML = loggedInUser.nickname
+      document.querySelector("#userpicture").src = loggedInUser.picture
+      document.querySelector("#userpicture").title = email
+
       //document.getElementById("ipt-user-profile").innerHTML = JSON.stringify(loggedInUser)
       const userInDB = await getUser(email)
       console.log(`User in DB with an email of ${email}: ${JSON.stringify(userInDB)}`)
@@ -47,11 +54,11 @@ const updateUI = async () => {
             done = games.map(game=>game.id).includes(selectedgameid)
           }
           localStorage.setItem('gameid',selectedgameid)
-          localStorage.setItem('email',email)
+          //localStorage.setItem('email',email)
           game = new Game(email,selectedgameid,games.filter(game=>game.id==selectedgameid).gamename)
         }else{
           localStorage.setItem('gameid',games[0].id)
-          localStorage.setItem('email',email)
+          //localStorage.setItem('email',email)
           game = new Game(email,games[0].id,games[0].gamename)
         }
         game.loadFromDB() 
@@ -59,16 +66,21 @@ const updateUI = async () => {
         //since the user has been authenticated but does not exist in DB
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
         console.log(`Gameid returned by createUserAndDefaultGame: ${gameid}`)
-        localStorage.setItem('email', email)
+        //localStorage.setItem('email', email)
         localStorage.setItem('gameid', gameid)
         game = new Game(email, gameid, Game.START_GAME_NAME)
       }
     } else {
-        // document.getElementById("gated-content").classList.add("hidden")
+        // user has not logged in and so has not been authenticated against auth0 
         let email = 'anonymous-'+ Date.now()
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
         localStorage.setItem('email', email)
         localStorage.setItem('gameid', gameid)
+        document.querySelector("#userpicture").title = `Email: ${email}`
+        let src = `https://www.gravatar.com/avatar/${MD5(email)}?s=32&d=identicon`
+        console.log(`Gravatar image: ${src}`)
+        document.querySelector("#userpicture").src = src
+        
         game = new Game(email, gameid, Game.START_GAME_NAME)
     }
     displayLeaderboardTable(localStorage.getItem('email'),Game.LEADERBOARDPERIODS)
@@ -79,7 +91,6 @@ const updateUI = async () => {
 }
 
 const login = async () => {
-  console.log(`window.location.origin: ${window.location.origin}`)
   await auth0.loginWithRedirect({
     redirect_uri: window.location.origin
   })
@@ -88,6 +99,7 @@ const login = async () => {
 const logout = () => {
   localStorage.removeItem('email')
   localStorage.removeItem('gameid')
+  localStorage.removeItem('picture')
   auth0.logout({
     returnTo: window.location.origin
   })
@@ -96,7 +108,6 @@ const logout = () => {
 const presskey = (key) => {
   let event = new KeyboardEvent("keyup", { "key": key });
   document.dispatchEvent(event) 
-  console.log(`dispatched keyup event for ${key} to document`) 
 }
 
 window.onload = async () => {
@@ -107,7 +118,9 @@ window.onload = async () => {
   const isAuthenticated = await auth0.isAuthenticated()
 
   if (isAuthenticated) {
-
+    let pr = await auth0.getUser()
+    localStorage.setItem('picture',pr.picture)
+    localStorage.setItem('nickname',pr.nickname)
     //show the gated content and return
     return
   }
@@ -121,7 +134,6 @@ window.onload = async () => {
   //and establish a connection with Auth0 web site.
 
   const query = window.location.search
-  console.log(query)
   if (query.includes("code=") && query.includes("state=")) {
     //process the login state
     await auth0.handleRedirectCallback()

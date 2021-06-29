@@ -55,7 +55,8 @@ body{
 .brand-title{
   width:100%;
   display:grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto 1fr 1fr;
+  gap:2px;
   font-size: 1.5rem;
   margin:.5rem;
   justify-items: center;
