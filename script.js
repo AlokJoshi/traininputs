@@ -44,23 +44,23 @@ const updateUI = async () => {
         let games = await getAllGamesForEmail(email)
         console.log(`data for getAllGamesForEmail(${email} is : ${JSON.stringify(games)})`)
         //games is an array of all games that this email was playing
+        let selectedGame=false
         if(games.length>1){
-          let done=false
           let list = games.map(game=>game.gamename + `, Id:(${game.id})`).join(",")
           let selectedgameid = 0
-          while (!done) {
+          while (!selectedGame) {
             selectedgameid = prompt(`Enter the game Id of the game you want to continue playing. The games you have played so far are: ${list}`)
             selectedgameid*=1
-            done = games.map(game=>game.id).includes(selectedgameid)
+            selectedGame = games.find(game=>selectedgameid==game.id)
           }
-          localStorage.setItem('gameid',selectedgameid)
-          //localStorage.setItem('email',email)
-          game = new Game(email,selectedgameid,games.filter(game=>game.id==selectedgameid).gamename)
         }else{
-          localStorage.setItem('gameid',games[0].id)
-          //localStorage.setItem('email',email)
-          game = new Game(email,games[0].id,games[0].gamename)
+          selectedGame=games[0]
         }
+        localStorage.setItem('gameid',selectedGame.id)
+        localStorage.setItem('email',email)
+        //localStorage.setItem('nickname',selectedGame.nickname)
+        //localStorage.setItem('picture',selectedGame.picture)
+        game = new Game(email,selectedGame.id,selectedGame.gamename)
         game.loadFromDB() 
       } else {
         //since the user has been authenticated but does not exist in DB

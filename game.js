@@ -796,9 +796,12 @@ class Game {
   }
 
   async createNewGameInDB() {
-    let promise = await addGameForEmail(this.email, 'New Game #1')
+    let games = await getAllGamesForEmail(email)
+    let gamename=`New Game #${games.length}`
+    let promise = await addGameForEmail(this.email, gamename)
     let gameid = promise[0]
-    game = new Game(this.email, gameid, 'New Game #1')
+    localStorage.setItem('gameid',gameid)
+    game = new Game(this.email, gameid, gamename)
   }
 
   exit() {

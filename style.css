@@ -398,9 +398,9 @@ keytype {
   display:grid
 } */
 
-#routeeditstate,#traineditstate,#runningstate,#pausedstate,#abouttoexitstate{
+#routeeditstate,#traineditstate,#runningstate,#pausedstate,#readytoexitstate{
   display: none;
 }
-#routeeditstate.active,#traineditstate.active,#runningstate.active,#pausedstate.active,#abouttoexitstate.active{
+#routeeditstate.active,#traineditstate.active,#runningstate.active,#pausedstate.active,#readytoexitstate.active{
   display: grid;
 }
