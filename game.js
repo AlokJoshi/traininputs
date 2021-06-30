@@ -699,13 +699,16 @@ class Game {
       default:
         break;
     }
-    this.hud.display(txt, this.state, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum - 1].name)
+    this.hud.display(txt, this.selectedPathNum == 0 ? 'None' : this.paths.paths[this.selectedPathNum - 1].name)
     if(id){
       let selecteddiv = this.buttonmenu.querySelector(id)
       selecteddiv.classList.add('active')
     }
   }
 
+  updateGameName = async (){
+    
+  }
   get numPaths() {
     return this.paths.numPaths
   }
