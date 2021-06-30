@@ -294,7 +294,6 @@ async function getWaypointData(pathid) {
 }
 async function saveStationToDB(pathid, name, wpn, x, y) {
   if(!pathid){
-    console.log(`%cStation info not saved to DB since the pathid was null`,`color:red`)
     return
   }
   let data = {
