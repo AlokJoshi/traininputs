@@ -10,7 +10,7 @@ class Hud{
       this._info.shift()
     }
   }
-  display(text,state,train){
+  display(text,train){
     //this.canvasElement.height = state==Game.RUNNING_STATE?1000:40
     this.canvasElement.height = 40
     this.ctx.fillStyle='rgba(256,256,256,.7)'

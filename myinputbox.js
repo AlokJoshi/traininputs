@@ -1,15 +1,21 @@
-class Gamename{
-  constructor(game,oldname){
-    this.game = game
-    this.oldname = oldname
+class Myinputbox{
+  //constructor(game,placeholder){
+  constructor(title,inputexplanation,placeholder,callback){
+    //this.game = game
     this.inputelement = document.querySelector('#inputpopup')
+    this.inputtitle = document.querySelector('#inputtitle')
+    this.inputexplanation = document.querySelector('#inputexplanation')
+    this.placeholder = placeholder
     this.width = 400
-    this.height = this.inputelement.height
-    //this.top = (window.innerHeight-this.height)/2
     this.left = (window.innerWidth-this.width)/2 
-    //this.inputelement.style = `display:grid;top:${this.top}px;left:${this.left}px;width:${this.width}px;height:${this.height}px`
+    this.ok = true
+    this.newvalue = null
+    this.callback = callback //callback expects this.ok and this.newvalue
+
+    this.inputexplanation.innerHTML=inputexplanation
+    this.inputtitle.innerHTML = title
     this.inputtext = document.getElementById('inputtext')
-    this.inputtext.placeholder = oldname
+    this.inputtext.placeholder = this.placeholder
     this.okbutton = document.getElementById('inputok')
     this.cancelbutton = document.getElementById('inputcancel')
     this.okbutton.addEventListener('click',this.rename)
@@ -23,26 +29,23 @@ class Gamename{
     this.inputelement.addEventListener('keydown',(e)=>{
       e.stopPropagation()
     })
-  }
-  show = () => {
     this.inputelement.style.left = `${this.left}px`
     this.inputelement.style.top = `${this.top}px`
     this.inputelement.style.width = `${this.width}px`
     this.inputelement.style.display = "grid"
     this.inputelement.style.visibility = "visible"
   }
-  rename = async () => {
-    await updateGameNameInDB(this.game.gameid, this.inputtext.value)
+  
+  rename = () => {
+    this.callback(true,this.inputtext.value)
     this.hide()
-    this.game.gamename = this.inputtext.value
-    this.game.state=this.game.previousstate
-    if(this.game.state==Game.RUNNING_STATE) this.game.animate()
   }
+  
   cancel = () => {
+    this.callback(false,null)
     this.hide()
-    this.game.state=this.game.previousstate
-    if(this.game.state==Game.RUNNING_STATE) this.game.animate()
   }
+
   hide = () => {
     this.inputelement.style = `display:none`
   }

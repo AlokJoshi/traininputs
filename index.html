@@ -688,27 +688,23 @@
     <div id="popup">
       <!-- svg for a steam engine -->
       <div class="popupheader">
-        <div class="popupimage">
-          <img src="toytrain.png" />
-        </div>
+        <img class="popupimage" src="toytrain.png" />
         <div class="popuptitle">
           Info
         </div>
+        <img class="popupimage" src="toytrain.png" />
       </div>
       <div class="popupbody">
         Lorem ipsum ...
       </div>
     </div>
     <div id="inputpopup">
-      <!-- svg for a steam engine -->
       <div class="inputheader">
-        <div class="inputimage">
-          <img src="toytrain.png" />
-        </div>
-        <div class="inputtitle">
-          Change Game Name
-        </div>
+        <img class="inputimage" src="toytrain.png" />
+        <div id="inputtitle"></div>
+        <img class="inputimage" src="toytrain.png" />
       </div>
+      <div id="inputexplanation"></div>
       <input id="inputtext" type="text" placeholder="Enter the new name for the game" />
       <div id="inputokcancelbuttons">
         <button id="inputok">OK</button>
@@ -743,48 +739,56 @@
     <canvas id="hud"></canvas>
     <div id="buttonmenu">
       <div id="routeeditstate" class="active">
-        <button onclick="presskey('d')">d</button>
-        <button onclick="presskey('a')">a</button>
-        <button onclick="presskey('t')">t</button>
-        <button onclick="presskey('g')">g</button>
-        <button onclick="presskey(' ')">space</button>
-        <button onclick="presskey('x')">x</button>
+        <button onclick="presskey('d')" title="delete/undo last click"><iconify-icon data-icon="ion:arrow-undo"></iconify-icon></button>
+        <button onclick="presskey('a')" title="add another route"><iconify-icon data-icon="carbon:add"></iconify-icon></button>
+        <button onclick="presskey('t')" title="train edit mode">train<iconify-icon data-icon="clarity:edit-line"></iconify-icon></button>
+        <button onclick="presskey('g')" title="resume game"><iconify-icon data-icon="radix-icons:resume"></iconify-icon></button>
+        <button onclick="presskey(' ')" title="back to docs"><iconify-icon data-icon="cib:read-the-docs"></iconify-icon></button>
+        <button onclick="presskey('x')" title="exit"><iconify-icon data-icon="vaadin:exit"></iconify-icon></button>
       </div>
       <div id="traineditstate">
-        <button onclick="presskey('+')">+</button>
-        <button onclick="presskey('-')">-</button>        
-        <button onclick="presskey('greaterthan')">&gt;</button>        
-        <button onclick="presskey('lessthan')">&lt;</button>        
-        <button onclick="presskey('n')">n</button>
-        <button onclick="presskey('g')">g</button>
-        <button onclick="presskey(' ')">space</button>
-        <button onclick="presskey('x')">x</button>
+        <button onclick="presskey('+')" title="add a passenger coach">add coach</button>
+        <button onclick="presskey('-')" title="remove a passenger coach">rem coach</button>        
+        <button onclick="presskey('greaterthan')" title="add a goods wagon"><img src="wagon.png" style="width:32px;height:32px">+</button>        
+        <button onclick="presskey('greaterthan')" title="add a goods wagon">add wagon</button>        
+        <button onclick="presskey('lessthan')" title="remove a goods wagon">rem wagon</button>        
+        <button onclick="presskey('n')" title="switch to next train">next trn</button>
+        <button onclick="presskey('g')" title="resume game"><iconify-icon data-icon="radix-icons:resume"></iconify-icon></button>
+        <button onclick="presskey(' ')" title="back to docs"><iconify-icon data-icon="cib:read-the-docs"></iconify-icon></button>
+        <button onclick="presskey('x')" title="exit"><iconify-icon data-icon="vaadin:exit"></iconify-icon></button>
       </div>
       <div id="runningstate">
-        <button onclick="presskey('p')">p</button>
-        <button onclick="presskey('+')">+</button>
-        <button onclick="presskey('-')">-</button>        
-        <button onclick="presskey('w')">w</button>        
-        <button onclick="presskey('n')">n</button>
-        <button onclick="presskey(' ')">space</button>
-        <button onclick="presskey('x')">x</button>
+        <button onclick="presskey('p')" title="pause the game">pause</button>
+        <button onclick="presskey('+')" title="speed up the game">speed up</button>
+        <button onclick="presskey('-')" title="slow down the game">slow down</button>        
+        <button onclick="presskey('w')" title="whistle on/off">whistle</button>        
+        <button onclick="presskey('n')" title="display detailed info for next game">n</button>
+        <button onclick="presskey(' ')" title="back to docs"><iconify-icon data-icon="cib:read-the-docs"></iconify-icon></button>
+        <button onclick="presskey('x')" title="exit"><iconify-icon data-icon="vaadin:exit"></iconify-icon></button>
       </div>
       <div id="pausedstate">
-        <button onclick="presskey('r')">r</button>
-        <button onclick="presskey('t')">t</button>
-        <button onclick="presskey('g')">g</button>
-        <button onclick="presskey(' ')">space</button>
-        <button onclick="presskey('x')">x</button>
+        <button onclick="presskey('r')" title="switch to route editing state">route</button>
+        <button onclick="presskey('t')" title="switch to train editing state">train</button>
+        <button onclick="presskey('g')" title="resume game"><iconify-icon data-icon="radix-icons:resume"></iconify-icon></button>
+        <button onclick="presskey(' ')" title="back to docs"><iconify-icon data-icon="cib:read-the-docs"></iconify-icon></button>
+        <button onclick="presskey('x')" title="exit"><iconify-icon data-icon="vaadin:exit"></iconify-icon></button>
       </div>
       <div id="readytoexitstate">
-        <button onclick="presskey('g')">g</button>
-        <button onclick="presskey('n')">n</button>
-        <button onclick="presskey('r')">r</button>
-        <button onclick="presskey('s')">s</button>
-        <button onclick="presskey(' ')">space</button>
-        <button onclick="presskey('y')">y</button>
+        <button onclick="presskey('g')" title="resume game"><iconify-icon data-icon="radix-icons:resume"></iconify-icon></button>
+        <button onclick="presskey('n')" title="new game">new</button>
+        <button onclick="presskey('r')" title="rename game">rename</button>
+        <button onclick="presskey('s')" title="switch to another game">switch</button>
+        <button onclick="presskey(' ')" title="back to docs"><iconify-icon data-icon="cib:read-the-docs"></iconify-icon></button>
+        <button onclick="presskey('y')" title="click y to exit completely">y</button>
       </div>
-      
+    </div>
+    <div id="hudnew">
+      <p style="border-radius:2px;padding:1px;color:yellow;background-color: rgba(50,50,50,1);position:relative;font-size:24px;line-height:32px;text-indent:0px;">
+
+        <iconify-icon data-icon="carbon:time-plot"></iconify-icon>0
+        <iconify-icon data-icon="emojione-v1:money-bag"></iconify-icon>0 
+        <img src="steamengineicon.png" style="width:24px;height:24px;background-color:yellow"/>
+      </p>
     </div>
   </div>
 
@@ -793,7 +797,7 @@
   <script src="socket.io.min.js"></script>
   <script src="chat.js"></script>
   <script src="milestone.js"></script>
-  <script src="gamename.js"></script>
+  <script src="myinputbox.js"></script>
   <script src="cloud.js"></script>
   <script src="location.js"></script>
   <script src="village.js"></script>

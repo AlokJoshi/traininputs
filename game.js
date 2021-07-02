@@ -467,9 +467,16 @@ class Game {
           return
         }
         if (event.key == 'r' || event.key == 'R') {
-          this.state = Game.PAUSED_STATE
-          let inputbox = new Gamename(this, this.gamename)
-          inputbox.show()
+          //this.state = Game.PAUSED_STATE
+          let inputbox = new Myinputbox('Rename Game','Game name in less than 100 characters',this.gamename,(ok,value)=>{
+            if(ok && value && value.trim()!=''){
+              value = value.trim().substring(0,100)
+              this.updateGameName(this.gameid,value)
+              this.gamename = value
+            }
+          })
+          //this.state=this.previousstate
+          //if(this.state==Game.RUNNING_STATE) this.animate()
           return
         }
         if (event.key == 'n' || event.key == 'N') {
@@ -706,9 +713,11 @@ class Game {
     }
   }
 
-  updateGameName = async (){
-    
+  updateGameName = async (gameid,newname) => {
+    //get the name of the game
+    await updateGameNameInDB(gameid, newname)
   }
+
   get numPaths() {
     return this.paths.numPaths
   }

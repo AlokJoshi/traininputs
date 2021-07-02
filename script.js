@@ -44,24 +44,35 @@ const updateUI = async () => {
         let games = await getAllGamesForEmail(email)
         console.log(`data for getAllGamesForEmail(${email} is : ${JSON.stringify(games)})`)
         //games is an array of all games that this email was playing
-        let selectedGame=false
+        let selectedGame=null
         if(games.length>1){
-          let list = games.map(game=>game.gamename + `, Id:(${game.id})`).join(",")
-          let selectedgameid = 0
-          while (!selectedGame) {
-            selectedgameid = prompt(`Enter the game Id of the game you want to continue playing. The games you have played so far are: ${list}`)
-            selectedgameid*=1
-            selectedGame = games.find(game=>selectedgameid==game.id)
-          }
+          //show it as a list
+          // let list = games.map(game=>`<li> Id:(${game.id}) Name:${game.gamename}</li>`).join(" ")
+          // let html = `<ul>${list}</ul>`
+          //show it as a table
+          let list = games.map(game=>`<tr> <td>${game.id}</td> <td>${game.lastperiod}</td> <td>${game.gamename}</td></tr>`).join(" ")
+          let html = `<table><tr><th>id</th><th>last period</th><th>game name</th></tr>${list}</table>`
+
+          let inputbox = new Myinputbox('Load a game from Database',
+            `<p>List below shows all the games you have played till now. Select the id of the game you want to play</p>
+            ${html}`,
+            'Enter ID' ,(ok,value)=>{
+              if(ok){
+                value = Number.parseInt(value)
+                selectedGame = games.find(game=>game.id==value)
+                if(selectedGame){
+                  localStorage.setItem('gameid',selectedGame.id)
+                  localStorage.setItem('email',email)
+                  game = new Game(email,selectedGame.id,selectedGame.gamename)
+                  game.loadFromDB() 
+                }else{
+                  //user did not elect to enter a valid game id
+                }
+              } 
+            })
         }else{
           selectedGame=games[0]
         }
-        localStorage.setItem('gameid',selectedGame.id)
-        localStorage.setItem('email',email)
-        //localStorage.setItem('nickname',selectedGame.nickname)
-        //localStorage.setItem('picture',selectedGame.picture)
-        game = new Game(email,selectedGame.id,selectedGame.gamename)
-        game.loadFromDB() 
       } else {
         //since the user has been authenticated but does not exist in DB
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
@@ -84,10 +95,10 @@ const updateUI = async () => {
         game = new Game(email, gameid, Game.START_GAME_NAME)
     }
     displayLeaderboardTable(localStorage.getItem('email'),Game.LEADERBOARDPERIODS)
-    document.title=`Train Tycoon-${game.gamename}`
   } catch (err) {
     console.log(`Error in UpdateUI: ${err}`)
   } //end of try catch block
+  document.title=`Train Tycoon${game?.gamename ? "-"+game?.gamename : ""}`
 }
 
 const login = async () => {

@@ -246,7 +246,7 @@ keytype {
 #popup , #inputpopup{
   position: absolute;
   z-index: 100;
-  background-color: rgb(255, 182, 193,0.7);
+  background-color: rgb(255, 182, 193,0.90);
   border: black 1px solid;
   border-radius: 20px;
   display: none;
@@ -256,6 +256,11 @@ keytype {
   pointer-events:unset; 
   top:50%;
   transform: translateY(-50%); 
+}
+#inputexplanation{
+  height:200px;
+  overflow: auto;
+  padding: 10px;
 }
 
 .hidden{
@@ -403,4 +408,10 @@ keytype {
 }
 #routeeditstate.active,#traineditstate.active,#runningstate.active,#pausedstate.active,#readytoexitstate.active{
   display: grid;
+}
+
+#hudnew{
+  position:absolute;
+  top:0px;
+  left:0px;
 }

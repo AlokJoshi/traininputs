@@ -1,5 +1,8 @@
 
 const knex = require('../services/dbservice')
+const Filter = require("bad-words")
+const filter = new Filter()
+
 function getAll (req, res) {
     knex('game')
       .then(data => {
@@ -23,10 +26,13 @@ function getGameWithId(req, res) {
   function getGameForUserGivenEmail(req, res) {
     const email = req.params.email
     console.log(`app.get("/api/games/email/:email", email:${email}`)
+    let gameId = knex.ref('game.id')
+    let subquery = knex('gameperiod').max('period').where('gameperiod.gameid',gameId).as('lastperiod')
     knex('game')
+      .select('*',subquery)
       .where('email',email)
       .then(data => {
-        console.log(`Games retrieved for email:${email}:${data}`)
+        console.log(`Games retrieved for email:${email}:${JSON.stringify(data)}`)
         res.send(data)
       })
       .catch(err => {
@@ -35,7 +41,7 @@ function getGameWithId(req, res) {
   }
   function addGame (req, res) {
     const email = req.body.email
-    const gamename = req.body.gamename
+    const gamename = filter.clean(req.body.gamename)
     console.log(`app.post("/api/game",email:${email},${gamename}`)
     knex('game')
       .insert({ email, gamename })
@@ -61,7 +67,7 @@ function getGameWithId(req, res) {
   }
   function updateName(req, res) {
     const id = req.body.id
-    const name = req.body.name
+    const name = filter.clean(req.body.name)
     console.log(`app.put("/api/game", id:${id}, name:${name}`)
     knex('game')
       .where('id',id)

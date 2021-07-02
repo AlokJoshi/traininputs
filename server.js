@@ -73,7 +73,11 @@ app.put("/api/path", path.updatePath)
 //------------Leaderboard-----------------
 app.get("/api/leaderboard/email/:email/periods/:periods",leaderboard.getleaderboard)
 
-const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
+const server = app.listen(port, () => {
+  console.log(`Listening on port ${port}!`)
+  //test if filter.clean is working..
+  //console.log(filter.clean("Don't be an ash0le"))
+})
 
 const io = new Server(server);
 io.on('connection', (socket) => {
