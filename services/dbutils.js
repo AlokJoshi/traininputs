@@ -12,9 +12,22 @@ async function getUser(email) {
   return users[0]
 }
 
+async function getGameName(id) {
+  const response = await fetch(`/api/game/id/${id}`, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    method: 'GET'
+  })
+  if (!response.ok) {
+    throw new Error('Network response was not ok')
+  }
+  const game = await response.json()
+  return game[0].gamename
+}
+
 function userExists(email) {
   return !!getUser(email)
 }
+
 
 async function createUserAndDefaultGame(email, gamename) {
   let newGameId
@@ -94,53 +107,7 @@ async function saveTrainToDB(pathid, passengercoaches, goodscoaches) {
   }
   return response.json()
 }
-/* 
-async function savePassengersOnTrainToDB(pathperiodid, passengers) {
-  if(!Object.hasOwnProperty(passengers)){
-    console.log(`%cPassengers Object is empty and hence not saved`,'color:red')
-    return
-  }
-  let data = {
-    pathperiodid: pathperiodid,
-    passengers: passengers
-  }
-  console.log(Qs.stringify(data))
-  const response = await fetch(`/api/passenger`, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
-    method: 'POST',
-    body: Qs.stringify(data)
-  })
-  if(!response.ok){
-    throw new Error("Network response was not ok")
-  }
-  let obj = await response.json()
-  return obj[0]
-}
- */
-/* 
-async function savePeriodPathToDB(gameperiodid, pathid, i, numframes,going, passengercoaches, goodscoaches, passengers) {
-  let data = {
-    gameperiodid: gameperiodid,
-    pathid: pathid,
-    i: i,
-    numframes: numframes,
-    going: going,
-    passengercoaches: passengercoaches,
-    goodscoaches: goodscoaches,
-    passengers: passengers
-  }
-  const response = await fetch(`/api/pathperiod`, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
-    method: 'POST',
-    body: Qs.stringify(data)
-  })
-  if(!response.ok){
-    throw new Error("Network response was not ok")
-  }
-  let json = await response.json()
-  return json
-}
- */
+
 async function getGamePeriodId(gameid, period, passengerid, openingcash, openingcumcapitalcost, openingcumdepreciation, cumtrackcost, cumstationcost,
                                costs, sales, interest, tax, profit,cumcoachcost,cumenginecost) {
   let data = {

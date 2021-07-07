@@ -45,6 +45,8 @@ const updateUI = async () => {
         console.log(`data for getAllGamesForEmail(${email} is : ${JSON.stringify(games)})`)
         //games is an array of all games that this email was playing
         let selectedGame=null
+        let gameid=localStorage.getItem('gameid')
+        let gamename=localStorage.getItem('gamename')
         if(games.length>1){
           //show it as a list
           // let list = games.map(game=>`<li> Id:(${game.id}) Name:${game.gamename}</li>`).join(" ")
@@ -61,18 +63,22 @@ const updateUI = async () => {
                 value = Number.parseInt(value)
                 selectedGame = games.find(game=>game.id==value)
                 if(selectedGame){
-                  localStorage.setItem('gameid',selectedGame.id)
-                  localStorage.setItem('email',email)
-                  game = new Game(email,selectedGame.id,selectedGame.gamename)
-                  game.loadFromDB() 
+                  gameid = selectedGame.id
+                  gamename = selectedGame.gamename
                 }else{
                   //user did not elect to enter a valid game id
+                  //by default load the game that was being played last
                 }
               } 
             })
         }else{
           selectedGame=games[0]
+          gameid = selectedGame.id
+          gamename = selectedGame.gamename
         }
+        localStorage.setItem('gameid',gameid)
+        game = new Game(email,gameid,gamename||'')
+        game.loadFromDB() 
       } else {
         //since the user has been authenticated but does not exist in DB
         let gameid = await createUserAndDefaultGame(email, Game.START_GAME_NAME)
@@ -97,8 +103,10 @@ const updateUI = async () => {
     displayLeaderboardTable(localStorage.getItem('email'),Game.LEADERBOARDPERIODS)
   } catch (err) {
     console.log(`Error in UpdateUI: ${err}`)
-  } //end of try catch block
-  document.title=`Train Tycoon${game?.gamename ? "-"+game?.gamename : ""}`
+  } 
+  // finally {
+  //   document.title=`Train Tycoon${game.gamename ? "-" + game.gamename : ""}`
+  // }
 }
 
 const login = async () => {

@@ -82,10 +82,15 @@ body{
 table, th, td {
     border: 1px solid black;
   }
-#background,#foreground,#routedesign,#hud,#cloud{
+#background,#foreground,#routedesign,#cloud{
+    position:absolute;
+    top: 0px;
+    left: 0px;
+}
+#hud{
     position:absolute;
     top: 0;
-    left: 0;
+    left: 150px;
 }
 #background{
   width:1200px;
@@ -414,4 +419,15 @@ keytype {
   position:absolute;
   top:0px;
   left:0px;
+}
+
+#hudnew > p{
+  position:relative;
+  border-radius:2px;
+  padding:1px;
+  color: yellow;
+  background-color: rgba(50,50,50,0.6);
+  font-size: 16px;
+  line-height: 32px;
+  text-indent: 0px;
 }

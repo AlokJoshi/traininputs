@@ -222,6 +222,7 @@ class Game {
       this.money.play()
     })
 
+    document.title=`Train Tycoon${this.gamename ? "-" + this.gamename : ""}`
   }
 
 
@@ -333,7 +334,7 @@ class Game {
 
       if (this.state == Game.ROUTE_EDITING_STATE) {
         if (event.key == 'd') {
-          if (!this.currentPath?.finalized) {
+          if (this.currentPath && !this.currentPath.finalized) {
             this.currentPath.popPoint()
             if (this.currentPath.length == 0) {
               this.lastClick.x = null
@@ -664,6 +665,7 @@ class Game {
       if ((this.period > 0) && (this.period % Game.PERIODS_PER_MEGA_PERIOD == 0)) {
       }
     }
+    updateHUDnew(this.period,Math.round(this.cashflow._openingcash/1000)+'K')
     this.updateHUD()
     setTimeout(() => {
       if (this.state == Game.RUNNING_STATE) {
@@ -678,7 +680,7 @@ class Game {
     arr.forEach(element => element.classList.remove('active'))
     let id = null //the id of the div within the buttonmenu element that has to have the active class
 
-    let txt = `Pd: ${this.period} G$: ${Math.floor(this.cashflow.closingcash / 1000)} K State: `
+    let txt = `State: `
     switch (this.state) {
       case Game.ROUTE_EDITING_STATE:
         txt += `Route Editing: click-click, d(delete last click), a(add another route), t(train), g(resume game), space(docs and back), x(exit)`
@@ -729,6 +731,11 @@ class Game {
 
   loadFromDB = async () => {
     console.log(`Game being loaded from DB:${this.gameid}`)
+    //load game name
+    let gamename = await getGameName(this.gameid)
+    document.title=`Train Tycoon${gamename ? "-" + gamename : ""}`
+
+    this.gamename = gamename
     //load from gameperiod
     let gameperiod_data = await getGamePeriodData(this.gameid)
     //console.log(JSON.stringify(gameperiod_data))

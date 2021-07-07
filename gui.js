@@ -253,3 +253,9 @@ function displayTicketPricesTable(rows){
    })
     */
 }
+function updateHUDnew(period,money){
+   let hudperiod= document.getElementById('hudperiod')
+   let hudmoney= document.getElementById('hudmoney')
+   hudperiod.innerHTML=period
+   hudmoney.innerHTML=money
+}
