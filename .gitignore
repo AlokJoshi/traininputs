@@ -31,3 +31,6 @@ yarn-error.log*
 
 #keys
 rootkey.csv
+
+#documentation files
+*.docx
