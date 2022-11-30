@@ -85,13 +85,15 @@ io.on('connection', (socket) => {
   socket.on('chat',function(msg){
     //console.log(`message received from: ${msg.email}, message:${filter.clean(msg.message)}`)
     //this emits the message to all connected clients
-    msg.message = filter.clean(msg.message)
+    //AJ: Commented out the following line
+    // msg.message = filter.clean(msg.message)
     io.emit('chat',msg)
   })
   socket.on('milestone',function(msg){
     //console.log(`milestone received from: ${msg.email}, message:${filter.clean(msg.milestone)}`)
     //this emits the message to all connected clients
-    msg.milestone = filter.clean(msg.milestone)
+    //AJ: Commented out the following line
+    // msg.milestone = filter.clean(msg.milestone)
     io.emit('milestone',msg)
   })
 });
